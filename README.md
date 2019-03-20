@@ -15,13 +15,14 @@ tensorflow-gpu (1.4.0)
 keras          (2.1.6)
 numpy          (1.14.3)
 h5py           (2.7.1)
+lxml           (4.3.2)
 sklearn        (0.0)
 ```
 
 ## Installation guide
 First install the packages:
 ```
-pip install numpy,tensorflow-gpu,keras,sklearn,h5py
+pip install numpy tensorflow-gpu keras sklearn h5py lxml
 ```
 For more details about installing Keras, please see [Keras installation instructions](https://keras.io/#installation).
 
