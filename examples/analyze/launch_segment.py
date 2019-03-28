@@ -10,6 +10,7 @@ path_weights = '../training/params_model_FINAL.h5'
 Ntomo = 10
 deepfind  = deepfind.deepfind(Ncl=10)
 
+# Segment all 10 test tomograms:
 for T in range(1,Ntomo+1):
     print('Segmenting tomogram '+str(T)+' ...')
     # Load data:
@@ -21,3 +22,4 @@ for T in range(1,Ntomo+1):
     # Save labelmap:
     utils.write_labelmap(labelmap, 'result/tomo'+str(T)+'_labelmap.h5')
 
+# Note: here I use the function 'segment_single_block'. However, this function restricted to input volumes of cubic shape, which is the case here. For testing on your own data I recomment using the function 'segment'.

@@ -7,6 +7,7 @@ import utils
 Ntomo = 10
 deepfind  = deepfind.deepfind(Ncl=10)
 
+# Cluster all 10 labelmaps (i.e. segmented tomograms):
 for T in range(1,Ntomo+1):
     print('Clustering labelmap '+str(T)+' ...')
     # Load labelmap:

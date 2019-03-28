@@ -1,3 +1,5 @@
+# This script prints out visualizations of the tomogram, the segmentation ground truth, and the segmentation obtained by deep finder.
+
 import sys
 sys.path.append('../../') # add parent folder to path
 
