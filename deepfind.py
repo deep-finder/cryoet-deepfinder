@@ -14,6 +14,8 @@ from lxml import etree
 
 import models
 import losses
+import core_utils
+import utils
 
 class deepfind:
     def __init__(self, Ncl):
@@ -28,22 +30,35 @@ class deepfind:
         self.Nvalid          = 100 # number of samples for validation
         self.optimizer = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
         
+        self.flag_direct_read     = 1
+        self.flag_batch_bootstrap = 1
         self.Lrnd = 13 # random shifts applied when sampling data- and target-patches (in voxels)
-        
-        self.net = models.my_model(self.dim_in, self.Ncl)
-        self.net.compile(optimizer=self.optimizer, loss=losses.tversky_loss, metrics=['accuracy'])
-        
+
         # Segmentation, parameters for dividing data in patches:
         self.P        = 192 # patch length (in pixels) /!\ has to a multiple of 4 (because of 2 pooling layers), so that dim_in=dim_out
         self.poverlap = 70  # patch overlap (in pixels)
         self.pcrop    = 25  # how many pixels to crop from border
     
-    # Parameters:
-    #   path_data     : path to data (i.e. tomograms)
-    #   path_target   : path to targets (i.e. annotated volumes)
-    #   objlist_train : object list containing coordinates of macromolecules
-    #   objlist_valid : another object list for monitoring the training (in particular detect overfitting)
+    # This function launches the training procedure. For each epoch, an image is plotted, displaying the progression with different metrics: loss, accuracy, f1-score, recall, precision. Every 10 epochs, the current network weights are saved. 
+    # The network is trained on small 3D patches (i.e. sub-volumes), sampled from the larger tomograms (due to memory limitation). The patch sampling is not realized randomly, but is guided by the macromolecule coordinates contained in so-called object lists (objlist).
+    # Concerning the loading of the dataset, two options are possible:
+    #    flag_direct_read=0:
+    #    flag_direct_read=1:
+    # Arguments:
+    #   path_data     : a list containing the paths to data files (i.e. tomograms)
+    #   path_target   : a list containing the paths to target files (i.e. annotated volumes)
+    #   objlist_train : an xml structure containing information about annotated objects: origin tomogram (should correspond to the index of 'path_data' argument), coordinates, class. During training, these coordinates are used for guiding the patch sampling procedure.
+    #   objlist_valid : same as 'objlist_train', but objects contained in this xml structure are not used for training, but for validation. It allows to monitor the training and check for over/under-fitting. Ideally, the validation objects should originate from different tomograms than training objects.
     def train(self, path_data, path_target, objlist_train, objlist_valid):
+        # Build network:
+        net = models.my_model(self.dim_in, self.Ncl)
+        net.compile(optimizer=self.optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+        
+        # Load whole dataset:
+        if self.flag_direct_read == False:
+            print('Loading dataset ...')
+            data_list, target_list = core_utils.load_dataset(path_data, path_target)
+
         print('Launch training ...')
         
         # Declare lists for storing training statistics:
@@ -61,18 +76,24 @@ class deepfind:
             # TRAINING:
             start = time.time()
             for it in range(self.steps_per_epoch):
-                batch_data, batch_target = self.generate_batch_direct_read(path_data, path_target, objlist_train, self.batch_size)
-                loss_train = self.net.train_on_batch(batch_data, batch_target)
+                if self.flag_direct_read:
+                    batch_data, batch_target = self.generate_batch_direct_read(path_data, path_target, self.batch_size, objlist_train)
+                else:
+                    batch_data, batch_target = self.generate_batch_from_array(data_list, target_list, self.batch_size, objlist_train)
+                loss_train = net.train_on_batch(batch_data, batch_target)
         
                 print('epoch %d/%d - it %d/%d - loss: %0.3f - acc: %0.3f' % (e+1, self.epochs, it+1, self.steps_per_epoch, loss_train[0], loss_train[1]))
             hist_loss_train.append(loss_train[0])
             hist_acc_train.append( loss_train[1])
     
             # VALIDATION (compute statistics to monitor training):
-            batch_data_valid, batch_target_valid = self.generate_batch_direct_read(path_data, path_target, objlist_valid, self.Nvalid)
-            loss_val = self.net.evaluate(batch_data_valid, batch_target_valid, verbose=0)
+            if self.flag_direct_read:
+                batch_data_valid, batch_target_valid = self.generate_batch_direct_read(path_data, path_target, self.batch_size, objlist_valid)
+            else:
+                batch_data_valid, batch_target_valid = self.generate_batch_from_array(data_list, target_list, self.batch_size, objlist_valid)
+            loss_val = net.evaluate(batch_data_valid, batch_target_valid, verbose=0)
     
-            batch_pred = self.net.predict(batch_data_valid)
+            batch_pred = net.predict(batch_data_valid)
             scores = precision_recall_fscore_support(batch_target_valid.argmax(axis=-1).flatten(), batch_pred.argmax(axis=-1).flatten(), average=None)
 
             hist_loss_valid.append(loss_val[0])
@@ -87,16 +108,16 @@ class deepfind:
             print('EPOCH %d/%d - valid loss: %0.3f - valid acc: %0.3f - %0.2fsec' % (e+1, self.epochs, loss_val[0], loss_val[1], end-start))
             print('=============================================================')
     
-            # Save training history:
+            # Save and plot training history:
             history = {'loss':hist_loss_train, 'acc':hist_acc_train, 'val_loss':hist_loss_valid, 'val_acc':hist_acc_valid, 'val_f1':hist_f1, 'val_recall':hist_recall, 'val_precision':hist_precision}
-            self.save_history(history)
+            core_utils.save_history(history)
+            core_utils.plot_history(history)
     
             if (e+1)%10 == 0: # save weights every 10 epochs
-                self.net.save('params_model_epoch'+str(e+1)+'.h5')
+                net.save('params_model_epoch'+str(e+1)+'.h5')
 
         print "Model took %0.2f seconds to train"%np.sum(process_time)
-        self.net.save('params_model_FINAL.h5')
-        
+        net.save('params_model_FINAL.h5')
         
     # This function generates training batches:
     #   - Data and target patches are sampled, in order to avoid loading whole tomograms.
@@ -108,47 +129,47 @@ class deepfind:
     #     This is usefull when a class is under-represented.
     
     # /!\ TO DO: add a test to ignore objlist coordinate too close to border (using tomodim=h5data['dataset'].shape)
-    def generate_batch_direct_read(self, path_data, path_target, objlist, batch_size):
-        Nobj = objlist.shape[0]
+    def generate_batch_direct_read(self, path_data, path_target, batch_size, objlist=None):
         p_in  = np.int( np.floor(self.dim_in /2) )
     
         batch_data   = np.zeros((batch_size, self.dim_in, self.dim_in, self.dim_in, 1))
         batch_target = np.zeros((batch_size, self.dim_in, self.dim_in, self.dim_in, self.Ncl))
-    
-        lblTAB = np.unique(objlist[:,0])
-        Nbs = 100
-    
-        # Bootstrap data so that we have equal frequencies (1/Nbs) for all classes:
-        bs_idx = []
-        for l in lblTAB:
-            bs_idx.append( np.random.choice(np.squeeze(np.asarray(np.nonzero(objlist[:,0]==l))), Nbs) )
-        bs_idx = np.concatenate(bs_idx)
+        
+        # The batch is generated by randomly sampling data patches. 
+        if self.flag_batch_bootstrap: # choose from bootstrapped objlist
+            pool = core_utils.get_bootstrap_idx(objlist,Nbs=batch_size)
+        else: # choose from whole objlist
+            pool = range(0,len(objlist))
+        
         
         for i in range(batch_size):
-            # Choose random sample in training set:
-            index = np.random.choice(bs_idx)
-            tomoID = objlist[index,1]
-        
-            # Add random shift to coordinates:
-            x = objlist[index,4] + np.random.choice(range(-self.Lrnd,self.Lrnd+1))
-            y = objlist[index,3] + np.random.choice(range(-self.Lrnd,self.Lrnd+1))
-            z = objlist[index,2] + np.random.choice(range(-self.Lrnd,self.Lrnd+1))
+            # Choose random object in training set:
+            index = np.random.choice(pool)
+                
+            tomoID = int( objlist[index].get('tomo_idx') )
+            
+            h5file = h5py.File(path_data[tomoID], 'r')
+            tomodim = h5file['dataset'].shape # get tomo dimensions without loading the array
+            h5file.close()
+            
+            x,y,z = core_utils.get_patch_position(tomodim, p_in, objlist[index], self.Lrnd)
         
             # Load data and target patches:
-            h5data = h5py.File(path_data[tomoID], 'r')
-            patch_data  = h5data['dataset'][x-p_in:x+p_in, y-p_in:y+p_in, z-p_in:z+p_in]
-            patch_data  = (patch_data - np.mean(patch_data)) / np.std(patch_data) # normalize
-            h5data.close()
+            h5file = h5py.File(path_data[tomoID], 'r')
+            patch_data  = h5file['dataset'][x-p_in:x+p_in, y-p_in:y+p_in, z-p_in:z+p_in]
+            h5file.close()
             
-            h5target = h5py.File(path_target[tomoID], 'r')
-            patch_batch = h5target['dataset'][x-p_in:x+p_in, y-p_in:y+p_in, z-p_in:z+p_in]
-            #patch_batch[patch_batch==-1] = 0 # /!\ -1 labels from 'ignore mask' could generate trouble
-            patch_batch_onehot = to_categorical(patch_batch, self.Ncl)
-            h5target.close()
+            h5file = h5py.File(path_target[tomoID], 'r')
+            patch_target = h5file['dataset'][x-p_in:x+p_in, y-p_in:y+p_in, z-p_in:z+p_in]
+            h5file.close()
+            
+            # Process the patches in order to be used by network:
+            patch_data  = (patch_data - np.mean(patch_data)) / np.std(patch_data) # normalize
+            patch_target_onehot = to_categorical(patch_target, self.Ncl)
             
             # Store into batch array:
             batch_data[i,:,:,:,0] = patch_data
-            batch_target[i] = patch_batch_onehot
+            batch_target[i] = patch_target_onehot
         
             # Data augmentation (180degree rotation around tilt axis):
             if np.random.uniform()<0.5:
@@ -157,38 +178,59 @@ class deepfind:
         
         return batch_data, batch_target
         
-    def save_history(self, history):
-        h5trainhist = h5py.File('params_train_history.h5', 'w')
-
-        # train and val loss & accuracy:
-        dset    = h5trainhist.create_dataset('acc', (len(history['acc']),))
-        dset[:] = history['acc']
-        dset    = h5trainhist.create_dataset('loss', (len(history['loss']),))
-        dset[:] = history['loss']
-        dset    = h5trainhist.create_dataset('val_acc', (len(history['val_acc']),))
-        dset[:] = history['val_acc']
-        dset    = h5trainhist.create_dataset('val_loss', (len(history['val_loss']),))
-        dset[:] = history['val_loss']
-
-        # val precision, recall, F1:
-        dset    = h5trainhist.create_dataset('val_f1', np.shape(history['val_f1']))
-        dset[:] = history['val_f1']
-        dset    = h5trainhist.create_dataset('val_precision', np.shape(history['val_precision']))
-        dset[:] = history['val_precision']
-        dset    = h5trainhist.create_dataset('val_recall', np.shape(history['val_recall']))
-        dset[:] = history['val_recall']
-
-        h5trainhist.close()
-        return
+    def generate_batch_from_array(self, data, target, batch_size, objlist=None):
+        p_in  = np.int( np.floor(self.dim_in /2) )
+    
+        batch_data   = np.zeros((batch_size, self.dim_in, self.dim_in, self.dim_in, 1))
+        batch_target = np.zeros((batch_size, self.dim_in, self.dim_in, self.dim_in, self.Ncl))
+        
+        # The batch is generated by randomly sampling data patches. 
+        if self.flag_batch_bootstrap: # choose from bootstrapped objlist
+            pool = core_utils.get_bootstrap_idx(objlist,Nbs=batch_size)
+        else: # choose from whole objlist
+            pool = range(0,len(objlist))
+    
+        for i in range(batch_size):
+            # choose random sample in training set:
+            index = np.random.choice(pool)
+            
+            tomoID = int( objlist[index].get('tomo_idx') )
+                
+            tomodim = data[tomoID].shape
+            
+            sample_data   = data[tomoID]
+            sample_target = target[tomoID]
+            
+            dim = sample_data.shape
+            
+            # Get patch position:
+            x,y,z = core_utils.get_patch_position(tomodim, p_in, objlist[index], self.Lrnd)
+            
+            # Get patch:
+            patch_data   =   sample_data[x-p_in:x+p_in, y-p_in:y+p_in, z-p_in:z+p_in]
+            patch_batch  = sample_target[x-p_in:x+p_in, y-p_in:y+p_in, z-p_in:z+p_in]
+            
+            # Process the patches in order to be used by network:
+            patch_data  = (patch_data - np.mean(patch_data)) / np.std(patch_data) # normalize
+            patch_batch_onehot = to_categorical(patch_batch, self.Ncl)
+            
+            # Store into batch array:
+            batch_data[i,:,:,:,0] = patch_data
+            batch_target[i] = patch_batch_onehot
+            
+            # Data augmentation (180degree rotation around tilt axis):
+            if np.random.uniform()<0.5:
+                batch_data[i]   = np.rot90(batch_data[i]  , k=2, axes=(0,2))
+                batch_target[i] = np.rot90(batch_target[i], k=2, axes=(0,2))
+            
+        return batch_data, batch_target
         
     def segment(self, dataArray, weights_path):
-        self.net = models.my_model(self.P, self.Ncl)
-        self.net.load_weights(weights_path)
         
-        # Load data:
-        #h5data    = h5py.File(path_data, 'r')
-        #dataArray = h5data['dataset'][:]
-        #h5data.close()
+        # Build network:
+        net = models.my_model(self.P, self.Ncl)
+        net.load_weights(weights_path)
+        
         dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:]) # normalize
         dim  = dataArray.shape 
         
@@ -225,7 +267,7 @@ class deepfind:
                     print('Segmenting patch ' + str(patchCount) + ' / ' + str(Npatch) + ' ...' )
                     patch = dataArray[x-l:x+l, y-l:y+l, z-l:z+l]
                     patch = np.reshape(patch, (1,self.P,self.P,self.P,1)) # reshape for keras [batch,x,y,z,channel]
-                    pred = self.net.predict(patch, batch_size=1)
+                    pred = net.predict(patch, batch_size=1)
             
                     predArray[x-lcrop:x+lcrop, y-lcrop:y+lcrop, z-lcrop:z+lcrop, :] = predArray[x-lcrop:x+lcrop, y-lcrop:y+lcrop, z-lcrop:z+lcrop, :] + pred[0, l-lcrop:l+lcrop,l-lcrop:l+lcrop,l-lcrop:l+lcrop, :]
                     normArray[x-lcrop:x+lcrop, y-lcrop:y+lcrop, z-lcrop:z+lcrop]    = normArray[x-lcrop:x+lcrop, y-lcrop:y+lcrop, z-lcrop:z+lcrop] + np.ones((self.P-2*self.pcrop,self.P-2*self.pcrop,self.P-2*self.pcrop))
@@ -240,17 +282,21 @@ class deepfind:
         print "Model took %0.2f seconds to predict"%(end - start)
         
         return predArray # predArray is the array containing the scoremaps
-    
-        # Save scoremaps:
-        #path, filename = os.path.split(path_data)
-        #scoremap_file = filename[:-3]+'_scoremaps.h5'
-        #h5scoremap = h5py.File(scoremap_file, 'w')
-        #for cl in range(0,self.Ncl):
-    	#    dset = h5scoremap.create_dataset('class'+str(cl), (dim[0], dim[1], dim[2]), dtype='float16' )
-    	#    dset[:] = np.float16(predArray[:,:,:,cl])
-        #h5scoremap.close()
         
-        # For binning: skimage.measure.block_reduce(mat, (2,2), np.mean)
+    def segment_single_block(self, dataArray, weights_path):
+        # Build network:
+        net = models.my_model(self.P, self.Ncl)
+        net.load_weights(weights_path)
+        
+        dim = dataArray.shape
+        dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:]) # normalize
+        dataArray = np.reshape(dataArray, (1,dim[0],dim[1],dim[2],1)) # reshape for keras [batch,x,y,z,channel]
+        
+        pred = net.predict(dataArray, batch_size=1)
+        predArray = pred[0,:,:,:,:]
+        
+        return predArray
+        
         
     def cluster(self, labelmap, sizeThr, clustRadius):
         Nclass = len(np.unique(labelmap)) - 1 # object classes only (background class not considered)
@@ -287,13 +333,7 @@ class deepfind:
                 labelcount[l] = np.size(np.nonzero( np.array(clustMember)==l+1 ))
             winninglabel = np.argmax(labelcount)+1
         
-            # Store cluster infos in array:
-            #objlist[c,0] = clustSize
-            #objlist[c,1] = centroid[0]
-            #objlist[c,2] = centroid[1]
-            #objlist[c,3] = centroid[2]
-            #objlist[c,4] = winninglabel
-            
+            # Store cluster infos in xml structure:
             obj = etree.SubElement(objlist, 'object')
             obj.set('cluster_size', str(clustSize))
             obj.set('class_label' , str(winninglabel))
