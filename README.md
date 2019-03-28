@@ -1,5 +1,7 @@
 # Deep Finder
 
+The code in this repository is described in [this pre-print](https://hal.inria.fr/hal-01966819/document). This paper has been submitted to Nature Communications and is currently under revision.
+
 ## Contents
 - [System requirements](##System requirements)
 - [Installation guide](##Installation guide)
