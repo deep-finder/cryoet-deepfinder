@@ -5,15 +5,17 @@ import deepfind
 import utils
 
 # First, initialize the Deep Finder framework:
-deepfind = deepfind.deepfind(Ncl=10)
+deepfind = deepfind.deepfind(Ncl=13)
 
 # Note: all training parameters are set to default values. If you wish to modify a parameter, for example the number of epochs, you can do so as follows : deepfind.epochs = 300
+deepfind.epochs = 150
+deepfind.flag_direct_read = 0
 
 # Then, prepare the arguments necessary for the training procedure (data paths and object lists):
 prefix = '/path/to/dataset/'
 path_data   = []
 path_target = []
-for idx in range(0,250):
+for idx in range(0,9):
     path_data.append(prefix+'tomo'+str(idx+1)+'_data.h5')
     path_target.append(prefix+'tomo'+str(idx+1)+'_target.h5')
 

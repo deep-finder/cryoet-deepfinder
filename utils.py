@@ -106,6 +106,19 @@ def objlist_above_thr(objlistIN, thr):
     for idx in range(0,len(idx_thr)):
         objlistOUT.append( deepcopy(objlistIN[idx_thr[idx]]) ) # deepcopy is necessary, else the object is removed from objlIN when appended to objlOUT
     return objlistOUT
+    
+def objlist_scale_coord(objlist, scale):
+    for p in range(0,len(objlist)):
+        x = int(np.round(float( objlist[p].get('x') )))
+        y = int(np.round(float( objlist[p].get('y') )))
+        z = int(np.round(float( objlist[p].get('z') )))
+        x = scale*x
+        y = scale*y
+        z = scale*z
+        objlist[p].set('x', str(x))
+        objlist[p].set('y', str(y))
+        objlist[p].set('z', str(z))
+    return objlist
 
 def bin_scoremaps(scoremaps):
     dim = scoremaps.shape

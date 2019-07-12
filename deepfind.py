@@ -15,6 +15,7 @@ from lxml import etree
 import models
 import core_utils
 import utils
+import losses
 
 class deepfind:
     def __init__(self, Ncl):
@@ -32,6 +33,8 @@ class deepfind:
         self.flag_direct_read     = 1
         self.flag_batch_bootstrap = 0
         self.Lrnd = 13 # random shifts applied when sampling data- and target-patches (in voxels)
+        
+        self.net = models.my_model(self.dim_in, self.Ncl)
 
         # Segmentation, parameters for dividing data in patches:
         self.P        = 192 # patch length (in pixels) /!\ has to a multiple of 4 (because of 2 pooling layers), so that dim_in=dim_out
@@ -50,8 +53,7 @@ class deepfind:
     #    flag_direct_read=1: only the patches are loaded into memory, each time a training batch is generated. This is usefull when the dataset is too large to load into memory. However, the transfer speed between the data server and the GPU host should be high enough, else the procedure becomes very slow.
     def train(self, path_data, path_target, objlist_train, objlist_valid):
         # Build network:
-        net = models.my_model(self.dim_in, self.Ncl)
-        net.compile(optimizer=self.optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+        self.net.compile(optimizer=self.optimizer, loss=losses.tversky_loss, metrics=['accuracy'])
         
         # Load whole dataset:
         if self.flag_direct_read == False:
@@ -79,7 +81,7 @@ class deepfind:
                     batch_data, batch_target = self.generate_batch_direct_read(path_data, path_target, self.batch_size, objlist_train)
                 else:
                     batch_data, batch_target = self.generate_batch_from_array(data_list, target_list, self.batch_size, objlist_train)
-                loss_train = net.train_on_batch(batch_data, batch_target)
+                loss_train = self.net.train_on_batch(batch_data, batch_target)
         
                 print('epoch %d/%d - it %d/%d - loss: %0.3f - acc: %0.3f' % (e+1, self.epochs, it+1, self.steps_per_epoch, loss_train[0], loss_train[1]))
             hist_loss_train.append(loss_train[0])
@@ -90,9 +92,9 @@ class deepfind:
                 batch_data_valid, batch_target_valid = self.generate_batch_direct_read(path_data, path_target, self.batch_size, objlist_valid)
             else:
                 batch_data_valid, batch_target_valid = self.generate_batch_from_array(data_list, target_list, self.batch_size, objlist_valid)
-            loss_val = net.evaluate(batch_data_valid, batch_target_valid, verbose=0)
+            loss_val = self.net.evaluate(batch_data_valid, batch_target_valid, verbose=0)
     
-            batch_pred = net.predict(batch_data_valid)
+            batch_pred = self.net.predict(batch_data_valid)
             scores = precision_recall_fscore_support(batch_target_valid.argmax(axis=-1).flatten(), batch_pred.argmax(axis=-1).flatten(), average=None)
 
             hist_loss_valid.append(loss_val[0])
@@ -113,10 +115,10 @@ class deepfind:
             core_utils.plot_history(history)
     
             if (e+1)%10 == 0: # save weights every 10 epochs
-                net.save('params_model_epoch'+str(e+1)+'.h5')
+                self.net.save('params_model_epoch'+str(e+1)+'.h5')
 
         print "Model took %0.2f seconds to train"%np.sum(process_time)
-        net.save('params_model_FINAL.h5')
+        self.net.save('params_model_FINAL.h5')
         
     # This function generates training batches:
     #   - Data and target patches are sampled, in order to avoid loading whole tomograms.
@@ -231,8 +233,8 @@ class deepfind:
     def segment(self, dataArray, weights_path):
         
         # Build network:
-        net = models.my_model(self.P, self.Ncl)
-        net.load_weights(weights_path)
+        self.net = models.my_model(self.P, self.Ncl)
+        self.net.load_weights(weights_path)
         
         dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:]) # normalize
         dim  = dataArray.shape 
@@ -270,7 +272,7 @@ class deepfind:
                     print('Segmenting patch ' + str(patchCount) + ' / ' + str(Npatch) + ' ...' )
                     patch = dataArray[x-l:x+l, y-l:y+l, z-l:z+l]
                     patch = np.reshape(patch, (1,self.P,self.P,self.P,1)) # reshape for keras [batch,x,y,z,channel]
-                    pred = net.predict(patch, batch_size=1)
+                    pred = self.net.predict(patch, batch_size=1)
             
                     predArray[x-lcrop:x+lcrop, y-lcrop:y+lcrop, z-lcrop:z+lcrop, :] = predArray[x-lcrop:x+lcrop, y-lcrop:y+lcrop, z-lcrop:z+lcrop, :] + pred[0, l-lcrop:l+lcrop,l-lcrop:l+lcrop,l-lcrop:l+lcrop, :]
                     normArray[x-lcrop:x+lcrop, y-lcrop:y+lcrop, z-lcrop:z+lcrop]    = normArray[x-lcrop:x+lcrop, y-lcrop:y+lcrop, z-lcrop:z+lcrop] + np.ones((self.P-2*self.pcrop,self.P-2*self.pcrop,self.P-2*self.pcrop))
@@ -294,14 +296,14 @@ class deepfind:
     #   predArray: a numpy array containing the predicted score maps.
     def segment_single_block(self, dataArray, weights_path):
         # Build network:
-        net = models.my_model(dataArray.shape[0], self.Ncl)
-        net.load_weights(weights_path)
+        self.net = models.my_model(self.P, self.Ncl)
+        self.net.load_weights(weights_path)
         
         dim = dataArray.shape
         dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:]) # normalize
         dataArray = np.reshape(dataArray, (1,dim[0],dim[1],dim[2],1)) # reshape for keras [batch,x,y,z,channel]
         
-        pred = net.predict(dataArray, batch_size=1)
+        pred = self.net.predict(dataArray, batch_size=1)
         predArray = pred[0,:,:,:,:]
         
         return predArray
