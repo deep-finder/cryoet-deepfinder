@@ -44,4 +44,4 @@ Then launch the script:
 %run script_file.py
 ```
 
-__Note:__ working examples are contained in examples/analyze/, where Deep Finder processes the test tomogram from the [SHREC'19 challenge](http://www2.projects.science.uu.nl/shrec/cryo-et/). The script in examples/training/ will fail because the training data is not included in this Gitlab. In addition, the evaluation script (examples/analyze/step3_launch_evaluation.py) is the one used in SHREC'19, which needs python3 and additional packages.
+__Note:__ working examples are contained in examples/analyze/, where Deep Finder processes the test tomogram from the [SHREC'19 challenge](http://www2.projects.science.uu.nl/shrec/cryo-et/). The script in examples/training/ will fail because the training data is not included in this Gitlab. In addition, the evaluation script (examples/analyze/step3_launch_evaluation.py) is the one used in SHREC'19, which needs python3 and additional packages. The performance of Deep Finder has been evaluated by an independent group, and the result of this evaluation have been published in Gubins & al., "SHREC'19 track: Classification in cryo-electron tomograms".

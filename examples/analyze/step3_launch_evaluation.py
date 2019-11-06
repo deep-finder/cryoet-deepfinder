@@ -1,6 +1,9 @@
 # This script computes recall, precision and f1-score for each object class, and prints out the result in log files.
 # The evaluation is based on a script used for the challenge "SHREC 2019: Classification in cryo-electron tomograms"
 
+# This script needs python3 and additional packages (see evaluate.py), as it was coded by SHREC'19 organizers. The 
+# scores have been published in Gubins & al., "SHREC'19 track: classification in cryo-electron tomograms", 2019
+
 import sys
 sys.path.append('../../') # add parent folder to path
 

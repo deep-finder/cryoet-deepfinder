@@ -20,8 +20,8 @@ labelmap  = utils.scoremaps2labelmap(scoremaps)
 scoremapsB = utils.bin_scoremaps(scoremaps)
 labelmapB  = utils.scoremaps2labelmap(scoremapsB)
 # Save labelmaps:
-utils.write_labelmap(labelmap , 'tomo9_labelmap.h5')
-utils.write_labelmap(labelmapB, 'tomo9_bin1_labelmap.h5')
+utils.write_labelmap(labelmap , 'result/tomo9_labelmap.h5')
+utils.write_labelmap(labelmapB, 'result/tomo9_bin1_labelmap.h5')
 
 # Print out visualizations of the test tomogram and obtained segmentation:
 utils.plot_volume_orthoslices(data[25:-25,25:-25,25:-25], 'result/tomo9_data.png')
