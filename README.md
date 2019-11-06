@@ -2,6 +2,8 @@
 
 The code in this repository is described in [this pre-print](https://hal.inria.fr/hal-01966819/document). This paper has been submitted to Nature Communications and is currently under revision.
 
+__Disclaimer:__ this is a preliminary version of the code, which is subject to improvements. For ease of use, we also plan to create a graphical interface in forthcoming months.
+
 ## Contents
 - [System requirements](##System requirements)
 - [Installation guide](##Installation guide)
@@ -41,3 +43,5 @@ Then launch the script:
 ```
 %run script_file.py
 ```
+
+__Note:__ working examples are contained in examples/analyze/, where Deep Finder processes the test tomogram from the [SHREC'19 challenge](http://www2.projects.science.uu.nl/shrec/cryo-et/). The script in examples/training/ will fail because the training data is not included in this Gitlab. In addition, the evaluation script (examples/analyze/step3_launch_evaluation.py) is the one used in SHREC'19, which needs python3 and additional packages.
