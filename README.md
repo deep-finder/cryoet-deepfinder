@@ -11,6 +11,7 @@ __Disclaimer:__ this is a preliminary version of the code, which is subject to i
 
 ## System requirements
 __Deep Finder__ has been implemented using __Python 2.7__ and is based on the __Keras__ package. It has been tested on Linux (Debian 8.6), and should also work on Mac OSX as well as Windows.
+
 The algorithm needs an Nvidia GPU to run at reasonable speed (in particular for training). The present code has been tested on Tesla K80 and M40 GPUs. For running on other GPUs, some parameter values (e.g. patch and batch sizes) may need to be changed to adapt to available memory.
 
 ### Package dependencies
