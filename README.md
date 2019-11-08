@@ -14,6 +14,10 @@ __Deep Finder__ has been implemented using __Python 2.7__ and is based on the __
 
 The algorithm needs an Nvidia GPU to run at reasonable speed (in particular for training). The present code has been tested on Tesla K80 and M40 GPUs. For running on other GPUs, some parameter values (e.g. patch and batch sizes) may need to be changed to adapt to available memory.
 
+```diff
+- If above conditions are not met, we cannot guarantee the functionality of our code at this time.
+```
+
 ### Package dependencies
 Users should install following packages in order to run Deep Finder. The package versions for which our software has been tested are displayed in brackets:
 ```
