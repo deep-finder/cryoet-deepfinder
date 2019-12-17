@@ -5,6 +5,8 @@ from lxml import etree
 from copy import deepcopy
 from sklearn.metrics import pairwise_distances
 
+import utils
+
 
 class objlist:
     # Constructors:
@@ -123,3 +125,77 @@ class objlist:
         return Ntp
         
         
+class scoremaps:
+    # Constructors:
+    def __init__(self, array=None):
+        self.array = array # numpy array of size (dim[0],dim[1],dim[2],Ncl)
+        
+    @classmethod
+    def from_h5(cls, filename):
+        h5file = h5py.File(filename, 'r')
+        datasetnames = h5file.keys()
+        Ncl = len(datasetnames)
+        dim = h5file['class0'].shape 
+        array = np.zeros((dim[0],dim[1],dim[2],Ncl))
+        for cl in range(0,Ncl):
+            array[:,:,:,cl] = h5file['class'+str(cl)][:]
+        h5file.close()
+        return cls(array=array)
+        
+    # to do
+    # @classmethod
+    # def from_mrc(cls, filename):
+    #     return cls(array=array)
+        
+    # Methods:
+    def write_h5(self, filename):
+        h5file = h5py.File(filename, 'w')
+        dim = self.array.shape
+        Ncl = dim[3]
+        for cl in range(0,Ncl):
+    	    dset = h5file.create_dataset('class'+str(cl), (dim[0], dim[1], dim[2]), dtype='float16' )
+    	    dset[:] = np.float16(self.array[:,:,:,cl])
+        h5file.close()
+        
+    # def write_mrc(self, filename):
+        
+    def to_lblmap(self):
+        lmap = np.argmax(self.array,3)
+        return lblmap(array=lmap)
+        
+    def bin(self):
+        dim = self.array.shape
+        Ncl = dim[3]
+        dimB = (int(np.round(dim[0]/2)), int(np.round(dim[1]/2)), int(np.round(dim[2]/2)), Ncl)
+        arrayB = np.zeros(dimB)
+        for cl in range(0,Ncl):
+            arrayB[:,:,:,cl] = block_reduce(self.array[:,:,:,cl], (2,2,2), np.mean)
+        return scoremaps(arrayB)
+
+
+class lblmap:
+    # Constructors:
+    def __init__(self, array=None):
+        self.array = array # numpy array of size (dim[0],dim[1],dim[2])
+
+    @classmethod
+    def from_h5(cls, filename):
+        array = utils.read_h5array(filename)
+        return cls(array=array)
+
+    @classmethod
+    def from_mrc(cls, filename):
+        array = utils.read_mrc(filename)
+        return cls(array=array)
+
+    # Methods:
+    def write_h5(self, filename):
+        dim = self.array.shape
+        h5file = h5py.File(filename, 'w')
+        dset = h5file.create_dataset('dataset', (dim[0], dim[1], dim[2]), dtype='int8')
+        dset[:] = np.int8(self.array)
+        h5file.close()
+
+    def write_mrc(self, filename):
+        utils.write_mrc(self.array, filename)
+

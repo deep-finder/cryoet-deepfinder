@@ -1,5 +1,10 @@
 import numpy as np
 import h5py
+
+import mrcfile
+import warnings
+warnings.simplefilter('ignore') # to mute some warnings produced when opening the tomos with mrcfile
+
 from skimage.measure import block_reduce
 from lxml import etree
 from copy import deepcopy
@@ -133,7 +138,7 @@ def scoremaps2labelmap(scoremaps):
     labelmap = np.argmax(scoremaps,3)
     return labelmap
     
-def load_h5array(filename): # rename to read_
+def read_h5array(filename): # rename to read_
     h5file    = h5py.File(filename, 'r')
     dataArray = h5file['dataset'][:]
     h5file.close()
@@ -171,3 +176,13 @@ def write_labelmap(labelmap, filename):
     dset     = h5file.create_dataset('dataset', (dim[0],dim[1],dim[2]), dtype='int8' )
     dset[:]  = np.int8(labelmap)
     h5file.close()
+
+def read_mrc(filename):
+    with mrcfile.open(filename, permissive=True) as mrc:
+        array = mrc.data
+    return array
+
+def write_mrc(array, filename):
+    with mrcfile.new(filename, overwrite=True) as mrc:
+        mrc.set_data(array)
+
