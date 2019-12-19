@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import h5py
 
@@ -137,19 +138,7 @@ def bin_scoremaps(scoremaps):
 def scoremaps2labelmap(scoremaps):
     labelmap = np.argmax(scoremaps,3)
     return labelmap
-    
-def read_h5array(filename): # rename to read_
-    h5file    = h5py.File(filename, 'r')
-    dataArray = h5file['dataset'][:]
-    h5file.close()
-    return dataArray
-    
-def write_h5array(array, filename):
-    h5file = h5py.File(filename, 'w')
-    dset     = h5file.create_dataset('dataset', array.shape, dtype='float16' )
-    dset[:]  = np.float16(array)
-    h5file.close()
-    
+
 def load_scoremaps(filename): # rename to read_
     h5file = h5py.File(filename, 'r')
     datasetnames = h5file.keys()
@@ -177,6 +166,19 @@ def write_labelmap(labelmap, filename):
     dset[:]  = np.int8(labelmap)
     h5file.close()
 
+
+def read_h5array(filename):
+    h5file = h5py.File(filename, 'r')
+    dataArray = h5file['dataset'][:]
+    h5file.close()
+    return dataArray
+
+def write_h5array(array, filename):
+    h5file = h5py.File(filename, 'w')
+    dset = h5file.create_dataset('dataset', array.shape, dtype='float16')
+    dset[:] = np.float16(array)
+    h5file.close()
+
 def read_mrc(filename):
     with mrcfile.open(filename, permissive=True) as mrc:
         array = mrc.data
@@ -185,4 +187,23 @@ def read_mrc(filename):
 def write_mrc(array, filename):
     with mrcfile.new(filename, overwrite=True) as mrc:
         mrc.set_data(array)
+
+def read_array(filename):
+    data_format = os.path.splitext(filename)
+    if data_format[1] == '.h5':
+        array = read_h5array(filename)
+    elif data_format[1] == '.mrc':
+        array = read_mrc(filename)
+    else:
+        print('/!\ DeepFinder can only read datasets in .h5 and .mrc formats')
+    return array
+
+def write_array(array, filename):
+    data_format = os.path.splitext(filename)
+    if data_format[1] == '.h5':
+        write_h5array(array, filename)
+    elif data_format[1] == '.mrc':
+        write_mrc(array, filename)
+    else:
+        print('/!\ DeepFinder can only write datasets in .h5 and .mrc formats')
 

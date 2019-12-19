@@ -10,8 +10,8 @@ def load_dataset(path_data, path_target):
     data_list   = []
     target_list = []
     for idx in range(0,len(path_data)):
-        data_list.append(  utils.load_h5array(path_data[idx]  ))
-        target_list.append(utils.load_h5array(path_target[idx]))
+        data_list.append(  utils.read_array(path_data[idx]  ))
+        target_list.append(utils.read_array(path_target[idx]))
     return data_list, target_list
 
 
