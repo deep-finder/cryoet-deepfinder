@@ -3,11 +3,12 @@ import h5py
 from skimage.measure import block_reduce
 from lxml import etree
 from copy import deepcopy
+from contextlib import redirect_stdout # for writing txt file
 from sklearn.metrics import pairwise_distances
 
 import utils
 
-class objlist: # here I want to test a list of dictionnaries as core structure and see if its faster
+class objlist: # here I want to test a list of dictionnaries as core structure and see if its faster (it is!)
     # Constructors:
     def __init__(self, objlist=None):
         if objlist is None: # this syntax is necessary, else objects share the same attributes
@@ -98,7 +99,7 @@ class objlist: # here I want to test a list of dictionnaries as core structure a
                 print('/!\ Object ' + str(idx) + ' has no attribute cluster_size')
 
         objlistOUT = []
-        for idx in range(0,len(idx_thr)):
+        for idx in range(len(idx_thr)):
             objlistOUT.append( self.objlist[idx_thr[idx]] )
         return objlist(objlist=objlistOUT)
 
@@ -121,6 +122,32 @@ class objlist: # here I want to test a list of dictionnaries as core structure a
 
         tree = etree.ElementTree(objl_xml)
         tree.write(filename, pretty_print=True)
+
+    def write_txt(self, filename):
+        with open(filename, 'w') as f:
+            with redirect_stdout(f):
+                for idx in range(len(self.objlist)):
+                    lbl = self.objlist[idx]['label']
+                    x = self.objlist[idx]['x']
+                    y = self.objlist[idx]['y']
+                    z = self.objlist[idx]['z']
+                    csize = self.objlist[idx]['cluster_size']
+                    if csize==None:
+                        print(lbl + ' ' + str(z) + ' ' + str(y) + ' ' + str(x))
+                    else:
+                        print(lbl + ' ' + str(z) + ' ' + str(y) + ' ' + str(x) + ' ' + str(csize))
+
+     # TODO check why np.round is used
+    def scale_coord(self, scale):
+        objlistOUT = deepcopy(self.objlist) # necessary else the original objl is scaled too
+        for idx in range(len(self.objlist)):
+            x = int(np.round(float(self.objlist[idx]['x'])))
+            y = int(np.round(float(self.objlist[idx]['y'])))
+            z = int(np.round(float(self.objlist[idx]['z'])))
+            objlistOUT[idx]['x'] = scale * x
+            objlistOUT[idx]['y'] = scale * y
+            objlistOUT[idx]['z'] = scale * z
+        return objlist(objlist=objlistOUT)
 
 
 
@@ -243,77 +270,77 @@ class objlist: # here I want to test a list of dictionnaries as core structure a
 #         return Ntp
         
         
-class scoremaps:
-    # Constructors:
-    def __init__(self, array=None):
-        self.array = array # numpy array of size (dim[0],dim[1],dim[2],Ncl)
-        
-    @classmethod
-    def from_h5(cls, filename):
-        h5file = h5py.File(filename, 'r')
-        datasetnames = h5file.keys()
-        Ncl = len(datasetnames)
-        dim = h5file['class0'].shape 
-        array = np.zeros((dim[0],dim[1],dim[2],Ncl))
-        for cl in range(0,Ncl):
-            array[:,:,:,cl] = h5file['class'+str(cl)][:]
-        h5file.close()
-        return cls(array=array)
-        
-    # to do
-    # @classmethod
-    # def from_mrc(cls, filename):
-    #     return cls(array=array)
-        
-    # Methods:
-    def write_h5(self, filename):
-        h5file = h5py.File(filename, 'w')
-        dim = self.array.shape
-        Ncl = dim[3]
-        for cl in range(0,Ncl):
-    	    dset = h5file.create_dataset('class'+str(cl), (dim[0], dim[1], dim[2]), dtype='float16' )
-    	    dset[:] = np.float16(self.array[:,:,:,cl])
-        h5file.close()
-        
-    # def write_mrc(self, filename):
-        
-    def to_lblmap(self):
-        lmap = np.argmax(self.array,3)
-        return lblmap(array=lmap)
-        
-    def bin(self):
-        dim = self.array.shape
-        Ncl = dim[3]
-        dimB = (int(np.round(dim[0]/2)), int(np.round(dim[1]/2)), int(np.round(dim[2]/2)), Ncl)
-        arrayB = np.zeros(dimB)
-        for cl in range(0,Ncl):
-            arrayB[:,:,:,cl] = block_reduce(self.array[:,:,:,cl], (2,2,2), np.mean)
-        return scoremaps(arrayB)
+# class scoremaps:
+#     # Constructors:
+#     def __init__(self, array=None):
+#         self.array = array # numpy array of size (dim[0],dim[1],dim[2],Ncl)
+#
+#     @classmethod
+#     def from_h5(cls, filename):
+#         h5file = h5py.File(filename, 'r')
+#         datasetnames = h5file.keys()
+#         Ncl = len(datasetnames)
+#         dim = h5file['class0'].shape
+#         array = np.zeros((dim[0],dim[1],dim[2],Ncl))
+#         for cl in range(0,Ncl):
+#             array[:,:,:,cl] = h5file['class'+str(cl)][:]
+#         h5file.close()
+#         return cls(array=array)
+#
+#     # to do
+#     # @classmethod
+#     # def from_mrc(cls, filename):
+#     #     return cls(array=array)
+#
+#     # Methods:
+#     def write_h5(self, filename):
+#         h5file = h5py.File(filename, 'w')
+#         dim = self.array.shape
+#         Ncl = dim[3]
+#         for cl in range(0,Ncl):
+#     	    dset = h5file.create_dataset('class'+str(cl), (dim[0], dim[1], dim[2]), dtype='float16' )
+#     	    dset[:] = np.float16(self.array[:,:,:,cl])
+#         h5file.close()
+#
+#     # def write_mrc(self, filename):
+#
+#     def to_lblmap(self):
+#         lmap = np.argmax(self.array,3)
+#         return lblmap(array=lmap)
+#
+#     def bin(self):
+#         dim = self.array.shape
+#         Ncl = dim[3]
+#         dimB = (int(np.round(dim[0]/2)), int(np.round(dim[1]/2)), int(np.round(dim[2]/2)), Ncl)
+#         arrayB = np.zeros(dimB)
+#         for cl in range(0,Ncl):
+#             arrayB[:,:,:,cl] = block_reduce(self.array[:,:,:,cl], (2,2,2), np.mean)
+#         return scoremaps(arrayB)
 
 
-class lblmap:
-    # Constructors:
-    def __init__(self, array=None):
-        self.array = array # numpy array of size (dim[0],dim[1],dim[2])
-
-    @classmethod
-    def from_h5(cls, filename):
-        array = utils.read_h5array(filename)
-        return cls(array=array)
-
-    @classmethod
-    def from_mrc(cls, filename):
-        array = utils.read_mrc(filename)
-        return cls(array=array)
-
-    # Methods:
-    def write_h5(self, filename):
-        dim = self.array.shape
-        h5file = h5py.File(filename, 'w')
-        dset = h5file.create_dataset('dataset', (dim[0], dim[1], dim[2]), dtype='int8')
-        dset[:] = np.int8(self.array)
-        h5file.close()
-
-    def write_mrc(self, filename):
-        utils.write_mrc(self.array, filename)
+# class lblmap:
+#     # Constructors:
+#     def __init__(self, array=None):
+#         self.array = array # numpy array of size (dim[0],dim[1],dim[2])
+#
+#     @classmethod
+#     def from_h5(cls, filename):
+#         array = utils.read_h5array(filename)
+#         return cls(array=array)
+#
+#     @classmethod
+#     def from_mrc(cls, filename):
+#         array = utils.read_mrc(filename)
+#         return cls(array=array)
+#
+#     # Methods:
+#     def write_h5(self, filename):
+#         dim = self.array.shape
+#         h5file = h5py.File(filename, 'w')
+#         dset = h5file.create_dataset('dataset', (dim[0], dim[1], dim[2]), dtype='int8')
+#         dset[:] = np.int8(self.array)
+#         h5file.close()
+#
+#     def write_mrc(self, filename):
+#         utils.write_mrc(self.array, filename)
 

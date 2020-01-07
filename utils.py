@@ -23,9 +23,9 @@ import matplotlib.pyplot as plt
 def plot_volume_orthoslices(vol, filename):
     # Get central slices along each dimension:
     dim = vol.shape
-    idx0 = np.round(dim[0]/2)
-    idx1 = np.round(dim[1]/2)
-    idx2 = np.round(dim[2]/2)
+    idx0 = np.int( np.round(dim[0]/2) )
+    idx1 = np.int( np.round(dim[1]/2) )
+    idx2 = np.int( np.round(dim[2]/2) )
 
     slice0 = vol[idx0,:,:]
     slice1 = vol[:,idx1,:]
@@ -175,8 +175,12 @@ def read_h5array(filename):
 
 def write_h5array(array, filename):
     h5file = h5py.File(filename, 'w')
-    dset = h5file.create_dataset('dataset', array.shape, dtype='float16')
-    dset[:] = np.float16(array)
+    if array.dtype == np.int8:
+        dset = h5file.create_dataset('dataset', array.shape, dtype='int8')
+        dset[:] = np.int8(array)
+    else:
+        dset = h5file.create_dataset('dataset', array.shape, dtype='float16')
+        dset[:] = np.float16(array)
     h5file.close()
 
 def read_mrc(filename):
@@ -205,5 +209,8 @@ def write_array(array, filename):
     elif data_format[1] == '.mrc':
         write_mrc(array, filename)
     else:
-        print('/!\ DeepFinder can only write datasets in .h5 and .mrc formats')
+        print('/!\ DeepFinder can only write arrays in .h5 and .mrc formats')
+
+def bin_array(array):
+    return block_reduce(array, (2,2,2), np.mean)
 
