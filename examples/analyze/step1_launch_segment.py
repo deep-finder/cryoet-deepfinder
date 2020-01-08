@@ -10,7 +10,7 @@ path_weights = '../training/params_model_FINAL.h5'
 deepfind  = deepfind.deepfind(Ncl=13)
 
 # Load data:
-data = utils.load_h5array(path_data)
+data = utils.read_array(path_data)
 # Segment data:
 scoremaps = deepfind.segment(data, path_weights)
 # Get labelmap from scoremaps:

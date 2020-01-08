@@ -11,9 +11,9 @@ from copy import deepcopy
 deepfind  = deepfind.deepfind(Ncl=13)
 
 # Load data:
-labelmapB = utils.load_h5array('result/tomo9_bin1_labelmap.h5')
+labelmapB = utils.read_array('result/tomo9_bin1_labelmap.h5')
 
-# Launch clustering (result stored in objlist):
+# Launch clustering (result stored in objlist): takes 37min on i7 cpu
 objlist = deepfind.cluster(labelmapB, sizeThr=1, clustRadius=5)
 
 
@@ -34,4 +34,20 @@ for lbl in lbl_list:
 
 # Save objlist:
 utils.write_objlist(objlist    , 'tomo9_objlist_raw.xml') 
-utils.write_objlist(objlist_thr, 'result/tomo9_objlist_thresholded.xml') 
+utils.write_objlist(objlist_thr, 'result/tomo9_objlist_thresholded.xml')
+
+
+
+# # New:
+# objlist = objlist.scale_coord(2)
+#
+# objlist_thr = []
+# for lbl in lbl_list:
+#     objlist_class = objlist.get_class(lbl)
+#     objlist_class = objl_class.above_thr(thr_list[lbl-1])
+#     for p in range(objlist_class.size())
+#         objlist_thr.append(objlist_class.objlist[p])
+# objl_thr = containers.objlist(objlist_thr)
+#
+# objlist.write_xml('result/tomo9_objlist_raw.xml')
+# objl_thr.write_xml('result/tomo9_objlist_raw.xml')

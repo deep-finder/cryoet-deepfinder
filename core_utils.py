@@ -20,7 +20,7 @@ def get_bootstrap_idx(objlist,Nbs):
     Nobj = len(objlist)
     label_list = np.zeros((Nobj,))
     for oo in range(0,Nobj):
-        label_list[oo] = float( objlist[oo].get('class_label') )
+        label_list[oo] = float( objlist[oo]['label'] )
         
     lblTAB = np.unique(label_list) # vector containing unique class labels 
         
@@ -34,9 +34,9 @@ def get_bootstrap_idx(objlist,Nbs):
     
 def get_patch_position(tomodim, p_in, obj, Lrnd):
     # sample at coordinates specified in obj=objlist[idx]
-    x = int( obj.get('x') )
-    y = int( obj.get('y') )
-    z = int( obj.get('z') )
+    x = int( obj['x'] )
+    y = int( obj['y'] )
+    z = int( obj['z'] )
         
     # Add random shift to coordinates:
     x = x + np.random.choice(range(-Lrnd,Lrnd+1))

@@ -117,7 +117,7 @@ class deepfind:
             if (e+1)%10 == 0: # save weights every 10 epochs
                 self.net.save('params_model_epoch'+str(e+1)+'.h5')
 
-        print "Model took %0.2f seconds to train"%np.sum(process_time)
+        print("Model took %0.2f seconds to train"%np.sum(process_time))
         self.net.save('params_model_FINAL.h5')
         
     # This function generates training batches:
@@ -193,8 +193,8 @@ class deepfind:
             # choose random sample in training set:
             index = np.random.choice(pool)
             
-            tomoID = int( objlist[index].get('tomo_idx') )
-                
+            tomoID = int( objlist[index]['tomo_idx'] )
+
             tomodim = data[tomoID].shape
             
             sample_data   = data[tomoID]
@@ -239,14 +239,14 @@ class deepfind:
         dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:]) # normalize
         dim  = dataArray.shape 
         
-        l        = self.P/2
-        lcrop    = l-self.pcrop
-        step     = 2*l+1 - self.poverlap
+        l        = np.int( self.P/2 )
+        lcrop    = np.int( l-self.pcrop )
+        step     = np.int( 2*l+1 - self.poverlap )
 
         # Get patch centers:
-        pcenterX = range(l, dim[0]-l, step)
-        pcenterY = range(l, dim[1]-l, step)
-        pcenterZ = range(l, dim[2]-l, step)
+        pcenterX = list( range(l, dim[0]-l, step) ) # list() necessary for py3 (in py2 range() returns type 'list' but in py3 it returns type 'range')
+        pcenterY = list( range(l, dim[1]-l, step) )
+        pcenterZ = list( range(l, dim[2]-l, step) )
 
         # If there are still few pixels at the end:
         if pcenterX[-1]<dim[0]-l:
@@ -284,7 +284,7 @@ class deepfind:
             predArray[:,:,:,C] = predArray[:,:,:,C] / normArray
 
         end = time.time()
-        print "Model took %0.2f seconds to predict"%(end - start)
+        print("Model took %0.2f seconds to predict"%(end - start))
         
         return predArray # predArray is the array containing the scoremaps
     
@@ -325,7 +325,7 @@ class deepfind:
         start = time.time()
         clusters = MeanShift(bandwidth=clustRadius).fit(objvoxels)
         end = time.time()
-        print "Clustering took %0.2f seconds"%(end - start)
+        print("Clustering took %0.2f seconds"%(end - start))
 
         Nclust = clusters.cluster_centers_.shape[0]
 

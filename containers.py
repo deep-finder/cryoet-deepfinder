@@ -27,11 +27,19 @@ class objlist: # here I want to test a list of dictionnaries as core structure a
             x   = objl_xml[p].get('x')
             y   = objl_xml[p].get('y')
             z   = objl_xml[p].get('z')
+            tomo_idx     = objl_xml[p].get('tomo_idx')
             cluster_size = objl_xml[p].get('cluster_size')
-            objlOUT.add_obj(label=lbl, coord=(float(x), float(y), float(z)), cluster_size=int(cluster_size))
+
+            # if facultative attributes exist, then cast to correct type:
+            if tomo_idx!=None:
+                tomo_idx = int(tomo_idx)
+            if cluster_size!=None:
+                cluster_size = int(cluster_size)
+
+            objlOUT.add_obj(label=lbl, coord=(float(x), float(y), float(z)), cluster_size=cluster_size, tomo_idx=tomo_idx)
         return objlOUT
 
-    # TODO: handle psi phi theta
+    # TODO: handle psi phi theta & tomoIDX
     @classmethod
     def from_txt(cls, filename):
         objlOUT = objlist()
@@ -42,7 +50,7 @@ class objlist: # here I want to test a list of dictionnaries as core structure a
         return objlOUT
 
     # Methods:
-    def add_obj(self, label, coord, orient=(None,None,None), cluster_size=None):
+    def add_obj(self, label, coord, orient=(None,None,None), cluster_size=None, tomo_idx=None):
         obj = {
             'label': label,
             'x'    :coord[0] ,
@@ -51,7 +59,8 @@ class objlist: # here I want to test a list of dictionnaries as core structure a
             'psi'  :orient[0],
             'phi'  :orient[1],
             'the'  :orient[2],
-            'cluster_size':cluster_size
+            'cluster_size':cluster_size,
+            'tomo_idx'    :tomo_idx
         }
         self.objlist.append(obj)
 
