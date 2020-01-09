@@ -13,9 +13,11 @@ from sklearn.cluster import MeanShift
 from lxml import etree
 
 import models
+import losses
+
 import core_utils
 import utils
-import losses
+import utils_objl as ol
 
 class deepfind:
     def __init__(self, Ncl):
@@ -145,7 +147,7 @@ class deepfind:
             # Choose random object in training set:
             index = np.random.choice(pool)
                 
-            tomoID = int( objlist[index].get('tomo_idx') )
+            tomoID = int( objlist[index]['tomo_idx'] )
             
             h5file = h5py.File(path_data[tomoID], 'r')
             tomodim = h5file['dataset'].shape # get tomo dimensions without loading the array
@@ -237,7 +239,8 @@ class deepfind:
         self.net.load_weights(weights_path)
         
         dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:]) # normalize
-        dim  = dataArray.shape 
+        dataArray = np.pad(dataArray, self.pcrop) # zeropad
+        dim  = dataArray.shape
         
         l        = np.int( self.P/2 )
         lcrop    = np.int( l-self.pcrop )
@@ -285,7 +288,8 @@ class deepfind:
 
         end = time.time()
         print("Model took %0.2f seconds to predict"%(end - start))
-        
+
+        predArray = predArray[self.pcrop:-self.pcrop,self.pcrop:-self.pcrop,self.pcrop:-self.pcrop,:] # unpad
         return predArray # predArray is the array containing the scoremaps
     
     # Similar to function 'segment', only here the tomogram is not decomposed in smaller patches, but processed in one take. However, the tomogram array should be cubic, and the cube length should be a multiple of 4. This function has been developped for tests on synthetic data. I recommend using 'segment' rather than 'segment_single_block'.
@@ -301,11 +305,13 @@ class deepfind:
         
         dim = dataArray.shape
         dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:]) # normalize
+        dataArray = np.pad(dataArray, self.pcrop)  # zeropad
         dataArray = np.reshape(dataArray, (1,dim[0],dim[1],dim[2],1)) # reshape for keras [batch,x,y,z,channel]
         
         pred = self.net.predict(dataArray, batch_size=1)
         predArray = pred[0,:,:,:,:]
-        
+        predArray = predArray[self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, :]  # unpad
+
         return predArray
         
     # This function analyzes the segmented tomograms (i.e. labelmap), identifies individual macromolecules and outputs their coordinates. This is achieved with a clustering algorithm (meanshift).
@@ -330,10 +336,10 @@ class deepfind:
         Nclust = clusters.cluster_centers_.shape[0]
 
         print('Analyzing clusters ...')
-        #objlist    = np.zeros((Nclust,5))
-        objlist    = etree.Element('objlist')
+        #objlist    = etree.Element('objlist')
+        objlist    = []
         labelcount = np.zeros((Nclass,))
-        for c in range(0,Nclust):
+        for c in range(Nclust):
             clustMemberIndex = np.nonzero(clusters.labels_==c)
     
             # Get cluster size and position:
@@ -342,20 +348,22 @@ class deepfind:
 
             # Attribute a macromolecule class to cluster:
             clustMember = []
-            for m in range(0,clustSize): # get labels of cluster members
+            for m in range(clustSize): # get labels of cluster members
                 clustMemberCoords = objvoxels[clustMemberIndex[0][m],:]
                 clustMember.append(labelmap[clustMemberCoords[0],clustMemberCoords[1],clustMemberCoords[2]])
         
-            for l in range(0,Nclass): # get most present label in cluster
+            for l in range(Nclass): # get most present label in cluster
                 labelcount[l] = np.size(np.nonzero( np.array(clustMember)==l+1 ))
             winninglabel = np.argmax(labelcount)+1
         
             # Store cluster infos in xml structure:
-            obj = etree.SubElement(objlist, 'object')
-            obj.set('cluster_size', str(clustSize))
-            obj.set('class_label' , str(winninglabel))
-            obj.set('x'           , '%.3f' % centroid[0])
-            obj.set('y'           , '%.3f' % centroid[1])
-            obj.set('z'           , '%.3f' % centroid[2])
+            # obj = etree.SubElement(objlist, 'object')
+            # obj.set('cluster_size', str(clustSize))
+            # obj.set('class_label' , str(winninglabel))
+            # obj.set('x'           , '%.3f' % centroid[0])
+            # obj.set('y'           , '%.3f' % centroid[1])
+            # obj.set('z'           , '%.3f' % centroid[2])
+
+            objlist = ol.add_obj(objlist, label=winninglabel, coord=centroid, cluster_size=clustSize)
         
         return objlist

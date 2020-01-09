@@ -7,8 +7,8 @@ def bin(scoremaps):
     dim = scoremaps.shape
     Ncl = dim[3]
     dimB0 = np.int(np.round(dim[0]/2))
-    dimB1 = np.int(np.round(dim[0]/2))
-    dimB2 = np.int(np.round(dim[0]/2))
+    dimB1 = np.int(np.round(dim[1]/2))
+    dimB2 = np.int(np.round(dim[2]/2))
     dimB = (dimB0, dimB1, dimB2, Ncl)
     scoremapsB = np.zeros(dimB)
     for cl in range(0,Ncl):

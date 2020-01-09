@@ -20,7 +20,9 @@ def add_obj(objlIN, label, coord, tomo_idx=None, orient=(None,None,None), cluste
         'the'  :orient[2],
         'cluster_size':cluster_size
     }
-    return objlIN.append(obj)
+    # return objlIN.append(obj)
+    objlIN.append(obj)
+    return objlIN
 
 def disp(objlIN):
     for p in range(len(objlIN)):
@@ -135,7 +137,7 @@ def write_txt(objlIN, filename):
 def get_class(objlIN, label):
     idx_class = []
     for idx in range(len(objlIN)):
-        if objlIN[idx]['label']==str(label):
+        if str(objlIN[idx]['label'])==str(label):
             idx_class.append(idx)
 
     objlOUT = []
@@ -156,6 +158,15 @@ def above_thr(objlIN, thr):
     objlOUT = []
     for idx in range(len(idx_thr)):
         objlOUT.append( objlIN[idx_thr[idx]] )
+    return objlOUT
+
+def above_thr_per_class(objlIN, lbl_list, thr_list):
+    objlOUT = []
+    for lbl in lbl_list:
+        objl_class = get_class(objlIN, lbl)
+        objl_class = above_thr(objl_class, thr_list[lbl-1])
+        for p in range(len(objl_class)):
+            objlOUT.append(objl_class[p])
     return objlOUT
 
 # TODO check why np.round is used
