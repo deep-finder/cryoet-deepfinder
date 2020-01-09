@@ -336,7 +336,6 @@ class deepfind:
         Nclust = clusters.cluster_centers_.shape[0]
 
         print('Analyzing clusters ...')
-        #objlist    = etree.Element('objlist')
         objlist    = []
         labelcount = np.zeros((Nclass,))
         for c in range(Nclust):
@@ -355,14 +354,6 @@ class deepfind:
             for l in range(Nclass): # get most present label in cluster
                 labelcount[l] = np.size(np.nonzero( np.array(clustMember)==l+1 ))
             winninglabel = np.argmax(labelcount)+1
-        
-            # Store cluster infos in xml structure:
-            # obj = etree.SubElement(objlist, 'object')
-            # obj.set('cluster_size', str(clustSize))
-            # obj.set('class_label' , str(winninglabel))
-            # obj.set('x'           , '%.3f' % centroid[0])
-            # obj.set('y'           , '%.3f' % centroid[1])
-            # obj.set('z'           , '%.3f' % centroid[2])
 
             objlist = ol.add_obj(objlist, label=winninglabel, coord=centroid, cluster_size=clustSize)
         
