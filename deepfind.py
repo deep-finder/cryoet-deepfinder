@@ -20,9 +20,9 @@ import utils
 import utils_objl as ol
 
 class deepfind:
-    def __init__(self, Ncl):
+    def __init__(self):
         # Network parameters:
-        self.Ncl    = Ncl
+        self.Ncl    = None #Ncl
         self.dim_in = 56 # /!\ has to a multiple of 4 (because of 2 pooling layers), so that dim_in=dim_out
         
         # Training parameters:
@@ -36,13 +36,21 @@ class deepfind:
         self.flag_batch_bootstrap = 0
         self.Lrnd = 13 # random shifts applied when sampling data- and target-patches (in voxels)
         
-        self.net = models.my_model(self.dim_in, self.Ncl)
+        #self.net = models.my_model(self.dim_in, self.Ncl)
+        self.net = None
 
         # Segmentation, parameters for dividing data in patches:
         self.P        = 192 # patch length (in pixels) /!\ has to a multiple of 4 (because of 2 pooling layers), so that dim_in=dim_out
         self.poverlap = 70  # patch overlap (in pixels)
         self.pcrop    = 25  # how many pixels to crop from border
-    
+
+        # Observer for prints. Default is normal print to terminal. Can be set up to send prints to GUI (see core_utils.py)
+        self.obs_list = [core_utils.observer_print]
+
+    def set_network(self, Ncl):
+        self.Ncl = Ncl
+        self.net = models.my_model(self.dim_in, Ncl)
+
     # This function launches the training procedure. For each epoch, an image is plotted, displaying the progression with different metrics: loss, accuracy, f1-score, recall, precision. Every 10 epochs, the current network weights are saved. 
     # INPUTS:
     #   path_data     : a list containing the paths to data files (i.e. tomograms)
@@ -54,6 +62,9 @@ class deepfind:
     #    flag_direct_read=0: the whole dataset is loaded into memory
     #    flag_direct_read=1: only the patches are loaded into memory, each time a training batch is generated. This is usefull when the dataset is too large to load into memory. However, the transfer speed between the data server and the GPU host should be high enough, else the procedure becomes very slow.
     def train(self, path_data, path_target, objlist_train, objlist_valid):
+        if self.net == None:
+            print('/!\ The network has not been initialized. Please use df.set_network(Ncl) to do so.')
+
         # Build network:
         self.net.compile(optimizer=self.optimizer, loss=losses.tversky_loss, metrics=['accuracy'])
         
@@ -327,15 +338,15 @@ class deepfind:
         objvoxels = np.nonzero(labelmap>0)
         objvoxels = np.array(objvoxels).T # convert to numpy array and transpose
 
-        print('Launch clustering ...')
+        self.display('Launch clustering ...')
         start = time.time()
         clusters = MeanShift(bandwidth=clustRadius).fit(objvoxels)
         end = time.time()
-        print("Clustering took %0.2f seconds"%(end - start))
+        self.display("Clustering took %0.2f seconds"%(end - start))
 
         Nclust = clusters.cluster_centers_.shape[0]
 
-        print('Analyzing clusters ...')
+        self.display('Analyzing clusters ...')
         objlist    = []
         labelcount = np.zeros((Nclass,))
         for c in range(Nclust):
@@ -356,5 +367,14 @@ class deepfind:
             winninglabel = np.argmax(labelcount)+1
 
             objlist = ol.add_obj(objlist, label=winninglabel, coord=centroid, cluster_size=clustSize)
-        
+
+        self.display('Finished !')
         return objlist
+
+    # Useful for sending prints to GUI
+    def set_observer(self, obs):
+        self.obs_list.append(obs)
+
+    # "Master print" calls all observers for prints
+    def display(self, message):
+        for obs in self.obs_list: obs.display(message)

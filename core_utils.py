@@ -125,3 +125,15 @@ def plot_history(history):
     plt.grid()
 
     fig.savefig('history_train.png')
+
+
+# Following observer classes are needed to send prints to GUI if needed:
+class observer_print:
+    def display(message):
+        print(message)
+
+class observer_gui:
+    def __init__(self, pyqt_signal):
+        self.sig = pyqt_signal
+    def display(self, message):
+        self.sig.emit(message)

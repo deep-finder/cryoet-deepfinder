@@ -88,3 +88,30 @@ def write_array(array, filename):
 
 def bin_array(array):
     return block_reduce(array, (2,2,2), np.mean)
+
+# # Not tested yet !!
+# # target_array is passed as an argument to allow the user to add some annotations himself (for example for non-macromolecule classes like 'membrane')
+# def generate_target(objl, target_array, ref_list):
+#     for p in range(len(objl)):
+#         lbl = objl[p]['label']
+#         x   = objl[p]['x']
+#         y   = objl[p]['y']
+#         z   = objl[p]['z']
+#         psi = objl[p]['psi']
+#         phi = objl[p]['phi']
+#         the = objl[p]['the']
+#
+#         ref = ref_list[lbl]
+#         centeroffset = np.int(np.round(ref.shape[0] / 2))
+#
+#         # To do: rotate ref!
+#
+#         # Get the coordinates of object voxels in target_array
+#         obj_voxels = np.nonzero(ref==1)
+#         x_vox = obj_voxels[0] + x - centeroffset
+#         y_vox = obj_voxels[1] + y - centeroffset
+#         z_vox = obj_voxels[2] + z - centeroffset
+#
+#         for idx=range(x_vox.size):
+#             target_array[x_vox[idx],y_vox[idx],z_vox[idx]] = lbl
+#     return target_array
