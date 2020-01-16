@@ -238,15 +238,15 @@ class train(df):
 
 
 class segment(df):
-    def __init__(self, Ncl, path_weights):
+    def __init__(self, Ncl, path_weights, patch_size=192):
         df.__init__(self)
 
         self.Ncl = Ncl
 
         # Segmentation, parameters for dividing data in patches:
-        self.P = 192  # patch length (in pixels) /!\ has to a multiple of 4 (because of 2 pooling layers), so that dim_in=dim_out
-        self.poverlap = 70  # patch overlap (in pixels)
-        self.pcrop = 25  # how many pixels to crop from border
+        self.P = patch_size  # patch length (in pixels) /!\ has to a multiple of 4 (because of 2 pooling layers), so that dim_in=dim_out
+        self.pcrop = 25  # how many pixels to crop from border (net model dependent)
+        self.poverlap = 55  # patch overlap (in pixels) (2*pcrop + 5)
 
         # Build network:
         self.net = models.my_model(self.P, self.Ncl)
@@ -260,7 +260,7 @@ class segment(df):
     #   predArray: a numpy array containing the predicted score maps.
     def launch(self, dataArray):
         dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:])  # normalize
-        dataArray = np.pad(dataArray, self.pcrop)  # zeropad
+        dataArray = np.pad(dataArray, self.pcrop, mode='constant', constant_values=0)  # zeropad
         dim = dataArray.shape
 
         l = np.int(self.P / 2)
