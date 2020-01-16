@@ -41,11 +41,12 @@ class ClusteringWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         labelmap = utils.read_array(path_lmap)
 
         # Initialize deepfinder:
-        deepfind = df.deepfind()
-        deepfind.set_observer(core_utils.observer_gui(self.print_signal))
+        clust = df.cluster(clustRadius=cradius)
+        clust.sizeThr = csize_thr
+        clust.set_observer(core_utils.observer_gui(self.print_signal))
 
         # Launch clustering (result stored in objlist)
-        objlist = deepfind.cluster(labelmap, sizeThr=csize_thr, clustRadius=cradius)
+        objlist = clust.launch(labelmap)
 
         # Save objlist:
         ol.write_xml(objlist, path_objl)
