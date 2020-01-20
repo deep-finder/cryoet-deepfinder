@@ -11,6 +11,7 @@ from sklearn.cluster import MeanShift
 import models
 import losses
 
+import utils
 import core_utils
 import utils_objl as ol
 
@@ -25,6 +26,66 @@ class df:
     # "Master print" calls all observers for prints
     def display(self, message):
         for obs in self.obs_list: obs.display(message)
+
+
+class target_builder(df):
+    def __init__(self):
+        df.__init__(self)
+
+    # Generates training targets from object list.
+    # INPUTS
+    #   objl: list of dictionaries
+    #   target_array: 3D numpy array that initializes the training target. Allows to pass an array already containing annotated structures like membranes.
+    #   ref_list: list of binary 3D arrays (expected to be cubic). These reference arrays contain the shape of macromolecules ('1' for 'is object' and '0' for 'is not object')
+    #             The references order in list should correspond to the class label
+    #             For ex: 1st element of list -> reference of class 1
+    #                     2nd element of list -> reference of class 2 etc.
+    # OUTPUT
+    #   target_array: 3D numpy array. '0' for background class, {'1','2',...} for object classes.
+    def generate_with_shapes(self, objl, target_array, ref_list):
+        N = len(objl)
+        dim = target_array.shape
+        for p in range(len(objl)):
+            self.display('Annotating object ' + str(p + 1) + ' / ' + str(N) + ' ...')
+            lbl = int(objl[p]['label'])
+            x = int(objl[p]['x'])
+            y = int(objl[p]['y'])
+            z = int(objl[p]['z'])
+            phi = objl[p]['phi']
+            psi = objl[p]['psi']
+            the = objl[p]['the']
+
+            ref = ref_list[lbl - 1]
+            centeroffset = np.int(np.floor(ref.shape[0] / 2))
+
+            # Rotate ref:
+            if phi!=None and psi!=None and the!=None:
+                ref = utils.rotate_array(ref, (phi, psi, the))
+                ref = np.int8(np.round(ref))
+
+            # Get the coordinates of object voxels in target_array
+            obj_voxels = np.nonzero(ref == 1)
+            x_vox = obj_voxels[0] + x - centeroffset
+            y_vox = obj_voxels[1] + y - centeroffset
+            z_vox = obj_voxels[2] + z - centeroffset
+
+            for idx in range(x_vox.size):
+                xx = x_vox[idx]
+                yy = y_vox[idx]
+                zz = z_vox[idx]
+                if xx >= 0 and xx < dim[0] and yy >= 0 and yy < dim[1] and zz >= 0 and zz < dim[2]:  # if in tomo bounds
+                    target_array[xx, yy, zz] = lbl
+        return np.int8(target_array)
+
+    def generate_with_spheres(self, objl, target_array, radius_list):
+        Rmax = max(radius_list)
+        dim = [2*Rmax, 2*Rmax, 2*Rmax]
+        ref_list = []
+        for idx in range(len(radius_list)):
+            ref_list.append(utils.create_sphere(dim, radius_list[idx]))
+        target_array = self.generate_with_shapes(objl, target_array, ref_list)
+        return target_array
+
 
 class train(df):
     def __init__(self, Ncl):

@@ -7,6 +7,8 @@ import warnings
 warnings.simplefilter('ignore') # to mute some warnings produced when opening the tomos with mrcfile
 
 from skimage.measure import block_reduce
+from scipy.spatial.transform import Rotation as R
+from scipy.ndimage import map_coordinates
 
 import matplotlib
 matplotlib.use('agg') # necessary else: AttributeError: 'NoneType' object has no attribute 'is_interactive'
@@ -89,29 +91,73 @@ def write_array(array, filename):
 def bin_array(array):
     return block_reduce(array, (2,2,2), np.mean)
 
-# # Not tested yet !!
-# # target_array is passed as an argument to allow the user to add some annotations himself (for example for non-macromolecule classes like 'membrane')
-# def generate_target(objl, target_array, ref_list):
-#     for p in range(len(objl)):
-#         lbl = objl[p]['label']
-#         x   = objl[p]['x']
-#         y   = objl[p]['y']
-#         z   = objl[p]['z']
-#         psi = objl[p]['psi']
-#         phi = objl[p]['phi']
-#         the = objl[p]['the']
-#
-#         ref = ref_list[lbl]
-#         centeroffset = np.int(np.round(ref.shape[0] / 2))
-#
-#         # To do: rotate ref!
-#
-#         # Get the coordinates of object voxels in target_array
-#         obj_voxels = np.nonzero(ref==1)
-#         x_vox = obj_voxels[0] + x - centeroffset
-#         y_vox = obj_voxels[1] + y - centeroffset
-#         z_vox = obj_voxels[2] + z - centeroffset
-#
-#         for idx=range(x_vox.size):
-#             target_array[x_vox[idx],y_vox[idx],z_vox[idx]] = lbl
-#     return target_array
+# Rotates a 3D array and uses the same (phi,psi,the) convention as TOM toolbox (matlab) and PyTOM.
+# Code based on: https://nbviewer.jupyter.org/gist/lhk/f05ee20b5a826e4c8b9bb3e528348688
+# INPUTS:
+#   array: 3D numpy array
+#   orient: list of Euler angles (phi,psi,the) as defined in PyTOM
+# OUTPUT:
+#   arrayR: rotated 3D numpy array
+def rotate_array(array, orient):
+    phi = orient[0]
+    psi = orient[1]
+    the = orient[2]
+
+    # Some voodoo magic so that rotation is the same as in pytom:
+    new_phi = -phi
+    new_psi = -the
+    new_the = -psi
+
+    # create meshgrid
+    dim = array.shape
+    ax = np.arange(dim[0])
+    ay = np.arange(dim[1])
+    az = np.arange(dim[2])
+    coords = np.meshgrid(ax, ay, az)
+
+    # stack the meshgrid to position vectors, center them around 0 by substracting dim/2
+    xyz = np.vstack([coords[0].reshape(-1) - float(dim[0]) / 2,  # x coordinate, centered
+                     coords[1].reshape(-1) - float(dim[1]) / 2,  # y coordinate, centered
+                     coords[2].reshape(-1) - float(dim[2]) / 2])  # z coordinate, centered
+
+    # create transformation matrix: the convention is not 'zxz' as announced in TOM toolbox
+    r = R.from_euler('YZY', [new_phi, new_psi, new_the], degrees=True)
+    mat = r.as_matrix()
+
+    # apply transformation
+    transformed_xyz = np.dot(mat, xyz)
+
+    # extract coordinates
+    x = transformed_xyz[0, :] + float(dim[0]) / 2
+    y = transformed_xyz[1, :] + float(dim[1]) / 2
+    z = transformed_xyz[2, :] + float(dim[2]) / 2
+
+    x = x.reshape((dim[1],dim[0],dim[2]))
+    y = y.reshape((dim[1],dim[0],dim[2]))
+    z = z.reshape((dim[1],dim[0],dim[2])) # reason for strange ordering: see next line
+
+    # the coordinate system seems to be strange, it has to be ordered like this
+    new_xyz = [y, x, z]
+
+    # sample
+    arrayR = map_coordinates(array, new_xyz, order=1)
+
+    # Remark: the above is equivalent to the below, however the above is faster (0.01s vs 0.03s for 40^3 vol).
+    # arrayR = scipy.ndimage.rotate(array, new_phi, axes=(1, 2), reshape=False)
+    # arrayR = scipy.ndimage.rotate(arrayR, new_psi, axes=(0, 1), reshape=False)
+    # arrayR = scipy.ndimage.rotate(arrayR, new_the, axes=(1, 2), reshape=False)
+    return arrayR
+
+# Creates a 3D array containing a full sphere (at center). Is used for target generation.
+# INPUTS:
+#   dim: list of int, determines the shape of the returned numpy array
+#   R  : radius of the sphere (in voxels)
+# OUTPUT:
+#   sphere: 3D numpy array where '1' is 'sphere' and '0' is 'no sphere'
+def create_sphere(dim, R):
+    C = np.floor((dim[0]/2, dim[1]/2, dim[2]/2))
+    x,y,z = np.meshgrid(range(dim[0]),range(dim[1]),range(dim[2]))
+
+    sphere = ((x - C[0])/R)**2 + ((y - C[1])/R)**2 + ((z - C[2])/R)**2
+    sphere = np.int8(sphere<=1)
+    return sphere
