@@ -9,6 +9,26 @@ import core_utils
 import utils
 import utils_objl as ol
 
+from PyQt5.QtCore import QThread
+
+# class Worker(QThread):
+#     def __init__(self, clust, path_lmap, path_objl):
+#         QThread.__init__(self)
+#         self.clust  = clust
+#         self.path_lmap = path_lmap
+#         self.path_objl = path_objl
+#     def start(self):
+#         # Load label map:
+#         labelmap = utils.read_array(self.path_lmap)
+#
+#         # Launch clustering (result stored in objlist)
+#         objlist = self.clust.launch(labelmap)
+#
+#         # Save objlist:
+#         ol.write_xml(objlist, self.path_objl)
+
+
+
 qtcreator_file  = 'gui_clustering.ui'
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtcreator_file)
 
@@ -26,9 +46,31 @@ class ClusteringWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def on_print_signal(self, message): # is called when signal is emmited. Signal passes str 'message' to slot
         self.te_terminal_out.append(message)
 
+    @QtCore.pyqtSlot()
     def on_clicked(self):
-        threading.Thread(target=self.launch_clustering(), daemon=True).start()
-        # dont forget '()' after self.launch_clustering else File ".../tensorflow_backend.py": AttributeError: '_thread._local' object has no attribute 'value'
+        threading.Thread(target=self.launch_clustering, daemon=True).start()
+        # # dont forget '()' after self.launch_clustering else File ".../tensorflow_backend.py": AttributeError: '_thread._local' object has no attribute 'value'
+
+        # # Get parameters from line edit widgets:
+        # path_lmap = self.line_path_lmap.text()
+        # cradius = int(self.line_cradius.text())
+        # csize_thr = int(self.line_csize_thr.text())
+        # path_objl = self.line_path_objl.text()
+        #
+        # # # Initialize deepfinder:
+        # clust = df.cluster(clustRadius=cradius)
+        # clust.sizeThr = csize_thr
+        # clust.set_observer(core_utils.observer_gui(self.print_signal))
+        #
+        # # Create and launch thread:
+        # w = Worker(clust, path_lmap, path_objl)
+        # w.start()
+        # print(str(w.currentThreadId()))
+
+        # dummy = df.dummy()
+        # dummy.set_observer(core_utils.observer_gui(self.print_signal))
+        # w = DummyWorker(dummy)
+        # w.start()
 
     def launch_clustering(self):
         # Get parameters from line edit widgets:

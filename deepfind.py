@@ -28,13 +28,22 @@ class df:
         for obs in self.obs_list: obs.display(message)
 
 
-class target_builder(df):
+# import time
+# class dummy(df):
+#     def __init__(self):
+#         df.__init__(self)
+#     def launch(self):
+#         for idx in range(5):
+#             self.display('Iteration '+str(idx)+' ...')
+#             time.sleep(1)
+
+class TargetBuilder(df):
     def __init__(self):
         df.__init__(self)
 
-    # Generates training targets from object list.
+    # Generates segmentation targets from object list. Here macromolecules are annotated with their shape.
     # INPUTS
-    #   objl: list of dictionaries
+    #   objl: list of dictionaries. Needs to contain [phi,psi,the] Euler angles for orienting the shapes.
     #   target_array: 3D numpy array that initializes the training target. Allows to pass an array already containing annotated structures like membranes.
     #   ref_list: list of binary 3D arrays (expected to be cubic). These reference arrays contain the shape of macromolecules ('1' for 'is object' and '0' for 'is not object')
     #             The references order in list should correspond to the class label
@@ -65,9 +74,9 @@ class target_builder(df):
 
             # Get the coordinates of object voxels in target_array
             obj_voxels = np.nonzero(ref == 1)
-            x_vox = obj_voxels[0] + x - centeroffset
-            y_vox = obj_voxels[1] + y - centeroffset
-            z_vox = obj_voxels[2] + z - centeroffset
+            x_vox = obj_voxels[0] + x - centeroffset +1
+            y_vox = obj_voxels[1] + y - centeroffset +1
+            z_vox = obj_voxels[2] + z - centeroffset +1
 
             for idx in range(x_vox.size):
                 xx = x_vox[idx]
@@ -77,6 +86,18 @@ class target_builder(df):
                     target_array[xx, yy, zz] = lbl
         return np.int8(target_array)
 
+    # Generates segmentation targets from object list. Here macromolecules are annotated with spheres.
+    # This method does not require knowledge of the macromolecule shape nor Euler angles in the objl.
+    # On the other hand, it can be that a network trained with 'sphere targets' is less accurate than with 'shape targets'
+    # INPUTS
+    #   objl: list of dictionaries. Needs to contain [phi,psi,the] Euler angles for orienting the shapes.
+    #   target_array: 3D numpy array that initializes the training target. Allows to pass an array already containing annotated structures like membranes.
+    #   radius_list: list of sphere radii (in voxels).
+    #             The radii order in list should correspond to the class label
+    #             For ex: 1st element of list -> sphere radius for class 1
+    #                     2nd element of list -> sphere radius for class 2 etc.
+    # OUTPUT
+    #   target_array: 3D numpy array. '0' for background class, {'1','2',...} for object classes.
     def generate_with_spheres(self, objl, target_array, radius_list):
         Rmax = max(radius_list)
         dim = [2*Rmax, 2*Rmax, 2*Rmax]
