@@ -15,7 +15,7 @@ import utils
 import core_utils
 import utils_objl as ol
 
-class df:
+class DeepFinder:
     def __init__(self):
         self.obs_list = [core_utils.observer_print]
 
@@ -37,9 +37,9 @@ class df:
 #             self.display('Iteration '+str(idx)+' ...')
 #             time.sleep(1)
 
-class TargetBuilder(df):
+class TargetBuilder(DeepFinder):
     def __init__(self):
-        df.__init__(self)
+        DeepFinder.__init__(self)
 
     # Generates segmentation targets from object list. Here macromolecules are annotated with their shape.
     # INPUTS
@@ -108,9 +108,9 @@ class TargetBuilder(df):
         return target_array
 
 
-class train(df):
+class Train(DeepFinder):
     def __init__(self, Ncl):
-        df.__init__(self)
+        DeepFinder.__init__(self)
         # Network parameters:
         self.Ncl = Ncl  # Ncl
         self.dim_in = 56  # /!\ has to a multiple of 4 (because of 2 pooling layers), so that dim_in=dim_out
@@ -143,10 +143,10 @@ class train(df):
 
         # Load whole dataset:
         if self.flag_direct_read == False:
-            print('Loading dataset ...')
+            self.display('Loading dataset ...')
             data_list, target_list = core_utils.load_dataset(path_data, path_target)
 
-        print('Launch training ...')
+        self.display('Launch training ...')
 
         # Declare lists for storing training statistics:
         hist_loss_train = []
@@ -171,7 +171,7 @@ class train(df):
                                                                               objlist_train)
                 loss_train = self.net.train_on_batch(batch_data, batch_target)
 
-                print('epoch %d/%d - it %d/%d - loss: %0.3f - acc: %0.3f' % (
+                self.display('epoch %d/%d - it %d/%d - loss: %0.3f - acc: %0.3f' % (
                 e + 1, self.epochs, it + 1, self.steps_per_epoch, loss_train[0], loss_train[1]))
             hist_loss_train.append(loss_train[0])
             hist_acc_train.append(loss_train[1])
@@ -197,10 +197,10 @@ class train(df):
 
             end = time.time()
             process_time.append(end - start)
-            print('-------------------------------------------------------------')
-            print('EPOCH %d/%d - valid loss: %0.3f - valid acc: %0.3f - %0.2fsec' % (
+            self.display('-------------------------------------------------------------')
+            self.display('EPOCH %d/%d - valid loss: %0.3f - valid acc: %0.3f - %0.2fsec' % (
             e + 1, self.epochs, loss_val[0], loss_val[1], end - start))
-            print('=============================================================')
+            self.display('=============================================================')
 
             # Save and plot training history:
             history = {'loss': hist_loss_train, 'acc': hist_acc_train, 'val_loss': hist_loss_valid,
@@ -212,7 +212,7 @@ class train(df):
             if (e + 1) % 10 == 0:  # save weights every 10 epochs
                 self.net.save('params_model_epoch' + str(e + 1) + '.h5')
 
-        print("Model took %0.2f seconds to train" % np.sum(process_time))
+        self.display("Model took %0.2f seconds to train" % np.sum(process_time))
         self.net.save('params_model_FINAL.h5')
 
     # This function generates training batches:
@@ -319,9 +319,9 @@ class train(df):
         return batch_data, batch_target
 
 
-class segment(df):
+class Segment(DeepFinder):
     def __init__(self, Ncl, path_weights, patch_size=192):
-        df.__init__(self)
+        DeepFinder.__init__(self)
 
         self.Ncl = Ncl
 
@@ -364,7 +364,7 @@ class segment(df):
             pcenterZ = pcenterZ + [dim[2] - l, ]
 
         Npatch = len(pcenterX) * len(pcenterY) * len(pcenterZ)
-        print('Data array is divided in ' + str(Npatch) + ' patches ...')
+        self.display('Data array is divided in ' + str(Npatch) + ' patches ...')
 
         # ---------------------------------------------------------------
         # Process data in patches:
@@ -376,7 +376,7 @@ class segment(df):
         for x in pcenterX:
             for y in pcenterY:
                 for z in pcenterZ:
-                    print('Segmenting patch ' + str(patchCount) + ' / ' + str(Npatch) + ' ...')
+                    self.display('Segmenting patch ' + str(patchCount) + ' / ' + str(Npatch) + ' ...')
                     patch = dataArray[x - l:x + l, y - l:y + l, z - l:z + l]
                     patch = np.reshape(patch, (1, self.P, self.P, self.P, 1))  # reshape for keras [batch,x,y,z,channel]
                     pred = self.net.predict(patch, batch_size=1)
@@ -403,7 +403,7 @@ class segment(df):
             predArray[:, :, :, C] = predArray[:, :, :, C] / normArray
 
         end = time.time()
-        print("Model took %0.2f seconds to predict" % (end - start))
+        self.display("Model took %0.2f seconds to predict" % (end - start))
 
         predArray = predArray[self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, :]  # unpad
         return predArray  # predArray is the array containing the scoremaps
@@ -426,9 +426,9 @@ class segment(df):
 
         return predArray
 
-class cluster(df):
+class Cluster(DeepFinder):
     def __init__(self, clustRadius):
-        df.__init__(self)
+        DeepFinder.__init__(self)
         self.clustRadius = clustRadius
         self.sizeThr = 1
 

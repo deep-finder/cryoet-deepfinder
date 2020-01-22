@@ -181,7 +181,17 @@ def scale_coord(objlIN, scale):
         objlOUT[idx]['z'] = scale * z
     return objlOUT
 
-# # /!\ for now this function does not know how to handle empty objlists
+# Returns a list with different (unique) labels contained in input objl
+def get_labels(objlIN):
+    class_list = []
+    for idx in range(len(objlIN)):
+        class_list.append(objlIN[idx]['label'])
+    # Set only stores a value once even if it is inserted more then once:
+    lbl_set  = set(class_list) # insert the list to the set
+    lbl_list = (list(lbl_set)) # convert the set to the list
+    return lbl_list
+
+    # # /!\ for now this function does not know how to handle empty objlists
 # def get_Ntp(objl_gt, objl_df, tol_pos_err):
 #     # tolerated position error (in voxel)
 #     Ngt = len(objl_gt)

@@ -6,78 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>386</width>
-    <height>547</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Clustering</string>
+   <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="0">
      <widget class="QGroupBox" name="gb_in">
       <property name="title">
-       <string>Inputs</string>
+       <string>Input</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="lbl_path_lmap">
-         <property name="text">
-          <string>Label map path</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="le_path_lmap">
-         <property name="text">
-          <string>/Users/emoebel/serpico-fs2/github/deep-finder/unit_tests/deepfind/cluster/in/tomo9_bin1_labelmap_cropped.h5</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="lbl_cradius">
-         <property name="toolTip">
-          <string>Should correspond to average radius of target objects (in voxels)</string>
-         </property>
-         <property name="text">
-          <string>Cluster radius</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="le_cradius">
-         <property name="text">
-          <string>5</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="lbl_sthr">
-         <property name="toolTip">
-          <string>Found objects smaller than this threshold are discarded</string>
-         </property>
-         <property name="text">
-          <string>Size threshold</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="le_csize_thr">
-         <property name="text">
-          <string>1</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="gp_out">
-      <property name="title">
-       <string>Output</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
         <widget class="QLabel" name="lbl_path_objl">
          <property name="text">
@@ -86,23 +29,77 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="le_path_objl">
+        <widget class="QLineEdit" name="le_path_objl"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="lbl_strategy">
          <property name="text">
-          <string>out/objlist.xml</string>
+          <string>Strategy</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="cb_strategy"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="1" rowspan="2">
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QLabel" name="lbl_strategy_input">
+         <property name="text">
+          <string>Object mask paths</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QTextEdit" name="te_strategy_input">
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOn</enum>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QTextEdit::NoWrap</enum>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
     </item>
-    <item>
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="gb_out">
+      <property name="title">
+       <string>Output</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="lbl_path_target">
+         <property name="text">
+          <string>Target path</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="le_path_target"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
      <widget class="QPushButton" name="button_launch">
       <property name="text">
        <string>Launch</string>
       </property>
      </widget>
     </item>
-    <item>
+    <item row="3" column="0" colspan="2">
      <widget class="QTextEdit" name="te_terminal_out"/>
     </item>
    </layout>
@@ -112,7 +109,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>386</width>
+     <width>800</width>
      <height>22</height>
     </rect>
    </property>

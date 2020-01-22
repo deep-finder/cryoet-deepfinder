@@ -13,7 +13,7 @@ import utils_smap as sm
 qtcreator_file  = 'gui_segment.ui'
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtcreator_file)
 
-class ClusteringWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+class SegmentationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     print_signal = QtCore.pyqtSignal(str) # signal for listening to prints of deepfinder
 
     def __init__(self):
@@ -28,8 +28,7 @@ class ClusteringWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.te_terminal_out.append(message)
 
     def on_clicked(self):
-        threading.Thread(target=self.launch_process(), daemon=True).start()
-        # dont forget '()' after self.launch_process else File ".../tensorflow_backend.py": AttributeError: '_thread._local' object has no attribute 'value'
+        threading.Thread(target=self.launch_process, daemon=True).start()
 
     def launch_process(self):
         # Get parameters from line edit widgets:
@@ -44,7 +43,7 @@ class ClusteringWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         data = utils.read_array(path_data)
 
         # Initialize segmentation:
-        seg = df.segment(Ncl=Ncl, path_weights=path_weights, patch_size=psize)
+        seg = df.Segment(Ncl=Ncl, path_weights=path_weights, patch_size=psize)
         seg.set_observer(core_utils.observer_gui(self.print_signal))
 
         # Segment data:
@@ -67,6 +66,6 @@ class ClusteringWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    window = ClusteringWindow()
+    window = SegmentationWindow()
     window.show()
     sys.exit(app.exec_())

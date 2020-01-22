@@ -6,120 +6,138 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>287</width>
-    <height>389</height>
+    <width>387</width>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Segmentation</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QFormLayout" name="formLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="lbl_nclass">
-      <property name="text">
-       <string>Number of classes</string>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QGroupBox" name="gb_in">
+      <property name="title">
+       <string>Input</string>
       </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="lbl_path_tomo">
+         <property name="text">
+          <string>Tomogram path</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="le_path_tomo">
+         <property name="text">
+          <string>/Users/emoebel/serpico-fs2/github/deep-finder/unit_tests/deepfind/segment/in/tomo9.h5</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="lbl_path_weights">
+         <property name="text">
+          <string>Net weights path</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="le_path_weights">
+         <property name="text">
+          <string>/Users/emoebel/serpico-fs2/github/deep-finder/examples/training/params_model_FINAL.h5</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="lbl_nclass">
+         <property name="text">
+          <string>Number of classes</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="le_nclass">
+         <property name="text">
+          <string>13</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="lbl_psize">
+         <property name="text">
+          <string>Patch size</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="sb_psize">
+         <property name="minimum">
+          <number>80</number>
+         </property>
+         <property name="maximum">
+          <number>200</number>
+         </property>
+         <property name="singleStep">
+          <number>4</number>
+         </property>
+         <property name="value">
+          <number>160</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="le_nclass">
-      <property name="text">
-       <string>13</string>
+    <item>
+     <widget class="QGroupBox" name="gb_out">
+      <property name="title">
+       <string>Output</string>
       </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="lbl_path_lmap">
+         <property name="text">
+          <string>Label map path</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="le_path_lmap">
+         <property name="text">
+          <string>out/labelmap.mrc</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="lbl_bin">
+         <property name="text">
+          <string>Bin label map</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="cb_bin">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="lbl_psize">
-      <property name="text">
-       <string>Patch size</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QSpinBox" name="sb_psize">
-      <property name="minimum">
-       <number>80</number>
-      </property>
-      <property name="maximum">
-       <number>200</number>
-      </property>
-      <property name="singleStep">
-       <number>4</number>
-      </property>
-      <property name="value">
-       <number>160</number>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="lbl_weights">
-      <property name="text">
-       <string>Net weights path</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLineEdit" name="le_path_weights">
-      <property name="text">
-       <string>/Users/emoebel/serpico-fs2/github/deep-finder/examples/training/params_model_FINAL.h5</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="lbl_path_tomo">
-      <property name="text">
-       <string>Tomogram path</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QLineEdit" name="le_path_tomo">
-      <property name="text">
-       <string>/Users/emoebel/serpico-fs2/github/deep-finder/unit_tests/deepfind/segment/in/tomo9.h5</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="lbl_path_lmap">
-      <property name="text">
-       <string>Label map path</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLineEdit" name="le_path_lmap">
-      <property name="text">
-       <string>out/labelmap.mrc</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="0" colspan="2">
+    <item>
      <widget class="QPushButton" name="button_launch">
       <property name="text">
-       <string>Segment</string>
+       <string>Launch</string>
       </property>
      </widget>
     </item>
-    <item row="8" column="0" colspan="2">
+    <item>
      <widget class="QTextEdit" name="te_terminal_out"/>
-    </item>
-    <item row="5" column="1">
-     <widget class="QCheckBox" name="cb_bin">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Bin label map</string>
-      </property>
-     </widget>
     </item>
    </layout>
   </widget>
@@ -128,7 +146,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>287</width>
+     <width>387</width>
      <height>22</height>
     </rect>
    </property>

@@ -6,238 +6,275 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>875</width>
-    <height>541</height>
+    <width>773</width>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Training</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>871</width>
-      <height>491</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QLabel" name="label_8">
-             <property name="text">
-              <string>Tomogram paths</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_9">
-             <property name="text">
-              <string>Target paths</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QTextEdit" name="textEdit"/>
-           </item>
-           <item>
-            <widget class="QTextEdit" name="textEdit_2"/>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QFormLayout" name="formLayout_2">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_10">
-             <property name="text">
-              <string>Object list (train)</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEdit_6"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_11">
-             <property name="text">
-              <string>Object list (validation)</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="lineEdit_7"/>
-           </item>
-          </layout>
-         </item>
-        </layout>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>Inputs</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="1">
+        <widget class="QLabel" name="lbl_path_target">
+         <property name="text">
+          <string>Target paths</string>
+         </property>
+        </widget>
        </item>
-       <item>
-        <layout class="QFormLayout" name="formLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="lbl_nclass">
-           <property name="text">
-            <string>Number of classes</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="le_nclass">
-           <property name="text">
-            <string>13</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="lbl_psize">
-           <property name="text">
-            <string>Patch size</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QSpinBox" name="sb_psize">
-           <property name="minimum">
-            <number>40</number>
-           </property>
-           <property name="maximum">
-            <number>80</number>
-           </property>
-           <property name="singleStep">
-            <number>4</number>
-           </property>
-           <property name="value">
-            <number>80</number>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Batch size</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="lineEdit">
-           <property name="text">
-            <string>25</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Number of epochs</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLineEdit" name="lineEdit_2">
-           <property name="text">
-            <string>100</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Steps per epoch</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="lineEdit_3">
-           <property name="text">
-            <string>100</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>Steps per validation</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QLineEdit" name="lineEdit_4">
-           <property name="text">
-            <string>100</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>Direct read</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QCheckBox" name="checkBox">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="label_6">
-           <property name="text">
-            <string>Bootstrap</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="QCheckBox" name="checkBox_2">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0">
-          <widget class="QLabel" name="label_7">
-           <property name="text">
-            <string>Random shift</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="1">
-          <widget class="QLineEdit" name="lineEdit_5"/>
-         </item>
-        </layout>
+       <item row="1" column="1">
+        <widget class="QTextEdit" name="te_path_target">
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOn</enum>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QTextEdit::NoWrap</enum>
+         </property>
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.SF NS Text'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/emoebel/serpico-fs2/shrec2019/data/for_cnn/tomo0/target_thr1.h5&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/emoebel/serpico-fs2/shrec2019/data/for_cnn/tomo1/target_thr1.h5&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/emoebel/serpico-fs2/shrec2019/data/for_cnn/tomo2/target_thr1.h5&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="le_path_objl_valid">
+         <property name="text">
+          <string>/Users/emoebel/serpico-fs2/github/deep-finder/unit_tests/deepfind/train/objlist_valid.xml</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="lbl_path_objl_train">
+         <property name="text">
+          <string>Object list (train)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="lbl_path_objl_valid">
+         <property name="text">
+          <string>Object list (validation)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QTextEdit" name="te_path_tomo">
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOn</enum>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QTextEdit::NoWrap</enum>
+         </property>
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.SF NS Text'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/emoebel/serpico-fs2/shrec2019/data/for_cnn/tomo0/data.h5&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/emoebel/serpico-fs2/shrec2019/data/for_cnn/tomo1/data.h5&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/emoebel/serpico-fs2/shrec2019/data/for_cnn/tomo2/data.h5&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="le_path_objl_train">
+         <property name="text">
+          <string>/Users/emoebel/serpico-fs2/github/deep-finder/unit_tests/deepfind/train/objlist_train.xml</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="lbl_path_tomo">
+         <property name="text">
+          <string>Tomogram paths</string>
+         </property>
+        </widget>
        </item>
       </layout>
-     </item>
-     <item>
-      <widget class="QPushButton" name="button_launch">
-       <property name="text">
-        <string>Train</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTextEdit" name="te_terminal_out"/>
-     </item>
-    </layout>
-   </widget>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Training parameters</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="lbl_nclass">
+         <property name="text">
+          <string>Number of classes</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="le_nclass">
+         <property name="text">
+          <string>13</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="lbl_psize">
+         <property name="text">
+          <string>Patch size</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QSpinBox" name="sb_psize">
+         <property name="minimum">
+          <number>40</number>
+         </property>
+         <property name="maximum">
+          <number>80</number>
+         </property>
+         <property name="singleStep">
+          <number>4</number>
+         </property>
+         <property name="value">
+          <number>56</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="lbl_bsize">
+         <property name="text">
+          <string>Batch size</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="le_bsize">
+         <property name="text">
+          <string>25</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="lbl_nepochs">
+         <property name="text">
+          <string>Number of epochs</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="le_nepochs">
+         <property name="text">
+          <string>1</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="lbl_steps_per_e">
+         <property name="text">
+          <string>Steps per epoch</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="le_steps_per_e">
+         <property name="text">
+          <string>2</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="lbl_steps_per_v">
+         <property name="text">
+          <string>Steps per validation</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="le_steps_per_v">
+         <property name="text">
+          <string>2</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="lbl_direct_read">
+         <property name="text">
+          <string>Direct read</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QCheckBox" name="cb_direct_read">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="lbl_bootstrap">
+         <property name="text">
+          <string>Bootstrap</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QCheckBox" name="cb_bootstrap">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="lbl_rnd_shift">
+         <property name="text">
+          <string>Random shift</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLineEdit" name="le_rnd_shift">
+         <property name="text">
+          <string>13</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QPushButton" name="button_launch">
+      <property name="text">
+       <string>Launch</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QTextEdit" name="te_terminal_out"/>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>875</width>
+     <width>773</width>
      <height>22</height>
     </rect>
    </property>

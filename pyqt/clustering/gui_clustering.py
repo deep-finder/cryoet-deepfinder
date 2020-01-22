@@ -49,7 +49,6 @@ class ClusteringWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     @QtCore.pyqtSlot()
     def on_clicked(self):
         threading.Thread(target=self.launch_clustering, daemon=True).start()
-        # # dont forget '()' after self.launch_clustering else File ".../tensorflow_backend.py": AttributeError: '_thread._local' object has no attribute 'value'
 
         # # Get parameters from line edit widgets:
         # path_lmap = self.line_path_lmap.text()
@@ -74,24 +73,38 @@ class ClusteringWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def launch_clustering(self):
         # Get parameters from line edit widgets:
-        path_lmap = self.line_path_lmap.text()
-        cradius   = int( self.line_cradius.text() )
-        csize_thr = int( self.line_csize_thr.text() )
-        path_objl = self.line_path_objl.text()
+        path_lmap = self.le_path_lmap.text()
+        cradius   = int( self.le_cradius.text() )
+        csize_thr = int( self.le_csize_thr.text() )
+        path_objl = self.le_path_objl.text()
 
         # Load label map:
         labelmap = utils.read_array(path_lmap)
 
         # Initialize deepfinder:
-        clust = df.cluster(clustRadius=cradius)
+        clust = df.Cluster(clustRadius=cradius)
         clust.sizeThr = csize_thr
         clust.set_observer(core_utils.observer_gui(self.print_signal))
 
         # Launch clustering (result stored in objlist)
         objlist = clust.launch(labelmap)
 
+        # Display result:
+        self.display_result(clust, objlist)
+
         # Save objlist:
         ol.write_xml(objlist, path_objl)
+
+    # Displays end result
+    # INPUTS:
+    #   clust: Cluster object, is needed to access clust.display() method
+    #   objlist: input objl
+    def display_result(self, clust, objlist):
+        clust.display('A total of ' + str(len(objlist)) + ' objects have been found.')
+        lbl_list = ol.get_labels(objlist)
+        for lbl in lbl_list:
+            objl_class = ol.get_class(objlist, lbl)
+            clust.display('Class ' + str(lbl) + ': ' + str(len(objl_class)) + ' objects')
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
