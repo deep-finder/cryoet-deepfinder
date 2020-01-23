@@ -59,7 +59,7 @@ def get_patch_position(tomodim, p_in, obj, Lrnd):
     return x,y,z
     
 def save_history(history):
-    h5file = h5py.File('params_train_history.h5', 'w')
+    h5file = h5py.File('net_train_history.h5', 'w')
 
     # train and val loss & accuracy:
     dset    = h5file.create_dataset('acc', (len(history['acc']),))

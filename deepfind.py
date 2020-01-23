@@ -15,6 +15,7 @@ import utils
 import core_utils
 import utils_objl as ol
 
+# TODO: add path_output as class argument
 class DeepFinder:
     def __init__(self):
         self.obs_list = [core_utils.observer_print]
@@ -150,13 +151,13 @@ class Train(DeepFinder):
 
         # Declare lists for storing training statistics:
         hist_loss_train = []
-        hist_acc_train = []
+        hist_acc_train  = []
         hist_loss_valid = []
-        hist_acc_valid = []
-        hist_f1 = []
-        hist_recall = []
-        hist_precision = []
-        process_time = []
+        hist_acc_valid  = []
+        hist_f1         = []
+        hist_recall     = []
+        hist_precision  = []
+        process_time    = []
 
         # Training loop:
         for e in range(self.epochs):
@@ -210,10 +211,10 @@ class Train(DeepFinder):
             core_utils.plot_history(history)
 
             if (e + 1) % 10 == 0:  # save weights every 10 epochs
-                self.net.save('params_model_epoch' + str(e + 1) + '.h5')
+                self.net.save('net_weights_epoch' + str(e + 1) + '.h5')
 
         self.display("Model took %0.2f seconds to train" % np.sum(process_time))
-        self.net.save('params_model_FINAL.h5')
+        self.net.save('net_weights_FINAL.h5')
 
     # This function generates training batches:
     #   - Data and target patches are sampled, in order to avoid loading whole tomograms.

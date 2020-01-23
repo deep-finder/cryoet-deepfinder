@@ -4,7 +4,7 @@ TP: 1916 unique particles localized out of total 2540 particles
 FP: 270 reported particles are false positives
 FN: 624 unique particles not found
 Note: there were 8 unique particles that had more than one result
-Average euclidean distance from predicted center to ground truth center: 2.16012
+Average euclidean distance from predicted center to ground truth center: 2.15997
 Total recall: 0.75433
 Total precision: 0.87329
 Total miss rate: 0.24567

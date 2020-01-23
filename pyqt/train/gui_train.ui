@@ -30,6 +30,9 @@
        </item>
        <item row="1" column="1">
         <widget class="QTextEdit" name="te_path_target">
+         <property name="toolTip">
+          <string>List line per line the paths to the tomograms and their corresponding targets.</string>
+         </property>
          <property name="horizontalScrollBarPolicy">
           <enum>Qt::ScrollBarAlwaysOn</enum>
          </property>
@@ -49,6 +52,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="3" column="1">
         <widget class="QLineEdit" name="le_path_objl_valid">
+         <property name="toolTip">
+          <string>The tomogram index in this object list should correspond to the order of above listed tomo/target pairs.</string>
+         </property>
          <property name="text">
           <string>/Users/emoebel/serpico-fs2/github/deep-finder/unit_tests/deepfind/train/objlist_valid.xml</string>
          </property>
@@ -56,6 +62,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="lbl_path_objl_train">
+         <property name="toolTip">
+          <string>The tomogram index in this object list should correspond to the order of above listed tomo/target pairs.</string>
+         </property>
          <property name="text">
           <string>Object list (train)</string>
          </property>
@@ -63,6 +72,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="lbl_path_objl_valid">
+         <property name="toolTip">
+          <string>The tomogram index in this object list should correspond to the order of above listed tomo/target pairs.</string>
+         </property>
          <property name="text">
           <string>Object list (validation)</string>
          </property>
@@ -70,6 +82,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="1" column="0">
         <widget class="QTextEdit" name="te_path_tomo">
+         <property name="toolTip">
+          <string>List line per line the paths to the tomograms and their corresponding targets.</string>
+         </property>
          <property name="horizontalScrollBarPolicy">
           <enum>Qt::ScrollBarAlwaysOn</enum>
          </property>
@@ -89,6 +104,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="2" column="1">
         <widget class="QLineEdit" name="le_path_objl_train">
+         <property name="toolTip">
+          <string>The tomogram index in this object list should correspond to the order of above listed tomo/target pairs.</string>
+         </property>
          <property name="text">
           <string>/Users/emoebel/serpico-fs2/github/deep-finder/unit_tests/deepfind/train/objlist_train.xml</string>
          </property>
@@ -112,6 +130,9 @@ p, li { white-space: pre-wrap; }
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
         <widget class="QLabel" name="lbl_nclass">
+         <property name="toolTip">
+          <string>Including background class</string>
+         </property>
          <property name="text">
           <string>Number of classes</string>
          </property>
@@ -119,6 +140,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="0" column="1">
         <widget class="QLineEdit" name="le_nclass">
+         <property name="toolTip">
+          <string>Including background class</string>
+         </property>
          <property name="text">
           <string>13</string>
          </property>
@@ -126,6 +150,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="lbl_psize">
+         <property name="toolTip">
+          <string>Must be a multiple of 4</string>
+         </property>
          <property name="text">
           <string>Patch size</string>
          </property>
@@ -133,6 +160,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="1" column="1">
         <widget class="QSpinBox" name="sb_psize">
+         <property name="toolTip">
+          <string>Must be a multiple of 4</string>
+         </property>
          <property name="minimum">
           <number>40</number>
          </property>
@@ -149,6 +179,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="lbl_bsize">
+         <property name="toolTip">
+          <string>Number of patches used to compute average loss</string>
+         </property>
          <property name="text">
           <string>Batch size</string>
          </property>
@@ -156,6 +189,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="2" column="1">
         <widget class="QLineEdit" name="le_bsize">
+         <property name="toolTip">
+          <string>Number of patches used to compute average loss</string>
+         </property>
          <property name="text">
           <string>25</string>
          </property>
@@ -163,6 +199,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="lbl_nepochs">
+         <property name="toolTip">
+          <string>At the end of each epoch, evaluation on validation set is performed (usefull to check if network overfits)</string>
+         </property>
          <property name="text">
           <string>Number of epochs</string>
          </property>
@@ -170,6 +209,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="3" column="1">
         <widget class="QLineEdit" name="le_nepochs">
+         <property name="toolTip">
+          <string>At the end of each epoch, evaluation on validation set is performed (usefull to check if network overfits)</string>
+         </property>
          <property name="text">
           <string>1</string>
          </property>
@@ -177,6 +219,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="lbl_steps_per_e">
+         <property name="toolTip">
+          <string>Number of batches trained on per epoch</string>
+         </property>
          <property name="text">
           <string>Steps per epoch</string>
          </property>
@@ -184,6 +229,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="4" column="1">
         <widget class="QLineEdit" name="le_steps_per_e">
+         <property name="toolTip">
+          <string>Number of batches trained on per epoch</string>
+         </property>
          <property name="text">
           <string>2</string>
          </property>
@@ -191,6 +239,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="lbl_steps_per_v">
+         <property name="toolTip">
+          <string>Number of batches used for validation</string>
+         </property>
          <property name="text">
           <string>Steps per validation</string>
          </property>
@@ -198,6 +249,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="5" column="1">
         <widget class="QLineEdit" name="le_steps_per_v">
+         <property name="toolTip">
+          <string>Number of batches used for validation</string>
+         </property>
          <property name="text">
           <string>2</string>
          </property>
@@ -205,6 +259,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="6" column="0">
         <widget class="QLabel" name="lbl_direct_read">
+         <property name="toolTip">
+          <string>Check if you run out of memory when loading dataset. Transmission speed between dataset storage and GPU should be high enough.</string>
+         </property>
          <property name="text">
           <string>Direct read</string>
          </property>
@@ -214,6 +271,9 @@ p, li { white-space: pre-wrap; }
         <widget class="QCheckBox" name="cb_direct_read">
          <property name="enabled">
           <bool>true</bool>
+         </property>
+         <property name="toolTip">
+          <string>Check if you run out of memory when loading dataset. Transmission speed between dataset storage and GPU should be high enough.</string>
          </property>
          <property name="text">
           <string/>
@@ -225,6 +285,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="7" column="0">
         <widget class="QLabel" name="lbl_bootstrap">
+         <property name="toolTip">
+          <string>Can remain checked. Usefull when in presence of unbalanced classes</string>
+         </property>
          <property name="text">
           <string>Bootstrap</string>
          </property>
@@ -232,6 +295,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="7" column="1">
         <widget class="QCheckBox" name="cb_bootstrap">
+         <property name="toolTip">
+          <string>Can remain checked. Usefull when in presence of unbalanced classes</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -242,6 +308,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="8" column="0">
         <widget class="QLabel" name="lbl_rnd_shift">
+         <property name="toolTip">
+          <string>(in voxels) Applied to positions in object list when sampling patches. Enhances network robustness. Make sure that objects are still contained in patches when applying shift.</string>
+         </property>
          <property name="text">
           <string>Random shift</string>
          </property>
@@ -249,6 +318,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="8" column="1">
         <widget class="QLineEdit" name="le_rnd_shift">
+         <property name="toolTip">
+          <string>(in voxels) Applied to positions in object list when sampling patches. Enhances network robustness. Make sure that objects are still contained in patches when applying shift.</string>
+         </property>
          <property name="text">
           <string>13</string>
          </property>

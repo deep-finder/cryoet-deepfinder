@@ -191,7 +191,18 @@ def get_labels(objlIN):
     lbl_list = (list(lbl_set)) # convert the set to the list
     return lbl_list
 
-    # # /!\ for now this function does not know how to handle empty objlists
+def get_tomo(objlIN, tomo_idx):
+    idx_tomo = []
+    for idx in range(len(objlIN)):
+        if objlIN[idx]['tomo_idx'] == tomo_idx:
+            idx_tomo.append(idx)
+
+    objlOUT = []
+    for idx in range(len(idx_tomo)):
+        objlOUT.append(objlIN[idx_tomo[idx]])
+    return objlOUT
+
+# # /!\ for now this function does not know how to handle empty objlists
 # def get_Ntp(objl_gt, objl_df, tol_pos_err):
 #     # tolerated position error (in voxel)
 #     Ngt = len(objl_gt)
