@@ -112,6 +112,8 @@ class TargetBuilder(DeepFinder):
 class Train(DeepFinder):
     def __init__(self, Ncl):
         DeepFinder.__init__(self)
+        self.path_out = './'
+
         # Network parameters:
         self.Ncl = Ncl  # Ncl
         self.dim_in = 56  # /!\ has to a multiple of 4 (because of 2 pooling layers), so that dim_in=dim_out
@@ -207,14 +209,14 @@ class Train(DeepFinder):
             history = {'loss': hist_loss_train, 'acc': hist_acc_train, 'val_loss': hist_loss_valid,
                        'val_acc': hist_acc_valid, 'val_f1': hist_f1, 'val_recall': hist_recall,
                        'val_precision': hist_precision}
-            core_utils.save_history(history)
-            core_utils.plot_history(history)
+            core_utils.save_history(history, self.path_out+'net_train_history.h5')
+            core_utils.plot_history(history, self.path_out+'net_train_history_plot.png')
 
             if (e + 1) % 10 == 0:  # save weights every 10 epochs
-                self.net.save('net_weights_epoch' + str(e + 1) + '.h5')
+                self.net.save(self.path_out+'net_weights_epoch' + str(e + 1) + '.h5')
 
         self.display("Model took %0.2f seconds to train" % np.sum(process_time))
-        self.net.save('net_weights_FINAL.h5')
+        self.net.save(self.path_out+'net_weights_FINAL.h5')
 
     # This function generates training batches:
     #   - Data and target patches are sampled, in order to avoid loading whole tomograms.

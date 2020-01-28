@@ -58,8 +58,8 @@ def get_patch_position(tomodim, p_in, obj, Lrnd):
     
     return x,y,z
     
-def save_history(history):
-    h5file = h5py.File('net_train_history.h5', 'w')
+def save_history(history, filename):
+    h5file = h5py.File(filename, 'w')
 
     # train and val loss & accuracy:
     dset    = h5file.create_dataset('acc', (len(history['acc']),))
@@ -82,7 +82,7 @@ def save_history(history):
     h5file.close()
     return
     
-def plot_history(history):
+def plot_history(history, filename):
     Ncl = len(history['val_f1'][0])
     legend_names = []
     for lbl in range(0,Ncl):
@@ -124,7 +124,7 @@ def plot_history(history):
     plt.xlabel('epochs')
     plt.grid()
 
-    fig.savefig('history_train.png')
+    fig.savefig(filename)
 
 
 # Following observer classes are needed to send prints to GUI if needed:

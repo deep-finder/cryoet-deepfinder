@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>773</width>
-    <height>547</height>
+    <width>733</width>
+    <height>559</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Training</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_3">
+   <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
      <widget class="QGroupBox" name="groupBox_2">
       <property name="title">
@@ -329,15 +329,41 @@ p, li { white-space: pre-wrap; }
       </layout>
      </widget>
     </item>
+    <item row="3" column="0" colspan="2">
+     <widget class="QTextEdit" name="te_terminal_out"/>
+    </item>
     <item row="1" column="0" colspan="2">
+     <widget class="QGroupBox" name="gb_out">
+      <property name="title">
+       <string>Output</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QLabel" name="lbl_path_out">
+         <property name="toolTip">
+          <string>Path for saving network weights and training metrics</string>
+         </property>
+         <property name="text">
+          <string>Path</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="le_path_out">
+         <property name="toolTip">
+          <string>Path for saving network weights and training metrics</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
      <widget class="QPushButton" name="button_launch">
       <property name="text">
        <string>Launch</string>
       </property>
      </widget>
-    </item>
-    <item row="2" column="0" colspan="2">
-     <widget class="QTextEdit" name="te_terminal_out"/>
     </item>
    </layout>
   </widget>
@@ -346,7 +372,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>773</width>
+     <width>733</width>
      <height>22</height>
     </rect>
    </property>

@@ -5,7 +5,7 @@ warnings.simplefilter('ignore') # to mute some warnings produced when opening th
 
 from lxml import etree
 from copy import deepcopy
-from sklearn.metrics import pairwise_distances
+#from sklearn.metrics import pairwise_distances
 from contextlib import redirect_stdout # for writing txt file
 
 def add_obj(objlIN, label, coord, tomo_idx=None, orient=(None,None,None), cluster_size=None):
@@ -191,6 +191,10 @@ def get_labels(objlIN):
     lbl_list = (list(lbl_set)) # convert the set to the list
     return lbl_list
 
+# INPUT:
+#   objlIN: object list with objects from various tomograms
+# OUTPUT:
+#   objlOUT: object list with objects from tomogram 'tomo_idx'
 def get_tomo(objlIN, tomo_idx):
     idx_tomo = []
     for idx in range(len(objlIN)):

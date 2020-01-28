@@ -4,6 +4,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets, uic
 import threading
 
 sys.path.append('../../')
+import numpy as np
 import deepfind as df
 import core_utils
 import utils
@@ -24,6 +25,34 @@ class TargetGenerationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.button_launch.clicked.connect(self.on_clicked)
 
         self.cb_strategy.currentIndexChanged.connect(self.update_label)
+        self.cb_initialize.stateChanged.connect(self.show_relevant_widgets)
+
+        # Per default, no target initialization. Therefore, hide following widgets:
+        self.lbl_path_vol_initial.hide()
+        self.le_path_vol_initial.hide()
+
+    @QtCore.pyqtSlot()
+    def show_relevant_widgets(self):
+        if self.cb_initialize.isChecked():
+            self.lbl_tsize.hide()
+            self.lbl_tsize_x.hide()
+            self.lbl_tsize_y.hide()
+            self.lbl_tsize_z.hide()
+            self.le_tsize_x.hide()
+            self.le_tsize_y.hide()
+            self.le_tsize_z.hide()
+            self.lbl_path_vol_initial.show()
+            self.le_path_vol_initial.show()
+        else:
+            self.lbl_tsize.show()
+            self.lbl_tsize_x.show()
+            self.lbl_tsize_y.show()
+            self.lbl_tsize_z.show()
+            self.le_tsize_x.show()
+            self.le_tsize_y.show()
+            self.le_tsize_z.show()
+            self.lbl_path_vol_initial.hide()
+            self.le_path_vol_initial.hide()
 
     @QtCore.pyqtSlot()
     def update_label(self):
@@ -44,27 +73,40 @@ class TargetGenerationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # Get parameters from GUI:
         path_objl        = self.le_path_objl.text()
         strategy         = self.cb_strategy.currentText()
-        path_initial_vol = self.le_initial_vol.text()
-        path_target      = self.le_path_target.text
+        dim_x            = int(self.le_tsize_x.text())
+        dim_y            = int(self.le_tsize_y.text())
+        dim_z            = int(self.le_tsize_z.text())
+        path_initial_vol = self.le_path_vol_initial.text()
+        path_target      = self.le_path_target.text()
+
+        Nclass = int(self.te_strategy_input.document().blockCount())
+        param_list = [] # for 'shapes' contains mask paths->str, for 'spheres' contains radii->int
+        for idx in range(Nclass): # one line corresponds to one class
+            param_list.append(self.te_strategy_input.document().findBlockByLineNumber(idx).text())
+
+        # Load objl:
+        objl = ol.read_xml(path_objl)
 
         # Initialize target generation:
         tbuild = df.TargetBuilder()
         tbuild.set_observer(core_utils.observer_gui(self.print_signal))
 
-        if path_initial_vol=='(optional)' or path_initial_vol = None:
-            vol_initial = np.zeros(tomodim)
-        else:
+        if self.cb_initialize.isChecked():
             tbuild.display('Loading initial volume ...')
             vol_initial = utils.read_array(path_initial_vol)
+        else:
+            vol_initial = np.zeros((dim_x, dim_y, dim_z))
 
         if strategy == 'Shapes':
-            target = tbuild.generate_with_shapes(objl, np.zeros(tomodim), ref_list)
+            target = tbuild.generate_with_shapes(objl, vol_initial, param_list)
         else:
-            target = tbuild.generate_with_spheres(objl, np.zeros(tomodim), radius_list)
+            param_list = list(map(int, param_list)) # convert the radius list from str to int
+            target = tbuild.generate_with_spheres(objl, vol_initial, param_list)
 
+        tbuild.display('Saving target ...')
+        utils.write_array(target, path_target)
+        tbuild.display('Done!')
 
-        utils.write_array(target, 'out/target_tomo42.mrc')
-        print('pouet')
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

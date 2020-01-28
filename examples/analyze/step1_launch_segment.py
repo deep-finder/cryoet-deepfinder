@@ -6,13 +6,13 @@ import utils
 import utils_smap as sm
 
 # Input parameters:
-path_tomo    = '../../data/tomo9.mrc' # tomogram to be segmented
-path_weights = '../training/net_weights_FINAL.h5' # weights for neural network (obtained from training)
+path_tomo    = 'in/tomo9.mrc' # tomogram to be segmented
+path_weights = 'in/net_weights_FINAL.h5' # weights for neural network (obtained from training)
 Nclass       = 13  # including background class
 patch_size   = 160 # must be multiple of 4
 
 # Output parameter:
-path_output = 'result/'
+path_output = 'out/'
 
 
 # Load data:

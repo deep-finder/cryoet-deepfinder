@@ -6,11 +6,11 @@ import deepfind as df
 import utils
 import utils_objl as ol
 
-path_output = './'
+path_output = 'out/'
 
 # First load object list with annotated positions. There are two strategies to generate targets: shapes and spheres
 # If you choose 'shapes', the object list has to contain the orientation (i.e. Euler angles) of the objects.
-objl = ol.read_xml('object_list_train.xml') # contains objects of whole dataset
+objl = ol.read_xml('in/object_list_train.xml') # contains objects of whole dataset
 
 # Let's generate the target for tomogram 0:
 objl = ol.get_tomo(objl, 0) # now contains objects of tomo0 only
