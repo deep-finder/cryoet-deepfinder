@@ -14,9 +14,13 @@ import matplotlib
 matplotlib.use('agg') # necessary else: AttributeError: 'NoneType' object has no attribute 'is_interactive'
 import matplotlib.pyplot as plt
 
-# Realizes quick visualization of a volume, by plotting its orthoslices, in the same fashion as the matlab function 'tom_volxyz' (TOM toolbox) 
+# Writes an image file containing ortho-slices of the input volume. Generates same visualization as matlab function
+# 'tom_volxyz' from TOM toolbox.
 # If volume type is int8, the function assumes that the volume is a labelmap, and hence plots in color scale.
 # Else, it assumes that the volume is tomographic data, and plots in gray scale.
+# INPUTS:
+#   vol     : 3D numpy array
+#   filename: string '/path/to/file.png'
 def plot_volume_orthoslices(vol, filename):
     # Get central slices along each dimension:
     dim = vol.shape
@@ -44,50 +48,84 @@ def plot_volume_orthoslices(vol, filename):
         plt.imshow(img_array, cmap='gray', vmin=mu-5*sig, vmax=mu+5*sig)
     fig.savefig(filename)
 
-def read_h5array(filename):
+# Reads data stored in h5 file, from specified h5 dataset.
+# INPUTS:
+#   filename : string '/path/to/file.h5'
+#   dset_name: string dataset name
+# OUTPUT:
+#   dataArray: numpy array
+def read_h5array(filename, dset_name='dataset'):
     h5file = h5py.File(filename, 'r')
-    dataArray = h5file['dataset'][:]
+    dataArray = h5file[dset_name][:]
     h5file.close()
     return dataArray
 
-def write_h5array(array, filename):
+# Writes data in h5 file, to specified h5 dataset. Is also adapted for labelmaps: saved as int8 to gain disk space.
+# INPUTS:
+#   array    : numpy array
+#   filename : string '/path/to/file.h5'
+#   dset_name: string dataset name
+def write_h5array(array, filename, dset_name='dataset'):
     h5file = h5py.File(filename, 'w')
     if array.dtype == np.int8:
-        dset = h5file.create_dataset('dataset', array.shape, dtype='int8')
+        dset = h5file.create_dataset(dset_name, array.shape, dtype='int8')
         dset[:] = np.int8(array)
     else:
-        dset = h5file.create_dataset('dataset', array.shape, dtype='float16')
+        dset = h5file.create_dataset(dset_name, array.shape, dtype='float16')
         dset[:] = np.float16(array)
     h5file.close()
 
+# Reads array stored as mrc.
+# INPUTS:
+#   filename: string '/path/to/file.mrc'
+# OUTPUT:
+#   array: numpy array
 def read_mrc(filename):
     with mrcfile.open(filename, permissive=True) as mrc:
         array = mrc.data
     return array
 
+# Writes array as mrc.
+# INPUTS:
+#   array   : numpy array
+#   filename: string '/path/to/file.mrc'
 def write_mrc(array, filename):
     with mrcfile.new(filename, overwrite=True) as mrc:
         mrc.set_data(array)
 
-def read_array(filename):
+# Reads arrays. Handles .h5 and .mrc files, according to what extension the file has.
+# INPUTS:
+#   filename : string '/path/to/file.ext' with '.ext' either '.h5' or '.mrc'
+#   dset_name: string h5 dataset name. Not necessary to specify when reading .mrc
+# OUTPUT:
+#   array: numpy array
+def read_array(filename, dset_name='dataset'):
     data_format = os.path.splitext(filename)
     if data_format[1] == '.h5':
-        array = read_h5array(filename)
+        array = read_h5array(filename, dset_name)
     elif data_format[1] == '.mrc':
         array = read_mrc(filename)
     else:
         print('/!\ DeepFinder can only read datasets in .h5 and .mrc formats')
     return array
 
-def write_array(array, filename):
+# Writes array. Can write .h5 and .mrc files, according to the extension specified in filename.
+# INPUTS:
+#   array    : numpy array
+#   filename : string '/path/to/file.ext' with '.ext' either '.h5' or '.mrc'
+#   dset_name: string h5 dataset name. Not necessary to specify when writing .mrc
+def write_array(array, filename, dset_name='dataset'):
     data_format = os.path.splitext(filename)
     if data_format[1] == '.h5':
-        write_h5array(array, filename)
+        write_h5array(array, filename, dset_name)
     elif data_format[1] == '.mrc':
         write_mrc(array, filename)
     else:
         print('/!\ DeepFinder can only write arrays in .h5 and .mrc formats')
 
+# Subsamples a 3D array by a factor 2. Subsampling is performed by averaging voxel values in 2x2x2 tiles.
+# INPUT: numpy array
+# OUTPUT: binned numpy array
 def bin_array(array):
     return block_reduce(array, (2,2,2), np.mean)
 

@@ -6,12 +6,21 @@ import matplotlib
 matplotlib.use('agg') # necessary else: AttributeError: 'NoneType' object has no attribute 'is_interactive'
 import matplotlib.pyplot as plt
 
-def load_dataset(path_data, path_target):
+
+# This functions loads the training set at specified paths.
+# INPUTS:
+#   path_data  : list of strings '/path/to/tomogram.ext'
+#   path_target: list of strings '/path/to/target.ext'
+#   dset_name  : can be usefull if files are stored as .h5
+# OUTPUTS:
+#   data_list  : list of 3D numpy arrays (tomograms)
+#   target_list: list of 3D numpy arrays (annotated tomograms)
+def load_dataset(path_data, path_target, dset_name='dataset'):
     data_list   = []
     target_list = []
     for idx in range(0,len(path_data)):
-        data_list.append(  utils.read_array(path_data[idx]  ))
-        target_list.append(utils.read_array(path_target[idx]))
+        data_list.append(  utils.read_array(path_data[idx]  , dset_name))
+        target_list.append(utils.read_array(path_target[idx], dset_name))
     return data_list, target_list
 
 

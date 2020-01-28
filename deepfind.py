@@ -113,6 +113,7 @@ class Train(DeepFinder):
     def __init__(self, Ncl):
         DeepFinder.__init__(self)
         self.path_out = './'
+        self.h5_dset_name = 'dataset' # if training set is stored as .h5 file, specify here in which h5 dataset the arrays are stored
 
         # Network parameters:
         self.Ncl = Ncl  # Ncl
@@ -147,7 +148,7 @@ class Train(DeepFinder):
         # Load whole dataset:
         if self.flag_direct_read == False:
             self.display('Loading dataset ...')
-            data_list, target_list = core_utils.load_dataset(path_data, path_target)
+            data_list, target_list = core_utils.load_dataset(path_data, path_target, self.h5_dset_name)
 
         self.display('Launch training ...')
 
