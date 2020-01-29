@@ -136,7 +136,7 @@ def bin_array(array):
 #   orient: list of Euler angles (phi,psi,the) as defined in PyTOM
 # OUTPUT:
 #   arrayR: rotated 3D numpy array
-def rotate_array(array, orient):
+def rotate_array(array, orient): # TODO move to core_utils?
     phi = orient[0]
     psi = orient[1]
     the = orient[2]
@@ -192,7 +192,7 @@ def rotate_array(array, orient):
 #   R  : radius of the sphere (in voxels)
 # OUTPUT:
 #   sphere: 3D numpy array where '1' is 'sphere' and '0' is 'no sphere'
-def create_sphere(dim, R):
+def create_sphere(dim, R): # TODO move to core_utils?
     C = np.floor((dim[0]/2, dim[1]/2, dim[2]/2))
     x,y,z = np.meshgrid(range(dim[0]),range(dim[1]),range(dim[2]))
 

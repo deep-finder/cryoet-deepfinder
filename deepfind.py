@@ -15,7 +15,13 @@ import utils
 import core_utils
 import utils_objl as ol
 
-# TODO: add path_output as class argument
+# Note:
+# All imports relative to keras&tensorflow are done inside the constructor of classes that need it (i.e. Train and
+# Segment). This is not best practice, but importing tensorflow-related utilities takes time, and I only want to import
+# them when needed.
+# -> does not work cause 'to_categorical' is used in train method. This method does not see the import in class
+# constructor
+
 class DeepFinder:
     def __init__(self):
         self.obs_list = [core_utils.observer_print]
@@ -46,6 +52,7 @@ class TargetBuilder(DeepFinder):
     # INPUTS
     #   objl: list of dictionaries. Needs to contain [phi,psi,the] Euler angles for orienting the shapes.
     #   target_array: 3D numpy array that initializes the training target. Allows to pass an array already containing annotated structures like membranes.
+    #                 index order of array should be [z,y,x]
     #   ref_list: list of binary 3D arrays (expected to be cubic). These reference arrays contain the shape of macromolecules ('1' for 'is object' and '0' for 'is not object')
     #             The references order in list should correspond to the class label
     #             For ex: 1st element of list -> reference of class 1
@@ -66,7 +73,7 @@ class TargetBuilder(DeepFinder):
             the = objl[p]['the']
 
             ref = ref_list[lbl - 1]
-            centeroffset = np.int(np.floor(ref.shape[0] / 2))
+            centeroffset = np.int(np.floor(ref.shape[0] / 2)) # here we expect ref to be cubic
 
             # Rotate ref:
             if phi!=None and psi!=None and the!=None:
@@ -75,16 +82,17 @@ class TargetBuilder(DeepFinder):
 
             # Get the coordinates of object voxels in target_array
             obj_voxels = np.nonzero(ref == 1)
-            x_vox = obj_voxels[0] + x - centeroffset +1
+            x_vox = obj_voxels[2] + x - centeroffset +1
             y_vox = obj_voxels[1] + y - centeroffset +1
-            z_vox = obj_voxels[2] + z - centeroffset +1
+            z_vox = obj_voxels[0] + z - centeroffset +1
 
             for idx in range(x_vox.size):
                 xx = x_vox[idx]
                 yy = y_vox[idx]
                 zz = z_vox[idx]
-                if xx >= 0 and xx < dim[0] and yy >= 0 and yy < dim[1] and zz >= 0 and zz < dim[2]:  # if in tomo bounds
-                    target_array[xx, yy, zz] = lbl
+                if xx >= 0 and xx < dim[2] and yy >= 0 and yy < dim[1] and zz >= 0 and zz < dim[0]:  # if in tomo bounds
+                    target_array[zz, yy, xx] = lbl
+
         return np.int8(target_array)
 
     # Generates segmentation targets from object list. Here macromolecules are annotated with spheres.
@@ -93,6 +101,7 @@ class TargetBuilder(DeepFinder):
     # INPUTS
     #   objl: list of dictionaries. Needs to contain [phi,psi,the] Euler angles for orienting the shapes.
     #   target_array: 3D numpy array that initializes the training target. Allows to pass an array already containing annotated structures like membranes.
+    #                 index order of array should be [z,y,x]
     #   radius_list: list of sphere radii (in voxels).
     #             The radii order in list should correspond to the class label
     #             For ex: 1st element of list -> sphere radius for class 1
@@ -131,20 +140,32 @@ class Train(DeepFinder):
         self.flag_batch_bootstrap = 0
         self.Lrnd = 13  # random shifts applied when sampling data- and target-patches (in voxels)
 
-    # This function launches the training procedure. For each epoch, an image is plotted, displaying the progression with different metrics: loss, accuracy, f1-score, recall, precision. Every 10 epochs, the current network weights are saved.
-    # INPUTS:
-    #   path_data     : a list containing the paths to data files (i.e. tomograms)
-    #   path_target   : a list containing the paths to target files (i.e. annotated volumes)
-    #   objlist_train : an xml structure containing information about annotated objects: origin tomogram (should correspond to the index of 'path_data' argument), coordinates, class. During training, these coordinates are used for guiding the patch sampling procedure.
-    #   objlist_valid : same as 'objlist_train', but objects contained in this xml structure are not used for training, but for validation. It allows to monitor the training and check for over/under-fitting. Ideally, the validation objects should originate from different tomograms than training objects.
-    # The network is trained on small 3D patches (i.e. sub-volumes), sampled from the larger tomograms (due to memory limitation). The patch sampling is not realized randomly, but is guided by the macromolecule coordinates contained in so-called object lists (objlist).
-    # Concerning the loading of the dataset, two options are possible:
-    #    flag_direct_read=0: the whole dataset is loaded into memory
-    #    flag_direct_read=1: only the patches are loaded into memory, each time a training batch is generated. This is usefull when the dataset is too large to load into memory. However, the transfer speed between the data server and the GPU host should be high enough, else the procedure becomes very slow.
-    def launch(self, path_data, path_target, objlist_train, objlist_valid):
         # Build network:
         self.net.compile(optimizer=self.optimizer, loss=losses.tversky_loss, metrics=['accuracy'])
 
+    # This function launches the training procedure. For each epoch, an image is plotted, displaying the progression
+    # with different metrics: loss, accuracy, f1-score, recall, precision. Every 10 epochs, the current network weights
+    # are saved.
+    # INPUTS:
+    #   path_data     : a list containing the paths to data files (i.e. tomograms)
+    #   path_target   : a list containing the paths to target files (i.e. annotated volumes)
+    #   objlist_train : list of dictionaries containing information about annotated objects (e.g. class, position)
+    #                   In particular, the tomo_idx should correspond to the index of 'path_data' and 'path_target'.
+    #                   See utils_objl.py for more info about object lists.
+    #                   During training, these coordinates are used for guiding the patch sampling procedure.
+    #   objlist_valid : same as 'objlist_train', but objects contained in this list are not used for training,
+    #                   but for validation. It allows to monitor the training and check for over/under-fitting. Ideally,
+    #                   the validation objects should originate from different tomograms than training objects.
+    # The network is trained on small 3D patches (i.e. sub-volumes), sampled from the larger tomograms (due to memory
+    # limitation). The patch sampling is not realized randomly, but is guided by the macromolecule coordinates contained
+    # in so-called object lists (objlist).
+    # Concerning the loading of the dataset, two options are possible:
+    #    flag_direct_read=0: the whole dataset is loaded into memory
+    #    flag_direct_read=1: only the patches are loaded into memory, each time a training batch is generated. This is
+    #                        usefull when the dataset is too large to load into memory. However, the transfer speed
+    #                        between the data server and the GPU host should be high enough, else the procedure becomes
+    #                        very slow.
+    def launch(self, path_data, path_target, objlist_train, objlist_valid):
         # Load whole dataset:
         if self.flag_direct_read == False:
             self.display('Loading dataset ...')
@@ -219,14 +240,25 @@ class Train(DeepFinder):
         self.display("Model took %0.2f seconds to train" % np.sum(process_time))
         self.net.save(self.path_out+'net_weights_FINAL.h5')
 
-    # This function generates training batches:
-    #   - Data and target patches are sampled, in order to avoid loading whole tomograms.
+    # Generates batches for training and validation. In this version, the dataset is not loaded into memory. Only the
+    # current batch content is loaded into memory, which is useful when memory is limited.
+    # Is called when self.flag_direct_read=True
+    # !! For now only works for h5 files !!
+    # Batches are generated as follows:
     #   - The positions at which patches are sampled are determined by the coordinates contained in the object list.
     #   - Two data augmentation techniques are applied:
     #       .. To gain invariance to translations, small random shifts are added to the positions.
     #       .. 180 degree rotation around tilt axis (this way missing wedge orientation remains the same).
     #   - Also, bootstrap (i.e. re-sampling) can be applied so that we have an equal amount of each macromolecule in each batch.
-    #     This is usefull when a class is under-represented.
+    #     This is usefull when a class is under-represented. Is applied when self.flag_batch_bootstrap=True
+    # INPUTS:
+    #   path_data: list of strings '/path/to/tomo.h5'
+    #   path_target: list of strings '/path/to/target.h5'
+    #   batch_size: int
+    #   objlist: list of dictionnaries
+    # OUTPUT:
+    #   batch_data: numpy array [batch_idx, z, y, x, channel] in our case only 1 channel
+    #   batch_target: numpy array [batch_idx, z, y, x, class_idx] is one-hot encoded
     def generate_batch_direct_read(self, path_data, path_target, batch_size, objlist=None):
         p_in = np.int(np.floor(self.dim_in / 2))
 
@@ -253,11 +285,11 @@ class Train(DeepFinder):
 
             # Load data and target patches:
             h5file = h5py.File(path_data[tomoID], 'r')
-            patch_data = h5file['dataset'][x - p_in:x + p_in, y - p_in:y + p_in, z - p_in:z + p_in]
+            patch_data = h5file['dataset'][z - p_in:z + p_in, y - p_in:y + p_in, x - p_in:x + p_in]
             h5file.close()
 
             h5file = h5py.File(path_target[tomoID], 'r')
-            patch_target = h5file['dataset'][x - p_in:x + p_in, y - p_in:y + p_in, z - p_in:z + p_in]
+            patch_target = h5file['dataset'][z - p_in:z + p_in, y - p_in:y + p_in, x - p_in:x + p_in]
             h5file.close()
 
             # Process the patches in order to be used by network:
@@ -275,6 +307,17 @@ class Train(DeepFinder):
 
         return batch_data, batch_target
 
+    # Generates batches for training and validation. In this version, the whole dataset has already been loaded into
+    # memory, and batch is sampled from there. Apart from that does the same as above.
+    # Is called when self.flag_direct_read=False
+    # INPUTS:
+    #   data: list of numpy arrays
+    #   target: list of numpy arrays
+    #   batch_size: int
+    #   objlist: list of dictionnaries
+    # OUTPUT:
+    #   batch_data: numpy array [batch_idx, z, y, x, channel] in our case only 1 channel
+    #   batch_target: numpy array [batch_idx, z, y, x, class_idx] is one-hot encoded
     def generate_batch_from_array(self, data, target, batch_size, objlist=None):
         p_in = np.int(np.floor(self.dim_in / 2))
 
@@ -304,8 +347,8 @@ class Train(DeepFinder):
             x, y, z = core_utils.get_patch_position(tomodim, p_in, objlist[index], self.Lrnd)
 
             # Get patch:
-            patch_data = sample_data[x - p_in:x + p_in, y - p_in:y + p_in, z - p_in:z + p_in]
-            patch_batch = sample_target[x - p_in:x + p_in, y - p_in:y + p_in, z - p_in:z + p_in]
+            patch_data  = sample_data[  z - p_in:z + p_in, y - p_in:y + p_in, x - p_in:x + p_in]
+            patch_batch = sample_target[z - p_in:z + p_in, y - p_in:y + p_in, x - p_in:x + p_in]
 
             # Process the patches in order to be used by network:
             patch_data = (patch_data - np.mean(patch_data)) / np.std(patch_data)  # normalize
@@ -344,6 +387,8 @@ class Segment(DeepFinder):
     #   weights_path: path to the .h5 file containing the network weights obtained by the training procedure (string)
     # OUTPUT:
     #   predArray: a numpy array containing the predicted score maps.
+    # Note: in this function x,y,z is actually z,y,x. Has no incidence when used. This note is for someone who wants
+    #       to understand this code.
     def launch(self, dataArray):
         dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:])  # normalize
         dataArray = np.pad(dataArray, self.pcrop, mode='constant', constant_values=0)  # zeropad

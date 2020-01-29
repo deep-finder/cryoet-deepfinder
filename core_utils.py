@@ -11,10 +11,13 @@ import matplotlib.pyplot as plt
 # INPUTS:
 #   path_data  : list of strings '/path/to/tomogram.ext'
 #   path_target: list of strings '/path/to/target.ext'
+#                The idx of above lists correspond to each other so that (path_data[idx], path_target[idx]) corresponds
+#                to a (tomog, target) pair
 #   dset_name  : can be usefull if files are stored as .h5
 # OUTPUTS:
 #   data_list  : list of 3D numpy arrays (tomograms)
 #   target_list: list of 3D numpy arrays (annotated tomograms)
+#                In the same way as for the inputs, (data_list[idx],target_list[idx]) corresponds to a (tomo,target) pair
 def load_dataset(path_data, path_target, dset_name='dataset'):
     data_list   = []
     target_list = []
@@ -23,7 +26,14 @@ def load_dataset(path_data, path_target, dset_name='dataset'):
         target_list.append(utils.read_array(path_target[idx], dset_name))
     return data_list, target_list
 
-
+# This function applies bootstrap (i.e. re-sampling) in case of unbalanced classes.
+# Given an objlist containing objects from various classes, this function outputs an equal amount of objects for each
+# class, each objects being uniformely sampled inside its class set.
+# INPUTS:
+#   objlist: list of dictionaries
+#   Nbs    : number of objects to sample from each class
+# OUTPUT:
+#   bs_idx : list of indexes corresponding to the bootstraped objects
 def get_bootstrap_idx(objlist,Nbs):
     # Get a vector containing the object class labels (from objlist):
     Nobj = len(objlist)
@@ -37,10 +47,19 @@ def get_bootstrap_idx(objlist,Nbs):
     # ->from label_list, sample Nbs objects from each class
     bs_idx = []
     for l in lblTAB:
-        bs_idx.append( np.random.choice(np.squeeze(np.asarray(np.nonzero(label_list==l))), Nbs) )
+        bs_idx.append( np.random.choice(np.squeeze(np.asarray(np.nonzero(label_list==l))), Nbs) ) # TODO: can be simplified
     bs_idx = np.concatenate(bs_idx)
     return bs_idx
-    
+
+# Takes position specified in 'obj', applies random shift to it, and then checks if the patch around this position is
+# out of the tomogram boundaries. If so, the position is shifted to that patch is inside the tomo boundaries.
+# INPUTS:
+#   tomodim: tuple (dimX,dimY,dimZ) containing size of tomogram
+#   p_in   : int lenght of patch in voxels
+#   obj    : dictionary obtained when calling objlist[idx]
+#   Lrnd   : int random shift in voxels applied to position
+# OUTPUTS:
+#   x,y,z  : int,int,int coordinates for sampling patch safely
 def get_patch_position(tomodim, p_in, obj, Lrnd):
     # sample at coordinates specified in obj=objlist[idx]
     x = int( obj['x'] )
@@ -56,9 +75,9 @@ def get_patch_position(tomodim, p_in, obj, Lrnd):
     if (x<p_in) : x = p_in
     if (y<p_in) : y = p_in
     if (z<p_in) : z = p_in
-    if (x>tomodim[0]-p_in): x = tomodim[0]-p_in
+    if (x>tomodim[2]-p_in): x = tomodim[2]-p_in
     if (y>tomodim[1]-p_in): y = tomodim[1]-p_in
-    if (z>tomodim[2]-p_in): z = tomodim[2]-p_in
+    if (z>tomodim[0]-p_in): z = tomodim[0]-p_in
 
     #else: # sample random position in tomogram
     #    x = np.int32( np.random.choice(range(p_in,tomodim[0]-p_in)) )
@@ -66,7 +85,11 @@ def get_patch_position(tomodim, p_in, obj, Lrnd):
     #    z = np.int32( np.random.choice(range(p_in,tomodim[0]-p_in)) )
     
     return x,y,z
-    
+
+# Saves training history as .h5 file.
+# INPUTS:
+#   history: dictionary object containing lists. These lists contain scores and metrics wrt epochs.
+#   filename: string '/path/to/net_train_history.h5'
 def save_history(history, filename):
     h5file = h5py.File(filename, 'w')
 
@@ -90,7 +113,11 @@ def save_history(history, filename):
 
     h5file.close()
     return
-    
+
+# Plots the training history as several graphs and saves them in an image file.
+# INPUTS:
+#   history: dictionary object containing lists. These lists contain scores and metrics wrt epochs.
+#   filename: string '/path/to/net_train_history_plot.png'
 def plot_history(history, filename):
     Ncl = len(history['val_f1'][0])
     legend_names = []
@@ -136,7 +163,7 @@ def plot_history(history, filename):
     fig.savefig(filename)
 
 
-# Following observer classes are needed to send prints to GUI if needed:
+# Following observer classes are needed to send prints to GUI:
 class observer_print:
     def display(message):
         print(message)

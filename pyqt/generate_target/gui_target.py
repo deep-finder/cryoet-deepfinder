@@ -95,7 +95,7 @@ class TargetGenerationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             tbuild.display('Loading initial volume ...')
             vol_initial = utils.read_array(path_initial_vol)
         else:
-            vol_initial = np.zeros((dim_x, dim_y, dim_z))
+            vol_initial = np.zeros((dim_z, dim_y, dim_x))
 
         if strategy == 'Shapes':
             target = tbuild.generate_with_shapes(objl, vol_initial, param_list)

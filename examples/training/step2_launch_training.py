@@ -27,6 +27,7 @@ Nclass = 13
 # Initialize training task:
 trainer = df.Train(Ncl=Nclass)
 trainer.path_out         = 'out/' # output path
+trainer.h5_dset_name     = 'dataset' # if training data is stored as h5, you can specify the h5 dataset
 trainer.dim_in           = 56 # patch size
 trainer.batch_size       = 25
 trainer.epochs           = 2
