@@ -1,9 +1,9 @@
 import sys
 sys.path.append('../../') # add parent folder to path
 
-import deepfind as df
-import utils
-import utils_objl as ol
+from deepfinder.inference import Cluster
+import deepfinder.utils.common as cm
+import deepfinder.utils.objl as ol
 
 # Input parameters:
 path_labelmap = 'out/tomo9_bin1_labelmap.mrc'
@@ -15,10 +15,10 @@ path_output = 'out/'
 
 
 # Load data:
-labelmapB = utils.read_array(path_labelmap)
+labelmapB = cm.read_array(path_labelmap)
 
 # Initialize clustering task:
-clust = df.Cluster(clustRadius=5)
+clust = Cluster(clustRadius=5)
 clust.sizeThr = cluster_size_threshold
 
 # Launch clustering (result stored in objlist): can take some time (37min on i7 cpu)

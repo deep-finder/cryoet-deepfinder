@@ -5,10 +5,10 @@ import os
 import threading
 
 sys.path.append('../../')
-import deepfind as df
-import core_utils
-import utils
-import utils_objl as ol
+
+from deepfinder.training import Train
+from deepfinder.utils import core
+from deepfinder.utils import objl as ol
 
 qtcreator_file  = 'gui_train.ui'
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtcreator_file)
@@ -53,7 +53,7 @@ class TrainingWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         rnd_shift        = int( self.le_rnd_shift.text() )
 
         # Initialize training:
-        trainer = df.Train(Ncl=Ncl)
+        trainer = Train(Ncl=Ncl)
         trainer.dim_in          = psize
         trainer.batch_size      = bsize
         trainer.epochs          = nepochs
@@ -63,7 +63,7 @@ class TrainingWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         trainer.flag_batch_bootstrap = flag_bootstrap
         trainer.Lrnd            = rnd_shift
 
-        trainer.set_observer(core_utils.observer_gui(self.print_signal))
+        trainer.set_observer(core.observer_gui(self.print_signal))
 
         # Load objlists:
         objl_train = ol.read_xml(path_objl_train)

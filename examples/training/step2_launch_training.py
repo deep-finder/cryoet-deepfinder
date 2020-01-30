@@ -1,8 +1,8 @@
 import sys
 sys.path.append('../../') # add parent folder to path
 
-import deepfind as df
-import utils_objl as ol
+from deepfinder.training import Train
+import deepfinder.utils.objl as ol
 
 # Input parameters:
 # path_data = ['/path/tomo1.mrc',
@@ -25,7 +25,7 @@ path_objl_valid = 'in/object_list_valid.xml'
 Nclass = 13
 
 # Initialize training task:
-trainer = df.Train(Ncl=Nclass)
+trainer = Train(Ncl=Nclass)
 trainer.path_out         = 'out/' # output path
 trainer.h5_dset_name     = 'dataset' # if training data is stored as h5, you can specify the h5 dataset
 trainer.dim_in           = 56 # patch size

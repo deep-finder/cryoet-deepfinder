@@ -6,47 +6,21 @@ from keras.optimizers import Adam
 from keras.utils import to_categorical
 
 from sklearn.metrics import precision_recall_fscore_support
-from sklearn.cluster import MeanShift
 
-import models
-import losses
+from . import models
+from . import losses
+# import models
+# import losses
 
-import utils
-import core_utils
-import utils_objl as ol
+from .utils import core
+from .utils import common as cm
+# import .utils.core as core
+# import .utils.common as cm
 
-# Note:
-# All imports relative to keras&tensorflow are done inside the constructor of classes that need it (i.e. Train and
-# Segment). This is not best practice, but importing tensorflow-related utilities takes time, and I only want to import
-# them when needed.
-# -> does not work cause 'to_categorical' is used in train method. This method does not see the import in class
-# constructor
 
-class DeepFinder:
+class TargetBuilder(core.DeepFinder):
     def __init__(self):
-        self.obs_list = [core_utils.observer_print]
-
-    # Useful for sending prints to GUI
-    def set_observer(self, obs):
-        self.obs_list.append(obs)
-
-    # "Master print" calls all observers for prints
-    def display(self, message):
-        for obs in self.obs_list: obs.display(message)
-
-
-# import time
-# class dummy(df):
-#     def __init__(self):
-#         df.__init__(self)
-#     def launch(self):
-#         for idx in range(5):
-#             self.display('Iteration '+str(idx)+' ...')
-#             time.sleep(1)
-
-class TargetBuilder(DeepFinder):
-    def __init__(self):
-        DeepFinder.__init__(self)
+        core.DeepFinder.__init__(self)
 
     # Generates segmentation targets from object list. Here macromolecules are annotated with their shape.
     # INPUTS
@@ -77,7 +51,7 @@ class TargetBuilder(DeepFinder):
 
             # Rotate ref:
             if phi!=None and psi!=None and the!=None:
-                ref = utils.rotate_array(ref, (phi, psi, the))
+                ref = cm.rotate_array(ref, (phi, psi, the))
                 ref = np.int8(np.round(ref))
 
             # Get the coordinates of object voxels in target_array
@@ -113,14 +87,14 @@ class TargetBuilder(DeepFinder):
         dim = [2*Rmax, 2*Rmax, 2*Rmax]
         ref_list = []
         for idx in range(len(radius_list)):
-            ref_list.append(utils.create_sphere(dim, radius_list[idx]))
+            ref_list.append(cm.create_sphere(dim, radius_list[idx]))
         target_array = self.generate_with_shapes(objl, target_array, ref_list)
         return target_array
 
 
-class Train(DeepFinder):
+class Train(core.DeepFinder):
     def __init__(self, Ncl):
-        DeepFinder.__init__(self)
+        core.DeepFinder.__init__(self)
         self.path_out = './'
         self.h5_dset_name = 'dataset' # if training set is stored as .h5 file, specify here in which h5 dataset the arrays are stored
 
@@ -133,7 +107,7 @@ class Train(DeepFinder):
         self.batch_size = 25
         self.epochs = 100
         self.steps_per_epoch = 100
-        self.Nvalid = 100  # number of samples for validation
+        self.Nvalid = 100  # number of samples for validation TODO: is not implemented !!!
         self.optimizer = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
 
         self.flag_direct_read = 1
@@ -151,7 +125,7 @@ class Train(DeepFinder):
     #   path_target   : a list containing the paths to target files (i.e. annotated volumes)
     #   objlist_train : list of dictionaries containing information about annotated objects (e.g. class, position)
     #                   In particular, the tomo_idx should correspond to the index of 'path_data' and 'path_target'.
-    #                   See utils_objl.py for more info about object lists.
+    #                   See utils/objl.py for more info about object lists.
     #                   During training, these coordinates are used for guiding the patch sampling procedure.
     #   objlist_valid : same as 'objlist_train', but objects contained in this list are not used for training,
     #                   but for validation. It allows to monitor the training and check for over/under-fitting. Ideally,
@@ -169,7 +143,7 @@ class Train(DeepFinder):
         # Load whole dataset:
         if self.flag_direct_read == False:
             self.display('Loading dataset ...')
-            data_list, target_list = core_utils.load_dataset(path_data, path_target, self.h5_dset_name)
+            data_list, target_list = core.load_dataset(path_data, path_target, self.h5_dset_name)
 
         self.display('Launch training ...')
 
@@ -231,8 +205,8 @@ class Train(DeepFinder):
             history = {'loss': hist_loss_train, 'acc': hist_acc_train, 'val_loss': hist_loss_valid,
                        'val_acc': hist_acc_valid, 'val_f1': hist_f1, 'val_recall': hist_recall,
                        'val_precision': hist_precision}
-            core_utils.save_history(history, self.path_out+'net_train_history.h5')
-            core_utils.plot_history(history, self.path_out+'net_train_history_plot.png')
+            core.save_history(history, self.path_out+'net_train_history.h5')
+            core.plot_history(history, self.path_out+'net_train_history_plot.png')
 
             if (e + 1) % 10 == 0:  # save weights every 10 epochs
                 self.net.save(self.path_out+'net_weights_epoch' + str(e + 1) + '.h5')
@@ -249,8 +223,8 @@ class Train(DeepFinder):
     #   - Two data augmentation techniques are applied:
     #       .. To gain invariance to translations, small random shifts are added to the positions.
     #       .. 180 degree rotation around tilt axis (this way missing wedge orientation remains the same).
-    #   - Also, bootstrap (i.e. re-sampling) can be applied so that we have an equal amount of each macromolecule in each batch.
-    #     This is usefull when a class is under-represented. Is applied when self.flag_batch_bootstrap=True
+    #   - Also, bootstrap (i.e. re-sampling) can be applied so that we have an equal amount of each macromolecule in
+    #     each batch. This is useful when a class is under-represented. Is applied when self.flag_batch_bootstrap=True
     # INPUTS:
     #   path_data: list of strings '/path/to/tomo.h5'
     #   path_target: list of strings '/path/to/target.h5'
@@ -267,7 +241,7 @@ class Train(DeepFinder):
 
         # The batch is generated by randomly sampling data patches.
         if self.flag_batch_bootstrap:  # choose from bootstrapped objlist
-            pool = core_utils.get_bootstrap_idx(objlist, Nbs=batch_size)
+            pool = core.get_bootstrap_idx(objlist, Nbs=batch_size)
         else:  # choose from whole objlist
             pool = range(0, len(objlist))
 
@@ -281,7 +255,7 @@ class Train(DeepFinder):
             tomodim = h5file['dataset'].shape  # get tomo dimensions without loading the array
             h5file.close()
 
-            x, y, z = core_utils.get_patch_position(tomodim, p_in, objlist[index], self.Lrnd)
+            x, y, z = core.get_patch_position(tomodim, p_in, objlist[index], self.Lrnd)
 
             # Load data and target patches:
             h5file = h5py.File(path_data[tomoID], 'r')
@@ -326,7 +300,7 @@ class Train(DeepFinder):
 
         # The batch is generated by randomly sampling data patches.
         if self.flag_batch_bootstrap:  # choose from bootstrapped objlist
-            pool = core_utils.get_bootstrap_idx(objlist, Nbs=batch_size)
+            pool = core.get_bootstrap_idx(objlist, Nbs=batch_size)
         else:  # choose from whole objlist
             pool = range(0, len(objlist))
 
@@ -344,7 +318,7 @@ class Train(DeepFinder):
             dim = sample_data.shape
 
             # Get patch position:
-            x, y, z = core_utils.get_patch_position(tomodim, p_in, objlist[index], self.Lrnd)
+            x, y, z = core.get_patch_position(tomodim, p_in, objlist[index], self.Lrnd)
 
             # Get patch:
             patch_data  = sample_data[  z - p_in:z + p_in, y - p_in:y + p_in, x - p_in:x + p_in]
@@ -364,165 +338,3 @@ class Train(DeepFinder):
                 batch_target[i] = np.rot90(batch_target[i], k=2, axes=(0, 2))
 
         return batch_data, batch_target
-
-
-class Segment(DeepFinder):
-    def __init__(self, Ncl, path_weights, patch_size=192):
-        DeepFinder.__init__(self)
-
-        self.Ncl = Ncl
-
-        # Segmentation, parameters for dividing data in patches:
-        self.P = patch_size  # patch length (in pixels) /!\ has to a multiple of 4 (because of 2 pooling layers), so that dim_in=dim_out
-        self.pcrop = 25  # how many pixels to crop from border (net model dependent)
-        self.poverlap = 55  # patch overlap (in pixels) (2*pcrop + 5)
-
-        # Build network:
-        self.net = models.my_model(self.P, self.Ncl)
-        self.net.load_weights(path_weights)
-
-    # This function enables to segment a tomogram. As tomograms are too large to be processed in one take, the tomogram is decomposed in smaller overlapping 3D patches.
-    # INPUTS:
-    #   dataArray: the volume to be segmented (3D numpy array)
-    #   weights_path: path to the .h5 file containing the network weights obtained by the training procedure (string)
-    # OUTPUT:
-    #   predArray: a numpy array containing the predicted score maps.
-    # Note: in this function x,y,z is actually z,y,x. Has no incidence when used. This note is for someone who wants
-    #       to understand this code.
-    def launch(self, dataArray):
-        dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:])  # normalize
-        dataArray = np.pad(dataArray, self.pcrop, mode='constant', constant_values=0)  # zeropad
-        dim = dataArray.shape
-
-        l = np.int(self.P / 2)
-        lcrop = np.int(l - self.pcrop)
-        step = np.int(2 * l + 1 - self.poverlap)
-
-        # Get patch centers:
-        pcenterX = list(range(l, dim[0] - l,
-                              step))  # list() necessary for py3 (in py2 range() returns type 'list' but in py3 it returns type 'range')
-        pcenterY = list(range(l, dim[1] - l, step))
-        pcenterZ = list(range(l, dim[2] - l, step))
-
-        # If there are still few pixels at the end:
-        if pcenterX[-1] < dim[0] - l:
-            pcenterX = pcenterX + [dim[0] - l, ]
-        if pcenterY[-1] < dim[1] - l:
-            pcenterY = pcenterY + [dim[1] - l, ]
-        if pcenterZ[-1] < dim[2] - l:
-            pcenterZ = pcenterZ + [dim[2] - l, ]
-
-        Npatch = len(pcenterX) * len(pcenterY) * len(pcenterZ)
-        self.display('Data array is divided in ' + str(Npatch) + ' patches ...')
-
-        # ---------------------------------------------------------------
-        # Process data in patches:
-        start = time.time()
-
-        predArray = np.zeros(dim + (self.Ncl,))
-        normArray = np.zeros(dim)
-        patchCount = 1
-        for x in pcenterX:
-            for y in pcenterY:
-                for z in pcenterZ:
-                    self.display('Segmenting patch ' + str(patchCount) + ' / ' + str(Npatch) + ' ...')
-                    patch = dataArray[x - l:x + l, y - l:y + l, z - l:z + l]
-                    patch = np.reshape(patch, (1, self.P, self.P, self.P, 1))  # reshape for keras [batch,x,y,z,channel]
-                    pred = self.net.predict(patch, batch_size=1)
-
-                    predArray[x - lcrop:x + lcrop, y - lcrop:y + lcrop, z - lcrop:z + lcrop, :] = predArray[
-                                                                                                  x - lcrop:x + lcrop,
-                                                                                                  y - lcrop:y + lcrop,
-                                                                                                  z - lcrop:z + lcrop,
-                                                                                                  :] + pred[0,
-                                                                                                       l - lcrop:l + lcrop,
-                                                                                                       l - lcrop:l + lcrop,
-                                                                                                       l - lcrop:l + lcrop,
-                                                                                                       :]
-                    normArray[x - lcrop:x + lcrop, y - lcrop:y + lcrop, z - lcrop:z + lcrop] = normArray[
-                                                                                               x - lcrop:x + lcrop,
-                                                                                               y - lcrop:y + lcrop,
-                                                                                               z - lcrop:z + lcrop] + np.ones(
-                        (self.P - 2 * self.pcrop, self.P - 2 * self.pcrop, self.P - 2 * self.pcrop))
-
-                    patchCount += 1
-
-                    # Normalize overlaping regions:
-        for C in range(0, self.Ncl):
-            predArray[:, :, :, C] = predArray[:, :, :, C] / normArray
-
-        end = time.time()
-        self.display("Model took %0.2f seconds to predict" % (end - start))
-
-        predArray = predArray[self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, :]  # unpad
-        return predArray  # predArray is the array containing the scoremaps
-
-    # Similar to function 'segment', only here the tomogram is not decomposed in smaller patches, but processed in one take. However, the tomogram array should be cubic, and the cube length should be a multiple of 4. This function has been developped for tests on synthetic data. I recommend using 'segment' rather than 'segment_single_block'.
-    # INPUTS:
-    #   dataArray: the volume to be segmented (3D numpy array)
-    #   weights_path: path to the .h5 file containing the network weights obtained by the training procedure (string)
-    # OUTPUT:
-    #   predArray: a numpy array containing the predicted score maps.
-    def launch_single_block(self, dataArray):
-        dim = dataArray.shape
-        dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:])  # normalize
-        dataArray = np.pad(dataArray, self.pcrop)  # zeropad
-        dataArray = np.reshape(dataArray, (1, dim[0], dim[1], dim[2], 1))  # reshape for keras [batch,x,y,z,channel]
-
-        pred = self.net.predict(dataArray, batch_size=1)
-        predArray = pred[0, :, :, :, :]
-        predArray = predArray[self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, :]  # unpad
-
-        return predArray
-
-class Cluster(DeepFinder):
-    def __init__(self, clustRadius):
-        DeepFinder.__init__(self)
-        self.clustRadius = clustRadius
-        self.sizeThr = 1
-
-    # This function analyzes the segmented tomograms (i.e. labelmap), identifies individual macromolecules and outputs their coordinates. This is achieved with a clustering algorithm (meanshift).
-    # INPUTS:
-    #   labelmap: segmented tomogram (3D numpy array)
-    #   sizeThr : cluster size (i.e. macromolecule size) (in voxels), under which a detected object is considered a false positive and is discarded
-    #   clustRadius: parameter for clustering algorithm. Corresponds to average object radius (in voxels)
-    # OUTPUT:
-    #   objlist: a xml structure containing infos about detected objects: coordinates, class label and cluster size
-    def launch(self, labelmap):
-        Nclass = len(np.unique(labelmap)) - 1  # object classes only (background class not considered)
-
-        objvoxels = np.nonzero(labelmap > 0)
-        objvoxels = np.array(objvoxels).T  # convert to numpy array and transpose
-
-        self.display('Launch clustering ...')
-        start = time.time()
-        clusters = MeanShift(bandwidth=self.clustRadius).fit(objvoxels)
-        end = time.time()
-        self.display("Clustering took %0.2f seconds" % (end - start))
-
-        Nclust = clusters.cluster_centers_.shape[0]
-
-        self.display('Analyzing clusters ...')
-        objlist = []
-        labelcount = np.zeros((Nclass,))
-        for c in range(Nclust):
-            clustMemberIndex = np.nonzero(clusters.labels_ == c)
-
-            # Get cluster size and position:
-            clustSize = np.size(clustMemberIndex)
-            centroid = clusters.cluster_centers_[c]
-
-            # Attribute a macromolecule class to cluster:
-            clustMember = []
-            for m in range(clustSize):  # get labels of cluster members
-                clustMemberCoords = objvoxels[clustMemberIndex[0][m], :]
-                clustMember.append(labelmap[clustMemberCoords[0], clustMemberCoords[1], clustMemberCoords[2]])
-
-            for l in range(Nclass):  # get most present label in cluster
-                labelcount[l] = np.size(np.nonzero(np.array(clustMember) == l + 1))
-            winninglabel = np.argmax(labelcount) + 1
-
-            objlist = ol.add_obj(objlist, label=winninglabel, coord=centroid, cluster_size=clustSize)
-
-        self.display('Finished !')
-        return objlist

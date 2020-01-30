@@ -4,29 +4,15 @@ from PyQt5 import QtCore, QtGui, QtWidgets, uic
 import threading
 
 sys.path.append('../../')
-import deepfind as df
-import core_utils
-import utils
-import utils_objl as ol
+# import deepfind as df
+# import core_utils
+# import utils
+# import utils_objl as ol
 
-from PyQt5.QtCore import QThread
-
-# class Worker(QThread):
-#     def __init__(self, clust, path_lmap, path_objl):
-#         QThread.__init__(self)
-#         self.clust  = clust
-#         self.path_lmap = path_lmap
-#         self.path_objl = path_objl
-#     def start(self):
-#         # Load label map:
-#         labelmap = utils.read_array(self.path_lmap)
-#
-#         # Launch clustering (result stored in objlist)
-#         objlist = self.clust.launch(labelmap)
-#
-#         # Save objlist:
-#         ol.write_xml(objlist, self.path_objl)
-
+from deepfinder.inference import Cluster
+from deepfinder.utils import core
+from deepfinder.utils import common as cm
+from deepfinder.utils import objl as ol
 
 
 qtcreator_file  = 'gui_clustering.ui'
@@ -48,43 +34,23 @@ class ClusteringWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @QtCore.pyqtSlot()
     def on_clicked(self):
-        threading.Thread(target=self.launch_clustering, daemon=True).start()
+        threading.Thread(target=self.launch_process, daemon=True).start()
 
-        # # Get parameters from line edit widgets:
-        # path_lmap = self.line_path_lmap.text()
-        # cradius = int(self.line_cradius.text())
-        # csize_thr = int(self.line_csize_thr.text())
-        # path_objl = self.line_path_objl.text()
-        #
-        # # # Initialize deepfinder:
-        # clust = df.cluster(clustRadius=cradius)
-        # clust.sizeThr = csize_thr
-        # clust.set_observer(core_utils.observer_gui(self.print_signal))
-        #
-        # # Create and launch thread:
-        # w = Worker(clust, path_lmap, path_objl)
-        # w.start()
-        # print(str(w.currentThreadId()))
-
-        # dummy = df.dummy()
-        # dummy.set_observer(core_utils.observer_gui(self.print_signal))
-        # w = DummyWorker(dummy)
-        # w.start()
-
-    def launch_clustering(self):
+    def launch_process(self):
         # Get parameters from line edit widgets:
         path_lmap = self.le_path_lmap.text()
         cradius   = int( self.le_cradius.text() )
         csize_thr = int( self.le_csize_thr.text() )
         path_objl = self.le_path_objl.text()
 
-        # Load label map:
-        labelmap = utils.read_array(path_lmap)
-
         # Initialize deepfinder:
-        clust = df.Cluster(clustRadius=cradius)
+        clust = Cluster(clustRadius=cradius)
         clust.sizeThr = csize_thr
-        clust.set_observer(core_utils.observer_gui(self.print_signal))
+        clust.set_observer(core.observer_gui(self.print_signal))
+
+        # Load label map:
+        clust.display('Loading label map ...')
+        labelmap = cm.read_array(path_lmap)
 
         # Launch clustering (result stored in objlist)
         objlist = clust.launch(labelmap)
@@ -100,6 +66,7 @@ class ClusteringWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     #   clust: Cluster object, is needed to access clust.display() method
     #   objlist: input objl
     def display_result(self, clust, objlist):
+        clust.display('----------------------------------------')
         clust.display('A total of ' + str(len(objlist)) + ' objects have been found.')
         lbl_list = ol.get_labels(objlist)
         for lbl in lbl_list:

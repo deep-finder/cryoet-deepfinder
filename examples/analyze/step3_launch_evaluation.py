@@ -7,8 +7,8 @@
 import sys
 sys.path.append('../../') # add parent folder to path
 
-import utils_objl as ol
 import os
+import deepfinder.utils.objl as ol
 
 # First, we load the object list produced by DeepFinder:
 objl = ol.read_xml('result/tomo9_objlist_thresholded.xml')

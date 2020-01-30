@@ -5,10 +5,11 @@ import os
 import threading
 
 sys.path.append('../../')
-import deepfind as df
-import core_utils
-import utils
-import utils_smap as sm
+
+from deepfinder.inference import Segment
+from deepfinder.utils import core
+from deepfinder.utils import common as cm
+from deepfinder.utils import smap as sm
 
 qtcreator_file  = 'gui_segment.ui'
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtcreator_file)
@@ -40,11 +41,11 @@ class SegmentationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
         # Load data:
-        data = utils.read_array(path_data)
+        data = cm.read_array(path_data)
 
         # Initialize segmentation:
-        seg = df.Segment(Ncl=Ncl, path_weights=path_weights, patch_size=psize)
-        seg.set_observer(core_utils.observer_gui(self.print_signal))
+        seg = Segment(Ncl=Ncl, path_weights=path_weights, patch_size=psize)
+        seg.set_observer(core.observer_gui(self.print_signal))
 
         # Segment data:
         scoremaps = seg.launch(data)
@@ -52,14 +53,14 @@ class SegmentationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         seg.display('Saving labelmap ...')
         # Get labelmap from scoremaps and save:
         labelmap = sm.to_labelmap(scoremaps)
-        utils.write_array(labelmap, path_lmap)
+        cm.write_array(labelmap, path_lmap)
 
         # Get binned labelmap and save:
         if self.cb_bin.isChecked():
             s = os.path.splitext(path_lmap)
             scoremapsB = sm.bin(scoremaps)
             labelmapB = sm.to_labelmap(scoremapsB)
-            utils.write_array(labelmapB, s[0]+'_binned'+s[1])
+            cm.write_array(labelmapB, s[0]+'_binned'+s[1])
 
         seg.display('Finished !')
 

@@ -5,10 +5,11 @@ import threading
 
 sys.path.append('../../')
 import numpy as np
-import deepfind as df
-import core_utils
-import utils
-import utils_objl as ol
+
+from deepfinder.training import TargetBuilder
+from deepfinder.utils import core
+from deepfinder.utils import common as cm
+from deepfinder.utils import objl as ol
 
 
 qtcreator_file  = 'gui_target.ui'
@@ -88,12 +89,12 @@ class TargetGenerationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         objl = ol.read_xml(path_objl)
 
         # Initialize target generation:
-        tbuild = df.TargetBuilder()
-        tbuild.set_observer(core_utils.observer_gui(self.print_signal))
+        tbuild = TargetBuilder()
+        tbuild.set_observer(core.observer_gui(self.print_signal))
 
         if self.cb_initialize.isChecked():
             tbuild.display('Loading initial volume ...')
-            vol_initial = utils.read_array(path_initial_vol)
+            vol_initial = cm.read_array(path_initial_vol)
         else:
             vol_initial = np.zeros((dim_z, dim_y, dim_x))
 
@@ -104,7 +105,7 @@ class TargetGenerationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             target = tbuild.generate_with_spheres(objl, vol_initial, param_list)
 
         tbuild.display('Saving target ...')
-        utils.write_array(target, path_target)
+        cm.write_array(target, path_target)
         tbuild.display('Done!')
 
 

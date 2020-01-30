@@ -1,10 +1,36 @@
+# This file contains classes/functions that are judged not necessary for the user.
+
 import numpy as np
-import utils
 import h5py
 
 import matplotlib
 matplotlib.use('agg') # necessary else: AttributeError: 'NoneType' object has no attribute 'is_interactive'
 import matplotlib.pyplot as plt
+
+from . import common as cm
+
+class DeepFinder:
+    def __init__(self):
+        self.obs_list = [observer_print]
+
+    # Useful for sending prints to GUI
+    def set_observer(self, obs):
+        self.obs_list.append(obs)
+
+    # "Master print" calls all observers for prints
+    def display(self, message):
+        for obs in self.obs_list: obs.display(message)
+
+# Following observer classes are needed to send prints to GUI:
+class observer_print:
+    def display(message):
+        print(message)
+
+class observer_gui:
+    def __init__(self, pyqt_signal):
+        self.sig = pyqt_signal
+    def display(self, message):
+        self.sig.emit(message)
 
 
 # This functions loads the training set at specified paths.
@@ -18,12 +44,13 @@ import matplotlib.pyplot as plt
 #   data_list  : list of 3D numpy arrays (tomograms)
 #   target_list: list of 3D numpy arrays (annotated tomograms)
 #                In the same way as for the inputs, (data_list[idx],target_list[idx]) corresponds to a (tomo,target) pair
+# TODO: move to common?
 def load_dataset(path_data, path_target, dset_name='dataset'):
     data_list   = []
     target_list = []
     for idx in range(0,len(path_data)):
-        data_list.append(  utils.read_array(path_data[idx]  , dset_name))
-        target_list.append(utils.read_array(path_target[idx], dset_name))
+        data_list.append(  cm.read_array(path_data[idx]  , dset_name))
+        target_list.append(cm.read_array(path_target[idx], dset_name))
     return data_list, target_list
 
 # This function applies bootstrap (i.e. re-sampling) in case of unbalanced classes.
@@ -162,14 +189,3 @@ def plot_history(history, filename):
 
     fig.savefig(filename)
 
-
-# Following observer classes are needed to send prints to GUI:
-class observer_print:
-    def display(message):
-        print(message)
-
-class observer_gui:
-    def __init__(self, pyqt_signal):
-        self.sig = pyqt_signal
-    def display(self, message):
-        self.sig.emit(message)

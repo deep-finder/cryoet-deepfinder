@@ -1,7 +1,7 @@
 import numpy as np
 import h5py
 
-import utils
+from . import common as cm
 
 def bin(scoremaps):
     dim = scoremaps.shape
@@ -12,7 +12,7 @@ def bin(scoremaps):
     dimB = (dimB0, dimB1, dimB2, Ncl)
     scoremapsB = np.zeros(dimB)
     for cl in range(0,Ncl):
-        scoremapsB[:,:,:,cl] = utils.bin_array(scoremaps[:,:,:,cl])
+        scoremapsB[:,:,:,cl] = cm.bin_array(scoremaps[:,:,:,cl])
     return scoremapsB
     
 def to_labelmap(scoremaps):
