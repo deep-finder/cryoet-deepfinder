@@ -42,6 +42,7 @@ class TrainingWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         path_objl_train  = self.le_path_objl_train.text()
         path_objl_valid  = self.le_path_objl_valid.text()
+        path_out         = self.le_path_out.text()
         Ncl              = int(self.le_nclass.text())
         psize            = int(self.sb_psize.value())
         bsize            = int( self.le_bsize.text() )
@@ -54,6 +55,7 @@ class TrainingWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Initialize training:
         trainer = Train(Ncl=Ncl)
+        trainer.path_out        = path_out
         trainer.dim_in          = psize
         trainer.batch_size      = bsize
         trainer.epochs          = nepochs

@@ -137,7 +137,7 @@
        <item row="0" column="1" colspan="6">
         <widget class="QLineEdit" name="le_path_objl">
          <property name="text">
-          <string>/Users/emoebel/serpico-fs2/github/deep-finder/unit_tests/deepfind/generate_target/spheres/in/objl_tomo0.xml</string>
+          <string>../../examples/training/in/object_list_tomo0.xml</string>
          </property>
         </widget>
        </item>
