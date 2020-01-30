@@ -34,7 +34,6 @@ labelmapB  = sm.to_labelmap(scoremapsB)
 # Save labelmaps:
 cm.write_array(labelmap , path_output+'tomo9_labelmap.mrc')
 cm.write_array(labelmapB, path_output+'tomo9_bin1_labelmap.mrc')
-cm.write_array(labelmapB, path_output+'tomo9_bin1_labelmap.mrc')
 
 # Print out visualizations of the test tomogram and obtained segmentation:
 cm.plot_volume_orthoslices(tomo    , path_output+'orthoslices_tomo9.png')
