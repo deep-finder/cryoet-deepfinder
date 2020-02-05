@@ -18,15 +18,26 @@ class DisplayWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.dwidget = DisplayOrthoslicesWidget()
         self.layout.addWidget(self.dwidget)
 
-        self.button_load.clicked.connect(self.on_button_clicked)
-
+        self.button_load_tomo.clicked.connect(self.on_button_tomo_clicked)
+        self.button_load_lmap.clicked.connect(self.on_button_lmap_clicked)
+        self.slider_opacity.valueChanged.connect(self.on_slider_value_changed)
 
     @QtCore.pyqtSlot()
-    def on_button_clicked(self):
-        path_data = self.le_path.text()
-        vol = cm.read_array(path_data)
+    def on_button_tomo_clicked(self):
+        path_tomo = self.le_path_tomo.text()
+        vol = cm.read_array(path_tomo)
         self.dwidget.set_vol(vol)
 
+    @QtCore.pyqtSlot()
+    def on_button_lmap_clicked(self):
+        path_lmap = self.le_path_lmap.text()
+        lmap = cm.read_array(path_lmap)
+        self.dwidget.set_lmap(lmap)
+
+    @QtCore.pyqtSlot()
+    def on_slider_value_changed(self):
+        opacity = float(self.slider_opacity.value()) / 100
+        self.dwidget.set_lmap_opacity(opacity)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
