@@ -1,13 +1,12 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
+sys.path.append('../')
+from custom_theme import set_custom_theme
+
 import threading
 
 sys.path.append('../../')
-# import deepfind as df
-# import core_utils
-# import utils
-# import utils_objl as ol
 
 from deepfinder.inference import Cluster
 from deepfinder.utils import core
@@ -75,6 +74,7 @@ class ClusteringWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
+    set_custom_theme(app)
     window = ClusteringWindow()
     window.show()
     sys.exit(app.exec_())

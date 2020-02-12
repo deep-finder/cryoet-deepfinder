@@ -1,11 +1,13 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
+sys.path.append('../')
+from custom_theme import set_custom_theme
+
 import os
 import threading
 
 sys.path.append('../../')
-
 from deepfinder.training import Train
 from deepfinder.utils import core
 from deepfinder.utils import objl as ol
@@ -77,6 +79,7 @@ class TrainingWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
+    set_custom_theme(app)
     window = TrainingWindow()
     window.show()
     sys.exit(app.exec_())

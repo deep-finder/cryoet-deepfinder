@@ -1,6 +1,9 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
+sys.path.append('../')
+from custom_theme import set_custom_theme
+
 import threading
 
 sys.path.append('../../')
@@ -111,6 +114,7 @@ class TargetGenerationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
+    set_custom_theme(app)
     window = TargetGenerationWindow()
     window.show()
     sys.exit(app.exec_())

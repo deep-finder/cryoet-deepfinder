@@ -1,11 +1,13 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
+sys.path.append('../')
+from custom_theme import set_custom_theme
+
 import os
 import threading
 
 sys.path.append('../../')
-
 from deepfinder.inference import Segment
 from deepfinder.utils import core
 from deepfinder.utils import common as cm
@@ -67,6 +69,7 @@ class SegmentationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
+    set_custom_theme(app)
     window = SegmentationWindow()
     window.show()
     sys.exit(app.exec_())
