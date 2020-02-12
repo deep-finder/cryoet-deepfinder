@@ -30,8 +30,7 @@ class DisplayWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.slider_contrast_min.valueChanged.connect(self.on_slider_value_changed_contrast_min)
         self.slider_contrast_max.valueChanged.connect(self.on_slider_value_changed_contrast_max)
 
-        # self.button_zoomin.clicked.connect(self.on_button_zoomin)
-        # self.button_zoomout.clicked.connect(self.on_button_zoomout)
+        self.button_denoise.clicked.connect(self.on_button_denoised)
 
     @QtCore.pyqtSlot()
     def on_button_tomo_clicked(self):
@@ -40,6 +39,10 @@ class DisplayWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.dwidget.set_vol(vol)
         self.slider_contrast_min.setValue(self.dataToSliderValue(self.dwidget.levels[0]))
         self.slider_contrast_max.setValue(self.dataToSliderValue(self.dwidget.levels[1]))
+
+        # Automatically propose a value for sigma_noise:
+        sigma_noise = int( 0.7*self.dwidget.vol_sig )
+        self.le_sigma_noise.setText(str(sigma_noise))
 
     @QtCore.pyqtSlot()
     def on_button_lmap_clicked(self):
@@ -78,15 +81,10 @@ class DisplayWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         scale = float(self.slider_zoom.value())/10
         self.dwidget.zoom_slices((scale,scale))
 
-    # @QtCore.pyqtSlot()
-    # def on_button_zoomin(self):
-    #     scale = 0.8
-    #     self.dwidget.zoom_slices(scale)
-
-    # @QtCore.pyqtSlot()
-    # def on_button_zoomout(self):
-    #     scale = 1.2
-    #     self.dwidget.zoom_slices(scale)
+    @QtCore.pyqtSlot()
+    def on_button_denoised(self):
+        sigma_noise = float( self.le_sigma_noise.text() )
+        self.dwidget.denoise_slices(sigma_noise)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

@@ -82,6 +82,8 @@ class DisplayOrthoslicesWidget(QWidget):
         self.levels = (None,None)
         self.vol_min = None
         self.vol_max = None
+        self.vol_mu = None
+        self.vol_sig = None
         self.x = None
         self.y = None
         self.z = None
@@ -124,9 +126,9 @@ class DisplayOrthoslicesWidget(QWidget):
         self.x = np.int(np.round(self.dim[2] / 2))
         self.y = np.int(np.round(self.dim[1] / 2))
         self.z = np.int(np.round(self.dim[0] / 2))
-        mu = np.mean(vol)
-        sig = np.std(vol)
-        self.levels = (mu-5*sig,mu+5*sig)
+        self.vol_mu = np.mean(vol)
+        self.vol_sig = np.std(vol)
+        self.levels = (self.vol_mu-5*self.vol_sig,self.vol_mu+5*self.vol_sig)
         self.vol_min = np.min(vol)
         self.vol_max = np.max(vol)
 
@@ -160,6 +162,7 @@ class DisplayOrthoslicesWidget(QWidget):
         #self.vb_xy.setLimits(xMin=0, xMax=self.dim[2], yMin=0, yMax=self.dim[1])
         #self.vb_zx.setLimits(xMin=0, xMax=self.dim[2], yMin=0, yMax=self.dim[0])
         #self.vb_zy.setLimits(xMin=0, xMax=self.dim[0], yMin=0, yMax=self.dim[1])
+
 
     def set_vol_levels(self, levels):
         self.levels = levels
@@ -281,14 +284,14 @@ class DisplayOrthoslicesWidget(QWidget):
         self.vb_zy.set_zoom_center(self.z, self.y)
         self.vb_zx.set_zoom_center(self.x, self.z)
 
-    # def denoise_slices(self, sigma):
-    #     slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
-    #     slice_xy = cm.denoise2D(slice_xy, sigma)
-    #     slice_zx = cm.denoise2D(slice_zx, sigma)
-    #     slice_zy = cm.denoise2D(slice_zy, sigma)
-    #     self.img_xy.setImage(slice_xy)
-    #     self.img_zx.setImage(slice_zx)
-    #     self.img_zy.setImage(slice_zy)
+    def denoise_slices(self, sigma):
+        slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
+        slice_xy = cm.denoise2D(slice_xy, sigma)
+        slice_zx = cm.denoise2D(slice_zx, sigma)
+        slice_zy = cm.denoise2D(slice_zy, sigma)
+        self.img_xy.setImage(slice_xy)
+        self.img_zx.setImage(slice_zx)
+        self.img_zy.setImage(slice_zy)
 
 
 # ViewBox has been subclassed to override wheelEvent. In default version, mouse wheel controls zoom towards where the
