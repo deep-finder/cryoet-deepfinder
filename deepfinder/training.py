@@ -114,9 +114,6 @@ class Train(core.DeepFinder):
         self.flag_batch_bootstrap = 0
         self.Lrnd = 13  # random shifts applied when sampling data- and target-patches (in voxels)
 
-        # Build network:
-        self.net.compile(optimizer=self.optimizer, loss=losses.tversky_loss, metrics=['accuracy'])
-
     # This function launches the training procedure. For each epoch, an image is plotted, displaying the progression
     # with different metrics: loss, accuracy, f1-score, recall, precision. Every 10 epochs, the current network weights
     # are saved.
@@ -140,6 +137,9 @@ class Train(core.DeepFinder):
     #                        between the data server and the GPU host should be high enough, else the procedure becomes
     #                        very slow.
     def launch(self, path_data, path_target, objlist_train, objlist_valid):
+        # Build network (not in constructor, else not possible to init model with weights from previous train round):
+        self.net.compile(optimizer=self.optimizer, loss=losses.tversky_loss, metrics=['accuracy'])
+
         # Load whole dataset:
         if self.flag_direct_read == False:
             self.display('Loading dataset ...')
