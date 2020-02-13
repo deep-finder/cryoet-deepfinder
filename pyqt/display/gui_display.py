@@ -37,7 +37,14 @@ class DisplayWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path_tomo = self.le_path_tomo.text()
         vol = cm.read_array(path_tomo)
         self.dwidget.set_vol(vol)
+
+        # Set contrast sliders:
+        self.slider_contrast_min.setMinimum(self.dataToSliderValue(self.dwidget.vol_min))
+        self.slider_contrast_min.setMaximum(self.dataToSliderValue(self.dwidget.vol_mu))
         self.slider_contrast_min.setValue(self.dataToSliderValue(self.dwidget.levels[0]))
+
+        self.slider_contrast_max.setMinimum(self.dataToSliderValue(self.dwidget.vol_mu))
+        self.slider_contrast_max.setMaximum(self.dataToSliderValue(self.dwidget.vol_max))
         self.slider_contrast_max.setValue(self.dataToSliderValue(self.dwidget.levels[1]))
 
         # Automatically propose a value for sigma_noise:
@@ -59,7 +66,7 @@ class DisplayWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def on_slider_value_changed_contrast_min(self):
         levels = self.dwidget.levels
         cmin = self.slider_contrast_min.value()
-        self.slider_contrast_max.setMinimum(cmin)
+        #self.slider_contrast_max.setMinimum(cmin)
         cmin = self.sliderToDataValue(float(cmin))
         self.dwidget.set_vol_levels((cmin, levels[1]))
 
@@ -67,7 +74,7 @@ class DisplayWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def on_slider_value_changed_contrast_max(self):
         levels = self.dwidget.levels
         cmax = self.slider_contrast_max.value()
-        self.slider_contrast_min.setMaximum(cmax)
+        #self.slider_contrast_min.setMaximum(cmax)
         cmax = self.sliderToDataValue(float(cmax))
         self.dwidget.set_vol_levels((levels[0], cmax))
 

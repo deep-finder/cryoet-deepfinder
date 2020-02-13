@@ -133,9 +133,9 @@ class DisplayOrthoslicesWidget(QWidget):
         self.vol_max = np.max(vol)
 
         slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
-        self.img_xy.setImage(slice_xy, autoLevels=False, levels=self.levels)
-        self.img_zx.setImage(slice_zx, autoLevels=False, levels=self.levels)
-        self.img_zy.setImage(slice_zy, autoLevels=False, levels=self.levels)
+        self.img_xy.setImage(slice_xy, levels=self.levels)
+        self.img_zx.setImage(slice_zx, levels=self.levels)
+        self.img_zy.setImage(slice_zy, levels=self.levels)
 
         self.lineV_xy.setPos(self.x)
         self.lineH_xy.setPos(self.y)
@@ -225,8 +225,8 @@ class DisplayOrthoslicesWidget(QWidget):
                 self.x = x
                 self.y = y
                 slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
-                self.img_zy.setImage(slice_zy)
-                self.img_zx.setImage(slice_zx)
+                self.img_zy.setImage(slice_zy, levels=self.levels)
+                self.img_zx.setImage(slice_zx, levels=self.levels)
                 if self.flag_lmap:
                     lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
                     self.img_lmap_zy.setImage(lmap_zy)
@@ -245,8 +245,8 @@ class DisplayOrthoslicesWidget(QWidget):
                 self.y = y
                 self.z = z
                 slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
-                self.img_xy.setImage(slice_xy)
-                self.img_zx.setImage(slice_zx)
+                self.img_xy.setImage(slice_xy, levels=self.levels)
+                self.img_zx.setImage(slice_zx, levels=self.levels)
                 if self.flag_lmap:
                     lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
                     self.img_lmap_xy.setImage(lmap_xy)
@@ -265,8 +265,8 @@ class DisplayOrthoslicesWidget(QWidget):
                 self.x = x
                 self.z = z
                 slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
-                self.img_xy.setImage(slice_xy)
-                self.img_zy.setImage(slice_zy)
+                self.img_xy.setImage(slice_xy, levels=self.levels)
+                self.img_zy.setImage(slice_zy, levels=self.levels)
                 if self.flag_lmap:
                     lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
                     self.img_lmap_xy.setImage(lmap_xy)
@@ -289,9 +289,9 @@ class DisplayOrthoslicesWidget(QWidget):
         slice_xy = cm.denoise2D(slice_xy, sigma)
         slice_zx = cm.denoise2D(slice_zx, sigma)
         slice_zy = cm.denoise2D(slice_zy, sigma)
-        self.img_xy.setImage(slice_xy)
-        self.img_zx.setImage(slice_zx)
-        self.img_zy.setImage(slice_zy)
+        self.img_xy.setImage(slice_xy, levels=self.levels)
+        self.img_zx.setImage(slice_zx, levels=self.levels)
+        self.img_zy.setImage(slice_zy, levels=self.levels)
 
 
 # ViewBox has been subclassed to override wheelEvent. In default version, mouse wheel controls zoom towards where the
