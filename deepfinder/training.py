@@ -4,18 +4,15 @@ import time
 
 from keras.optimizers import Adam
 from keras.utils import to_categorical
+import keras.backend as K
 
 from sklearn.metrics import precision_recall_fscore_support
 
 from . import models
 from . import losses
-# import models
-# import losses
-
 from .utils import core
 from .utils import common as cm
-# import .utils.core as core
-# import .utils.common as cm
+
 
 
 class TargetBuilder(core.DeepFinder):
@@ -107,7 +104,7 @@ class Train(core.DeepFinder):
         self.batch_size = 25
         self.epochs = 100
         self.steps_per_epoch = 100
-        self.Nvalid = 100  # number of samples for validation TODO: is not implemented !!!
+        self.steps_per_valid = 10  # number of samples for validation
         self.optimizer = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
 
         self.flag_direct_read = 1
@@ -136,6 +133,8 @@ class Train(core.DeepFinder):
     #                        usefull when the dataset is too large to load into memory. However, the transfer speed
     #                        between the data server and the GPU host should be high enough, else the procedure becomes
     #                        very slow.
+    # TODO: delete flag_direct_read. Launch should detect if direct_read is desired by checking if input data_list and
+    #       target_list contain str (path) or numpy array
     def launch(self, path_data, path_target, objlist_train, objlist_valid):
         # Build network (not in constructor, else not possible to init model with weights from previous train round):
         self.net.compile(optimizer=self.optimizer, loss=losses.tversky_loss, metrics=['accuracy'])
@@ -161,38 +160,48 @@ class Train(core.DeepFinder):
         for e in range(self.epochs):
             # TRAINING:
             start = time.time()
+            list_loss_train = []
+            list_acc_train = []
             for it in range(self.steps_per_epoch):
                 if self.flag_direct_read:
-                    batch_data, batch_target = self.generate_batch_direct_read(path_data, path_target, self.batch_size,
-                                                                               objlist_train)
+                    batch_data, batch_target = self.generate_batch_direct_read(path_data, path_target, self.batch_size, objlist_train)
                 else:
-                    batch_data, batch_target = self.generate_batch_from_array(data_list, target_list, self.batch_size,
-                                                                              objlist_train)
+                    batch_data, batch_target = self.generate_batch_from_array(data_list, target_list, self.batch_size, objlist_train)
                 loss_train = self.net.train_on_batch(batch_data, batch_target)
 
-                self.display('epoch %d/%d - it %d/%d - loss: %0.3f - acc: %0.3f' % (
-                e + 1, self.epochs, it + 1, self.steps_per_epoch, loss_train[0], loss_train[1]))
-            hist_loss_train.append(loss_train[0])
-            hist_acc_train.append(loss_train[1])
+                self.display('epoch %d/%d - it %d/%d - loss: %0.3f - acc: %0.3f' % (e + 1, self.epochs, it + 1, self.steps_per_epoch, loss_train[0], loss_train[1]))
+                list_loss_train.append(loss_train[0])
+                list_acc_train.append(loss_train[1])
+            hist_loss_train.append(list_loss_train)
+            hist_acc_train.append(list_acc_train)
 
             # VALIDATION (compute statistics to monitor training):
-            if self.flag_direct_read:
-                batch_data_valid, batch_target_valid = self.generate_batch_direct_read(path_data, path_target,
-                                                                                       self.batch_size, objlist_valid)
-            else:
-                batch_data_valid, batch_target_valid = self.generate_batch_from_array(data_list, target_list,
-                                                                                      self.batch_size, objlist_valid)
-            loss_val = self.net.evaluate(batch_data_valid, batch_target_valid, verbose=0)
+            list_loss_valid = []
+            list_acc_valid  = []
+            list_f1         = []
+            list_recall     = []
+            list_precision  = []
+            for it in range(self.steps_per_valid):
+                if self.flag_direct_read:
+                    batch_data_valid, batch_target_valid = self.generate_batch_direct_read(path_data, path_target, self.batch_size, objlist_valid)
+                else:
+                    batch_data_valid, batch_target_valid = self.generate_batch_from_array(data_list, target_list, self.batch_size, objlist_valid)
+                loss_val = self.net.evaluate(batch_data_valid, batch_target_valid, verbose=0) # TODO replace by loss() to reduce computation
+                batch_pred = self.net.predict(batch_data_valid)
+                #loss_val = K.eval(losses.tversky_loss(K.constant(batch_target_valid), K.constant(batch_pred)))
+                scores = precision_recall_fscore_support(batch_target_valid.argmax(axis=-1).flatten(), batch_pred.argmax(axis=-1).flatten(), average=None)
 
-            batch_pred = self.net.predict(batch_data_valid)
-            scores = precision_recall_fscore_support(batch_target_valid.argmax(axis=-1).flatten(),
-                                                     batch_pred.argmax(axis=-1).flatten(), average=None)
+                list_loss_valid.append(loss_val[0])
+                list_acc_valid.append(loss_val[1])
+                list_f1.append(scores[2])
+                list_recall.append(scores[1])
+                list_precision.append(scores[0])
 
-            hist_loss_valid.append(loss_val[0])
-            hist_acc_valid.append(loss_val[1])
-            hist_f1.append(scores[2])
-            hist_recall.append(scores[1])
-            hist_precision.append(scores[0])
+            hist_loss_valid.append(list_loss_valid)
+            hist_acc_valid.append(list_acc_valid)
+            hist_f1.append(list_f1)
+            hist_recall.append(list_recall)
+            hist_precision.append(list_precision)
 
             end = time.time()
             process_time.append(end - start)
@@ -213,6 +222,7 @@ class Train(core.DeepFinder):
 
         self.display("Model took %0.2f seconds to train" % np.sum(process_time))
         self.net.save(self.path_out+'net_weights_FINAL.h5')
+
 
     # Generates batches for training and validation. In this version, the dataset is not loaded into memory. Only the
     # current batch content is loaded into memory, which is useful when memory is limited.

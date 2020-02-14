@@ -121,27 +121,30 @@ def save_history(history, filename):
     h5file = h5py.File(filename, 'w')
 
     # train and val loss & accuracy:
-    dset    = h5file.create_dataset('acc', (len(history['acc']),))
-    dset[:] = history['acc']
-    dset    = h5file.create_dataset('loss', (len(history['loss']),))
-    dset[:] = history['loss']
-    dset    = h5file.create_dataset('val_acc', (len(history['val_acc']),))
-    dset[:] = history['val_acc']
-    dset    = h5file.create_dataset('val_loss', (len(history['val_loss']),))
-    dset[:] = history['val_loss']
+    dset    = h5file.create_dataset('acc', np.array(history['acc']).shape)
+    dset[:] = np.array(history['acc'])
+    dset    = h5file.create_dataset('loss', np.array(history['loss']).shape)
+    dset[:] = np.array(history['loss'])
+    dset    = h5file.create_dataset('val_acc', np.array(history['val_acc']).shape)
+    dset[:] = np.array(history['val_acc'])
+    dset    = h5file.create_dataset('val_loss', np.array(history['val_loss']).shape)
+    dset[:] = np.array(history['val_loss'])
 
     # val precision, recall, F1:
-    dset    = h5file.create_dataset('val_f1', np.shape(history['val_f1']))
-    dset[:] = history['val_f1']
-    dset    = h5file.create_dataset('val_precision', np.shape(history['val_precision']))
-    dset[:] = history['val_precision']
-    dset    = h5file.create_dataset('val_recall', np.shape(history['val_recall']))
-    dset[:] = history['val_recall']
+    dset    = h5file.create_dataset('val_f1', np.array(history['val_f1']).shape)
+    dset[:] = np.array(history['val_f1'])
+    dset    = h5file.create_dataset('val_precision', np.array(history['val_precision']).shape)
+    dset[:] = np.array(history['val_precision'])
+    dset    = h5file.create_dataset('val_recall', np.array(history['val_recall']).shape)
+    dset[:] = np.array(history['val_recall'])
 
     h5file.close()
     return
 
 # Plots the training history as several graphs and saves them in an image file.
+# Validation score is averaged over all batches tested in validation step (steps_per_valid)
+# Training score is averaged over last N=steps_per_valid batches of each epoch.
+#   -> This is to have similar curve smoothness to validation.
 # INPUTS:
 #   history: dictionary object containing lists. These lists contain scores and metrics wrt epochs.
 #   filename: string '/path/to/net_train_history_plot.png'
@@ -151,38 +154,62 @@ def plot_history(history, filename):
     for lbl in range(0,Ncl):
         legend_names.append('class '+str(lbl))
 
+    epochs = len(history['val_loss'])
+    steps_per_valid = len(history['val_loss'][0])
+
+    hist_loss_train = []
+    hist_acc_train = []
+    hist_loss_valid = []
+    hist_acc_valid = []
+    hist_f1 = []
+    hist_recall = []
+    hist_precision = []
+    for e in range(epochs):
+        hist_loss_train.append(np.mean(history['loss'         ][e][-steps_per_valid:]))
+        hist_acc_train.append( np.mean(history['acc'          ][e][-steps_per_valid:]))
+
+        hist_loss_valid.append(np.mean(history['val_loss'     ][e]))
+        hist_acc_valid.append( np.mean(history['val_acc'      ][e]))
+
+        # array_f1 = np.array(history['val_f1'       ][e]) # easier to achieve desired averaging (per class) with np array
+        # array_re = np.array(history['val_recall'   ][e])
+        # array_pr = np.array(history['val_precision'][e])
+        hist_f1.append(        np.mean(np.array(history['val_f1'       ][e]), axis=0))
+        hist_recall.append(    np.mean(np.array(history['val_recall'   ][e]), axis=0))
+        hist_precision.append( np.mean(np.array(history['val_precision'][e]), axis=0))
+
     fig = plt.figure(figsize=(15,12))
     plt.subplot(321)
-    plt.plot(history['loss']    , label='train')
-    plt.plot(history['val_loss'], label='valid')
+    plt.plot(hist_loss_train, label='train')
+    plt.plot(hist_loss_valid, label='valid')
     plt.ylabel('loss')
     plt.xlabel('epochs')
     plt.legend()
     plt.grid()
 
     plt.subplot(323)
-    plt.plot(history['acc']    , label='train')
-    plt.plot(history['val_acc'], label='valid')
+    plt.plot(hist_acc_train, label='train')
+    plt.plot(hist_acc_valid, label='valid')
     plt.ylabel('accuracy')
     plt.xlabel('epochs')
     plt.legend()
     plt.grid()
 
     plt.subplot(322)
-    plt.plot(history['val_f1'])
+    plt.plot(hist_f1)
     plt.ylabel('F1-score')
     plt.xlabel('epochs')
     plt.legend(legend_names)
     plt.grid()
 
     plt.subplot(324)
-    plt.plot(history['val_precision'])
+    plt.plot(hist_precision)
     plt.ylabel('precision')
     plt.xlabel('epochs')
     plt.grid()
 
     plt.subplot(326)
-    plt.plot(history['val_recall'])
+    plt.plot(hist_recall)
     plt.ylabel('recall')
     plt.xlabel('epochs')
     plt.grid()
