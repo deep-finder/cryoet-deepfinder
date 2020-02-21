@@ -59,7 +59,7 @@ cd pyqt/generate_target/
 python gui_target.py
 ```
 
-![Training GUI](./screenshots/gui_train.png)
+![Training GUI](./screenshots/gui_segment.png)
 
 In near future we plan to provide a data visualization tool.
 
