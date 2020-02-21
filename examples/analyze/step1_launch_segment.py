@@ -19,7 +19,7 @@ path_output = 'out/'
 tomo = cm.read_array(path_tomo)
 
 # Initialize segmentation task:
-seg  = Segment(Ncl=Nclass, path_weights=path_weights)
+seg  = Segment(Ncl=Nclass, path_weights=path_weights, patch_size=patch_size)
 
 # Segment tomogram:
 scoremaps = seg.launch(tomo)

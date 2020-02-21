@@ -2,6 +2,7 @@
 
 import numpy as np
 import h5py
+import os
 
 import matplotlib
 matplotlib.use('agg') # necessary else: AttributeError: 'NoneType' object has no attribute 'is_interactive'
@@ -118,6 +119,9 @@ def get_patch_position(tomodim, p_in, obj, Lrnd):
 #   history: dictionary object containing lists. These lists contain scores and metrics wrt epochs.
 #   filename: string '/path/to/net_train_history.h5'
 def save_history(history, filename):
+    if os.path.isfile(filename): # if file exists, delete before writing the updated version
+        os.remove(filename)      # quick fix for OSError: Can't write data (no appropriate function for conversion path)
+
     h5file = h5py.File(filename, 'w')
 
     # train and val loss & accuracy:

@@ -12,9 +12,9 @@ def add_obj(objlIN, label, coord, tomo_idx=None, orient=(None,None,None), cluste
     obj = {
         'tomo_idx': tomo_idx,
         'label': label,
-        'x'    :coord[0] ,
+        'x'    :coord[2] ,
         'y'    :coord[1] ,
-        'z'    :coord[2] ,
+        'z'    :coord[0] ,
         'psi'  :orient[0],
         'phi'  :orient[1],
         'the'  :orient[2],
