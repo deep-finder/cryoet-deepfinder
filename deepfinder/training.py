@@ -31,6 +31,19 @@ class TargetBuilder(core.DeepFinder):
     # OUTPUT
     #   target_array: 3D numpy array. '0' for background class, {'1','2',...} for object classes.
     def generate_with_shapes(self, objl, target_array, ref_list):
+        """Generates segmentation targets from object list. Here macromolecules are annotated with their shape.
+
+        Args:
+            objl (list of dictionaries): Needs to contain [phi,psi,the] Euler angles for orienting the shapes.
+            target_array (3D numpy array): array that initializes the training target. Allows to pass an array already containing annotated structures like membranes.
+                index order of array should be [z,y,x]
+            ref_list (list of 3D numpy arrays): These reference arrays are expected to be cubic and to contain the shape of macromolecules ('1' for 'is object' and '0' for 'is not object')
+                The references order in list should correspond to the class label.
+                For ex: 1st element of list -> reference of class 1; 2nd element of list -> reference of class 2 etc.
+
+        Returns:
+            3D numpy array: Target array, where '0' for background class, {'1','2',...} for object classes.
+        """
         N = len(objl)
         dim = target_array.shape
         for p in range(len(objl)):
@@ -70,7 +83,7 @@ class TargetBuilder(core.DeepFinder):
     # This method does not require knowledge of the macromolecule shape nor Euler angles in the objl.
     # On the other hand, it can be that a network trained with 'sphere targets' is less accurate than with 'shape targets'
     # INPUTS
-    #   objl: list of dictionaries. Needs to contain [phi,psi,the] Euler angles for orienting the shapes.
+    #   objl: list of dictionaries.
     #   target_array: 3D numpy array that initializes the training target. Allows to pass an array already containing annotated structures like membranes.
     #                 index order of array should be [z,y,x]
     #   radius_list: list of sphere radii (in voxels).
@@ -80,6 +93,21 @@ class TargetBuilder(core.DeepFinder):
     # OUTPUT
     #   target_array: 3D numpy array. '0' for background class, {'1','2',...} for object classes.
     def generate_with_spheres(self, objl, target_array, radius_list):
+        """Generates segmentation targets from object list. Here macromolecules are annotated with spheres.
+        This method does not require knowledge of the macromolecule shape nor Euler angles in the objl.
+        On the other hand, it can be that a network trained with 'sphere targets' is less accurate than with 'shape targets'.
+
+        Args:
+            objl (list of dictionaries)
+            target_array (3D numpy array): array that initializes the training target. Allows to pass an array already containing annotated structures like membranes.
+                index order of array should be [z,y,x]
+            radius_list (list of int): contains sphere radii per class (in voxels).
+                The radii order in list should correspond to the class label.
+                For ex: 1st element of list -> sphere radius for class 1, 2nd element of list -> sphere radius for class 2 etc.
+
+        Returns:
+            3D numpy array: Target array, where '0' for background class, {'1','2',...} for object classes.
+        """
         Rmax = max(radius_list)
         dim = [2*Rmax, 2*Rmax, 2*Rmax]
         ref_list = []
@@ -136,6 +164,33 @@ class Train(core.DeepFinder):
     # TODO: delete flag_direct_read. Launch should detect if direct_read is desired by checking if input data_list and
     #       target_list contain str (path) or numpy array
     def launch(self, path_data, path_target, objlist_train, objlist_valid):
+        """This function launches the training procedure. For each epoch, an image is plotted, displaying the progression
+        with different metrics: loss, accuracy, f1-score, recall, precision. Every 10 epochs, the current network weights
+        are saved.
+
+        Args:
+            path_data (list of string): contains paths to data files (i.e. tomograms)
+            path_target (list of string): contains paths to target files (i.e. annotated volumes)
+            objlist_train (list of dictionaries): contains information about annotated objects (e.g. class, position)
+                In particular, the tomo_idx should correspond to the index of 'path_data' and 'path_target'.
+                See utils/objl.py for more info about object lists.
+                During training, these coordinates are used for guiding the patch sampling procedure.
+            objlist_valid (list of dictionaries): same as 'objlist_train', but objects contained in this list are not
+                used for training, but for validation. It allows to monitor the training and check for over/under-fitting.
+                Ideally, the validation objects should originate from different tomograms than training objects.
+
+        Note:
+            The function saves following files at regular intervals:
+                net_weights_epoch*.h5: contains current network weights
+
+                net_train_history.h5: contains arrays with all metrics per training iteration
+
+                net_train_history_plot.png: plotted metric curves
+
+        """
+
+
+
         # Build network (not in constructor, else not possible to init model with weights from previous train round):
         self.net.compile(optimizer=self.optimizer, loss=losses.tversky_loss, metrics=['accuracy'])
 
@@ -269,11 +324,11 @@ class Train(core.DeepFinder):
 
             # Load data and target patches:
             h5file = h5py.File(path_data[tomoID], 'r')
-            patch_data = h5file['dataset'][z - p_in:z + p_in, y - p_in:y + p_in, x - p_in:x + p_in]
+            patch_data = h5file['dataset'][z-p_in:z+p_in, y-p_in:y+p_in, x-p_in:x+p_in]
             h5file.close()
 
             h5file = h5py.File(path_target[tomoID], 'r')
-            patch_target = h5file['dataset'][z - p_in:z + p_in, y - p_in:y + p_in, x - p_in:x + p_in]
+            patch_target = h5file['dataset'][z-p_in:z+p_in, y-p_in:y+p_in, x-p_in:x+p_in]
             h5file.close()
 
             # Process the patches in order to be used by network:
@@ -331,8 +386,8 @@ class Train(core.DeepFinder):
             x, y, z = core.get_patch_position(tomodim, p_in, objlist[index], self.Lrnd)
 
             # Get patch:
-            patch_data  = sample_data[  z - p_in:z + p_in, y - p_in:y + p_in, x - p_in:x + p_in]
-            patch_batch = sample_target[z - p_in:z + p_in, y - p_in:y + p_in, x - p_in:x + p_in]
+            patch_data  = sample_data[  z-p_in:z+p_in, y-p_in:y+p_in, x-p_in:x+p_in]
+            patch_batch = sample_target[z-p_in:z+p_in, y-p_in:y+p_in, x-p_in:x+p_in]
 
             # Process the patches in order to be used by network:
             patch_data = (patch_data - np.mean(patch_data)) / np.std(patch_data)  # normalize

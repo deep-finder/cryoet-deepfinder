@@ -125,22 +125,22 @@ def save_history(history, filename):
     h5file = h5py.File(filename, 'w')
 
     # train and val loss & accuracy:
-    dset    = h5file.create_dataset('acc', np.array(history['acc']).shape)
-    dset[:] = np.array(history['acc'])
-    dset    = h5file.create_dataset('loss', np.array(history['loss']).shape)
-    dset[:] = np.array(history['loss'])
-    dset    = h5file.create_dataset('val_acc', np.array(history['val_acc']).shape)
-    dset[:] = np.array(history['val_acc'])
-    dset    = h5file.create_dataset('val_loss', np.array(history['val_loss']).shape)
-    dset[:] = np.array(history['val_loss'])
+    dset    = h5file.create_dataset('acc', np.array(history['acc']).shape, dtype='float16')
+    dset[:] = np.array(history['acc'], dtype='float16')
+    dset    = h5file.create_dataset('loss', np.array(history['loss']).shape, dtype='float16')
+    dset[:] = np.array(history['loss'], dtype='float16')
+    dset    = h5file.create_dataset('val_acc', np.array(history['val_acc']).shape, dtype='float16')
+    dset[:] = np.array(history['val_acc'], dtype='float16')
+    dset    = h5file.create_dataset('val_loss', np.array(history['val_loss']).shape, dtype='float16')
+    dset[:] = np.array(history['val_loss'], dtype='float16')
 
     # val precision, recall, F1:
-    dset    = h5file.create_dataset('val_f1', np.array(history['val_f1']).shape)
-    dset[:] = np.array(history['val_f1'])
-    dset    = h5file.create_dataset('val_precision', np.array(history['val_precision']).shape)
-    dset[:] = np.array(history['val_precision'])
-    dset    = h5file.create_dataset('val_recall', np.array(history['val_recall']).shape)
-    dset[:] = np.array(history['val_recall'])
+    dset    = h5file.create_dataset('val_f1', np.array(history['val_f1']).shape, dtype='float16')
+    dset[:] = np.array(history['val_f1'], dtype='float16')
+    dset    = h5file.create_dataset('val_precision', np.array(history['val_precision']).shape, dtype='float16')
+    dset[:] = np.array(history['val_precision'], dtype='float16')
+    dset    = h5file.create_dataset('val_recall', np.array(history['val_recall']).shape, dtype='float16')
+    dset[:] = np.array(history['val_recall'], dtype='float16')
 
     h5file.close()
     return

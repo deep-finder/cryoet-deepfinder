@@ -25,6 +25,7 @@ def add_obj(objlIN, label, coord, tomo_idx=None, orient=(None,None,None), cluste
     return objlIN
 
 def disp(objlIN):
+    """Prints objl in terminal"""
     for p in range(len(objlIN)):
         tidx  = objlIN[p]['tomo_idx']
         lbl   = objlIN[p]['label']
@@ -135,6 +136,13 @@ def write_txt(objlIN, filename):
 
 # label can be int or str (is casted to str)
 def get_class(objlIN, label):
+    """
+    Args:
+        objl (list of dict)
+        label (int)
+    Returns:
+        list of dict: contains only objects from class 'label'
+    """
     idx_class = []
     for idx in range(len(objlIN)):
         if str(objlIN[idx]['label'])==str(label):
@@ -146,6 +154,14 @@ def get_class(objlIN, label):
     return objlOUT
 
 def above_thr(objlIN, thr):
+    """
+    Args:
+        objl (list of dict)
+        thr (float): threshold
+
+    Returns:
+        list of dict: contains only objects with cluster size >= thr
+    """
     idx_thr = []
     for idx in range(len(objlIN)):
         csize = objlIN[idx]['cluster_size']
@@ -196,6 +212,13 @@ def get_labels(objlIN):
 # OUTPUT:
 #   objlOUT: object list with objects from tomogram 'tomo_idx'
 def get_tomo(objlIN, tomo_idx):
+    """
+    Args:
+        objlIN (list of dict): contains objects from various tomograms
+        tomo_idx (int): tomogram index
+    Returns:
+        list of dict: contains objects from tomogram 'tomo_idx'
+    """
     idx_tomo = []
     for idx in range(len(objlIN)):
         if objlIN[idx]['tomo_idx'] == tomo_idx:

@@ -23,6 +23,16 @@ import matplotlib.pyplot as plt
 #   vol     : 3D numpy array
 #   filename: string '/path/to/file.png'
 def plot_volume_orthoslices(vol, filename):
+    """Writes an image file containing ortho-slices of the input volume. Generates same visualization as matlab function
+    'tom_volxyz' from TOM toolbox.
+    If volume type is int8, the function assumes that the volume is a labelmap, and hence plots in color scale.
+    Else, it assumes that the volume is tomographic data, and plots in gray scale.
+
+    Args:
+        vol (3D numpy array)
+        filename (str): '/path/to/file.png'
+    """
+
     # Get central slices along each dimension:
     dim = vol.shape
     idx0 = np.int( np.round(dim[0]/2) )
@@ -101,6 +111,15 @@ def write_mrc(array, filename):
 # OUTPUT:
 #   array: numpy array
 def read_array(filename, dset_name='dataset'):
+    """Reads arrays. Handles .h5 and .mrc files, according to what extension the file has.
+
+    Args:
+        filename (str): '/path/to/file.ext' with '.ext' either '.h5' or '.mrc'
+        dset_name (str, optional): h5 dataset name. Not necessary to specify when reading .mrc
+
+    Returns:
+        numpy array
+    """
     data_format = os.path.splitext(filename)
     if data_format[1] == '.h5':
         array = read_h5array(filename, dset_name)
@@ -116,6 +135,13 @@ def read_array(filename, dset_name='dataset'):
 #   filename : string '/path/to/file.ext' with '.ext' either '.h5' or '.mrc'
 #   dset_name: string h5 dataset name. Not necessary to specify when writing .mrc
 def write_array(array, filename, dset_name='dataset'):
+    """Writes array. Can write .h5 and .mrc files, according to the extension specified in filename.
+
+    Args:
+        array (numpy array)
+        filename (str): '/path/to/file.ext' with '.ext' either '.h5' or '.mrc'
+        dset_name (str, optional): h5 dataset name. Not necessary to specify when reading .mrc
+    """
     data_format = os.path.splitext(filename)
     if data_format[1] == '.h5':
         write_h5array(array, filename, dset_name)
@@ -128,6 +154,15 @@ def write_array(array, filename, dset_name='dataset'):
 # INPUT: numpy array
 # OUTPUT: binned numpy array
 def bin_array(array):
+    """Subsamples a 3D array by a factor 2. Subsampling is performed by averaging voxel values in 2x2x2 tiles.
+
+    Args:
+        array (numpy array)
+
+    Returns:
+        numpy array: binned array
+
+    """
     return block_reduce(array, (2,2,2), np.mean)
 
 # Rotates a 3D array and uses the same (phi,psi,the) convention as TOM toolbox (matlab) and PyTOM.
