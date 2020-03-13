@@ -4,16 +4,18 @@
    contain the root `toctree` directive.
 
 Welcome to DeepFinder's documentation!
-======================================
+**************************************
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   intro
+   guide
    api
 
 Indices and tables
-==================
+******************
 
 * :ref:`genindex`
 * :ref:`modindex`

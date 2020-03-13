@@ -44,6 +44,8 @@ class TargetBuilder(core.DeepFinder):
         Returns:
             3D numpy array: Target array, where '0' for background class, {'1','2',...} for object classes.
         """
+        self.check_arguments(objl, target_array, ref_list)
+
         N = len(objl)
         dim = target_array.shape
         for p in range(len(objl)):
@@ -78,6 +80,11 @@ class TargetBuilder(core.DeepFinder):
                     target_array[zz, yy, xx] = lbl
 
         return np.int8(target_array)
+
+    def check_arguments(self, objl, target_array, ref_list):
+        self.is_list(objl)
+        self.is_3D_nparray(target_array)
+        self.is_list(ref_list)
 
     # Generates segmentation targets from object list. Here macromolecules are annotated with spheres.
     # This method does not require knowledge of the macromolecule shape nor Euler angles in the objl.
@@ -139,6 +146,17 @@ class Train(core.DeepFinder):
         self.flag_batch_bootstrap = 0
         self.Lrnd = 13  # random shifts applied when sampling data- and target-patches (in voxels)
 
+        self.check_attributes()
+
+    def check_attributes(self):
+        self.is_positive_int(self.Ncl, 'Ncl')
+        self.is_multiple_4_int(self.dim_in, 'dim_in')
+        self.is_positive_int(self.batch_size, 'batch_size')
+        self.is_positive_int(self.epochs, 'epochs')
+        self.is_positive_int(self.steps_per_epoch, 'steps_per_epoch')
+        self.is_positive_int(self.steps_per_valid, 'steps_per_valid')
+        self.is_int(self.Lrnd, 'Lrnd')
+
     # This function launches the training procedure. For each epoch, an image is plotted, displaying the progression
     # with different metrics: loss, accuracy, f1-score, recall, precision. Every 10 epochs, the current network weights
     # are saved.
@@ -188,7 +206,8 @@ class Train(core.DeepFinder):
                 net_train_history_plot.png: plotted metric curves
 
         """
-
+        self.check_attributes()
+        self.check_arguments(path_data, path_target, objlist_train, objlist_valid)
 
 
         # Build network (not in constructor, else not possible to init model with weights from previous train round):
@@ -278,6 +297,11 @@ class Train(core.DeepFinder):
         self.display("Model took %0.2f seconds to train" % np.sum(process_time))
         self.net.save(self.path_out+'net_weights_FINAL.h5')
 
+    def check_arguments(self, path_data, path_target, objlist_train, objlist_valid):
+        self.is_list(path_data, 'path_data')
+        self.is_list(path_target, 'path_target')
+        self.is_list(objlist_train, 'objlist_train')
+        self.is_list(objlist_valid, 'objlist_valid')
 
     # Generates batches for training and validation. In this version, the dataset is not loaded into memory. Only the
     # current batch content is loaded into memory, which is useful when memory is limited.

@@ -54,23 +54,8 @@ class ClusteringWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # Launch clustering (result stored in objlist)
         objlist = clust.launch(labelmap)
 
-        # Display result:
-        self.display_result(clust, objlist)
-
         # Save objlist:
         ol.write_xml(objlist, path_objl)
-
-    # Displays end result
-    # INPUTS:
-    #   clust: Cluster object, is needed to access clust.display() method
-    #   objlist: input objl
-    def display_result(self, clust, objlist):
-        clust.display('----------------------------------------')
-        clust.display('A total of ' + str(len(objlist)) + ' objects have been found.')
-        lbl_list = ol.get_labels(objlist)
-        for lbl in lbl_list:
-            objl_class = ol.get_class(objlist, lbl)
-            clust.display('Class ' + str(lbl) + ': ' + str(len(objl_class)) + ' objects')
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

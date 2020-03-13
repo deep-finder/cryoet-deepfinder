@@ -3,6 +3,7 @@
 import numpy as np
 import h5py
 import os
+import sys
 
 import matplotlib
 matplotlib.use('agg') # necessary else: AttributeError: 'NoneType' object has no attribute 'is_interactive'
@@ -22,6 +23,49 @@ class DeepFinder:
     def display(self, message):
         for obs in self.obs_list: obs.display(message)
 
+    # For checking inputs:
+    def is_3D_nparray(self, v, varname):
+        if type(v)!=np.ndarray:
+            self.display('DeepFinder message: variable "'+varname+'" is '+str(type(v))+'. Expected is numpy array.')
+            sys.exit()
+        if len(v.shape)!=3:
+            self.display('DeepFinder message: variable "'+varname+'" is a '+str(len(v.shape))+'D array. Expected is a 3D array.')
+            sys.exit()
+
+    def is_int(self, v, varname):
+        if type(v)!=int and type(v)!=np.int8 and type(v)!=np.int16:
+            self.display('DeepFinder message: variable "' + varname + '" is ' + str(type(v)) + '. Expected is int.')
+            sys.exit()
+
+    def is_positive_int(self, v, varname):
+        self.is_int(v, varname)
+        if v<=0:
+            self.display('DeepFinder message: variable "'+varname+'" is <=0. Expected is >0.')
+            sys.exit()
+
+    def is_multiple_4_int(self, v, varname):
+        self.is_int(v, varname)
+        if v % 4 != 0:
+            self.display('DeepFinder message: variable "' + varname + '" should be a multiple of 4.')
+            sys.exit()
+
+    def is_str(self, v, varname):
+        if type(v) != str:
+            self.display('DeepFinder message: variable "' + varname + '" is ' + str(type(v)) + '. Expected is str.')
+            sys.exit()
+
+    def is_h5_path(self, v, varname):
+        self.is_str(v, varname)
+        s = os.path.splitext(v)
+        if s[1] != '.h5':
+            self.display('DeepFinder message: "'+str(varname)+'" points to '+s[1]+', expected is .h5')
+            sys.exit()
+
+    def is_list(self, v, varname):
+        if type(v)!=list:
+            self.display('DeepFinder message: variable "' + varname + '" is ' + str(type(v)) + '. Expected is list.')
+            sys.exit()
+
 # Following observer classes are needed to send prints to GUI:
 class observer_print:
     def display(message):
@@ -32,6 +76,15 @@ class observer_gui:
         self.sig = pyqt_signal
     def display(self, message):
         self.sig.emit(message)
+
+# Retrieves variable name as a str:
+# Found here: https://stackoverflow.com/questions/18425225/getting-the-name-of-a-variable-as-a-string
+def retrieve_var_name(x, Vars=vars()):
+    for k in Vars:
+        if type(x) == type(Vars[k]):
+            if x is Vars[k]:
+                return k
+    return None
 
 
 # This functions loads the training set at specified paths.
@@ -219,4 +272,3 @@ def plot_history(history, filename):
     plt.grid()
 
     fig.savefig(filename)
-
