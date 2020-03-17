@@ -82,9 +82,9 @@ class TargetBuilder(core.DeepFinder):
         return np.int8(target_array)
 
     def check_arguments(self, objl, target_array, ref_list):
-        self.is_list(objl)
-        self.is_3D_nparray(target_array)
-        self.is_list(ref_list)
+        self.is_list(objl, 'objl')
+        self.is_3D_nparray(target_array, 'target_array')
+        self.is_list(ref_list, 'ref_list')
 
     # Generates segmentation targets from object list. Here macromolecules are annotated with spheres.
     # This method does not require knowledge of the macromolecule shape nor Euler angles in the objl.

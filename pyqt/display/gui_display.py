@@ -7,14 +7,16 @@ from custom_theme import set_custom_theme
 from widget_display import DisplayOrthoslicesWidget
 from deepfinder.utils import common as cm
 
+import gui_display_interface
 
-qtcreator_file  = 'gui_display.ui'
-Ui_MainWindow, QtBaseClass = uic.loadUiType(qtcreator_file)
+#qtcreator_file  = 'gui_display.ui'
+#Ui_MainWindow, QtBaseClass = uic.loadUiType(qtcreator_file)
 
-class DisplayWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+#class DisplayWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
-        Ui_MainWindow.__init__(self)
+        gui_display_interface.Ui_MainWindow.__init__(self)
         self.setupUi(self)
 
         self.dwidget = DisplayOrthoslicesWidget()
@@ -31,6 +33,14 @@ class DisplayWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.slider_contrast_max.valueChanged.connect(self.on_slider_value_changed_contrast_max)
 
         self.button_denoise.clicked.connect(self.on_button_denoised)
+
+        #self.coord_signal = None # for communicating with annotation windows
+
+    #def connect_coord_signal(self, coord_signal):
+    #    self.coord_signal = coord_signal
+    def get_coord(self):
+        coord = [self.dwidget.z, self.dwidget.y, self.dwidget.x]
+        return coord
 
     @QtCore.pyqtSlot()
     def on_button_tomo_clicked(self):
