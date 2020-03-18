@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>762</width>
+    <width>547</width>
     <height>599</height>
    </rect>
   </property>
@@ -21,13 +21,6 @@
        <string>Tomogram</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="lbl_path_tomo">
-         <property name="text">
-          <string>Path</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="2">
         <widget class="QSlider" name="slider_contrast_max">
          <property name="maximum">
@@ -48,20 +41,6 @@
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="le_path_tomo">
-         <property name="text">
-          <string>/Users/emoebel/temp/tomo_p19.mrc</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QPushButton" name="button_load_tomo">
-         <property name="text">
-          <string>Load</string>
          </property>
         </widget>
        </item>
@@ -89,6 +68,13 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="0" colspan="3">
+        <widget class="QPushButton" name="button_load_tomo">
+         <property name="text">
+          <string>Load</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -98,24 +84,16 @@
        <string>Label map</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QLabel" name="lbl_path_lmap">
-         <property name="text">
-          <string>Path</string>
+       <item row="1" column="1" colspan="2">
+        <widget class="QSlider" name="slider_opacity">
+         <property name="maximum">
+          <number>100</number>
          </property>
-        </widget>
-       </item>
-       <item row="0" column="1" colspan="2">
-        <widget class="QLineEdit" name="le_path_lmap">
-         <property name="text">
-          <string>/Users/emoebel/serpico-fs2/github/deep-finder/unit_tests/deepfind/segment/out/tomo9_labelmap.h5</string>
+         <property name="value">
+          <number>100</number>
          </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QPushButton" name="button_load_lmap">
-         <property name="text">
-          <string>Load</string>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
@@ -126,16 +104,10 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1" colspan="3">
-        <widget class="QSlider" name="slider_opacity">
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="value">
-          <number>100</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+       <item row="0" column="0" colspan="3">
+        <widget class="QPushButton" name="button_load_lmap">
+         <property name="text">
+          <string>Load</string>
          </property>
         </widget>
        </item>
@@ -152,7 +124,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>762</width>
+     <width>547</width>
      <height>22</height>
     </rect>
    </property>

@@ -19,6 +19,9 @@ class TargetBuilder(core.DeepFinder):
     def __init__(self):
         core.DeepFinder.__init__(self)
 
+        self.remove_flag = False # if true, places '0' at object voxels, instead of 'lbl'.
+                                 # Usefull in annotation tool, for removing objects from target
+
     # Generates segmentation targets from object list. Here macromolecules are annotated with their shape.
     # INPUTS
     #   objl: list of dictionaries. Needs to contain [phi,psi,the] Euler angles for orienting the shapes.
@@ -77,7 +80,10 @@ class TargetBuilder(core.DeepFinder):
                 yy = y_vox[idx]
                 zz = z_vox[idx]
                 if xx >= 0 and xx < dim[2] and yy >= 0 and yy < dim[1] and zz >= 0 and zz < dim[0]:  # if in tomo bounds
-                    target_array[zz, yy, xx] = lbl
+                    if self.remove_flag:
+                        target_array[zz, yy, xx] = 0
+                    else:
+                        target_array[zz, yy, xx] = lbl
 
         return np.int8(target_array)
 

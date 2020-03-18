@@ -246,18 +246,6 @@ class DisplayOrthoslicesWidget(QWidget):
             if x >= 0 and x < self.dim[2] and y >= 0 and y < self.dim[1]:
                 self.x = x
                 self.y = y
-                # slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
-                # self.img_zy.setImage(slice_zy, levels=self.levels)
-                # self.img_zx.setImage(slice_zx, levels=self.levels)
-                # if self.flag_lmap:
-                #     lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
-                #     self.img_lmap_zy.setImage(lmap_zy)
-                #     self.img_lmap_zx.setImage(lmap_zx)
-                # self.lineV_xy.setPos(x)
-                # self.lineH_xy.setPos(y)
-                # self.lineV_zx.setPos(x)
-                # self.lineH_zy.setPos(y)
-                # self.set_zoom_centers()
                 self.goto_coord()
 
         if self.vb_zy.sceneBoundingRect().contains(pos):
@@ -267,18 +255,6 @@ class DisplayOrthoslicesWidget(QWidget):
             if z >= 0 and z < self.dim[0] and y >= 0 and y < self.dim[1]:
                 self.y = y
                 self.z = z
-                # slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
-                # self.img_xy.setImage(slice_xy, levels=self.levels)
-                # self.img_zx.setImage(slice_zx, levels=self.levels)
-                # if self.flag_lmap:
-                #     lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
-                #     self.img_lmap_xy.setImage(lmap_xy)
-                #     self.img_lmap_zx.setImage(lmap_zx)
-                # self.lineV_zy.setPos(z)
-                # self.lineH_zy.setPos(y)
-                # self.lineH_xy.setPos(y)
-                # self.lineH_zx.setPos(z)
-                # self.set_zoom_centers()
                 self.goto_coord()
 
         if self.vb_zx.sceneBoundingRect().contains(pos):
@@ -288,18 +264,6 @@ class DisplayOrthoslicesWidget(QWidget):
             if x >= 0 and x < self.dim[2] and z >= 0 and z < self.dim[0]:
                 self.x = x
                 self.z = z
-                # slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
-                # self.img_xy.setImage(slice_xy, levels=self.levels)
-                # self.img_zy.setImage(slice_zy, levels=self.levels)
-                # if self.flag_lmap:
-                #     lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
-                #     self.img_lmap_xy.setImage(lmap_xy)
-                #     self.img_lmap_zy.setImage(lmap_zy)
-                # self.lineV_zx.setPos(x)
-                # self.lineH_zx.setPos(z)
-                # self.lineV_xy.setPos(x)
-                # self.lineV_zy.setPos(z)
-                # self.set_zoom_centers()
                 self.goto_coord()
 
         self.label.setText('(x,y,z)=' + '(' + str(self.x) + ',' + str(self.y) + ',' + str(self.z) + ')')
@@ -309,7 +273,37 @@ class DisplayOrthoslicesWidget(QWidget):
         self.vb_zy.set_zoom_center(self.z, self.y)
         self.vb_zx.set_zoom_center(self.x, self.z)
 
-    def denoise_slices(self, sigma):
+    def denoise_slices(self, sigma): # by averaging neighboring slices
+        n = 5
+        min0 = self.z-n
+        max0 = self.z+n
+        if min0 < 0          : min0 = 0
+        if max0 > self.dim[0]: max0 = self.dim[0]
+        slice_xy = self.vol[min0:max0, :, :]
+        slice_xy = np.mean(slice_xy, axis=0)
+        slice_xy = np.transpose(slice_xy)
+
+        min1 = self.y - n
+        max1 = self.y + n
+        if min1 < 0          : min1 = 0
+        if max1 > self.dim[1]: max1 = self.dim[1]
+        slice_zx = self.vol[:, min1:max1, :]
+        slice_zx = np.mean(slice_zx, axis=1)
+        slice_zx = np.transpose(slice_zx)
+
+        min2 = self.z - n
+        max2 = self.z + n
+        if min2 < 0          : min2 = 0
+        if max2 > self.dim[2]: max2 = self.dim[2]
+        slice_zy = self.vol[:, :, min2:max2]
+        slice_zy = np.mean(slice_zy, axis=2)
+
+        self.img_xy.setImage(slice_xy, levels=self.levels)
+        self.img_zx.setImage(slice_zx, levels=self.levels)
+        self.img_zy.setImage(slice_zy, levels=self.levels)
+
+
+    def denoise_slices_old(self, sigma): # with bm3d
         slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
         slice_xy = cm.denoise2D(slice_xy, sigma)
         slice_zx = cm.denoise2D(slice_zx, sigma)

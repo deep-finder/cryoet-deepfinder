@@ -18,6 +18,7 @@ Ui_MainWindow, QtBaseClass = uic.loadUiType(qtcreator_file)
 
 class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     #coord_signal = QtCore.pyqtSignal(list) # signal for getting coords from display window
+    signal_tomo_loaded = QtCore.pyqtSignal()
 
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
@@ -27,7 +28,6 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # Initialize object list:
         self.objl = []
         self.label_list = [1]
-        self.obj_id_list = [0] # init with 0 for max() ->to include in objl?
 
         # Classes section:
         self.table_classes.setColumnCount(2)
@@ -55,12 +55,22 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Set display window:
         self.winDisp = DisplayWindow()
+        self.winDisp.button_load_lmap.hide() # hide load lmap button
         #self.winDisp.connect_coord_signal(coord_signal)
+
+        # Connect signals to communicate with display window:
+        self.winDisp.connect_signal_tomo_loaded(self.signal_tomo_loaded) # connect to display window
+        self.signal_tomo_loaded.connect(self.on_signal_tomo_loaded)      # connect to function
 
         # Set target builder:
         self.tarBuild = TargetBuilder()
-        #self.lmap = None
-        self.lmap = np.zeros((300,928,928)) # TODO: get tomodim from display window with signal is_tomo_loaded
+        self.lmap = None
+        self.isTomoLoaded = False
+
+    def on_signal_tomo_loaded(self):
+        tomodim = self.winDisp.dwidget.dim
+        self.lmap = np.zeros(tomodim)
+        self.isTomoLoaded = True
 
     def on_class_add(self):
         Nclasses = len(self.label_list)
@@ -82,15 +92,20 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # Get class label:
         label = self.label_list[ self.table_classes.currentRow() ]
         # Get obj id:
-        new_obj_id = max(self.obj_id_list)+1
-        self.obj_id_list.append(new_obj_id)
+        objid_list = []
+        for idx in range(len(self.objl)):
+            objid_list.append(self.objl[idx]['obj_id'])
+        if len(objid_list)==0: # if 1st object
+            new_objid = 1
+        else:
+            new_objid = max(objid_list)+1
         # Add to objlist:
-        self.objl = ol.add_obj(self.objl, label, coord)
+        self.objl = ol.add_obj(self.objl, label=label, coord=coord, obj_id=new_objid)
 
         # Add new row to table:
         Nobjects = self.table_objects.rowCount()
         self.table_objects.insertRow(Nobjects)
-        self.table_objects.setItem(Nobjects, 0, QtWidgets.QTableWidgetItem(str(new_obj_id)))
+        self.table_objects.setItem(Nobjects, 0, QtWidgets.QTableWidgetItem(str(new_objid)))
         self.table_objects.setItem(Nobjects, 1, QtWidgets.QTableWidgetItem(str(label)))
         self.table_objects.setItem(Nobjects, 2, QtWidgets.QTableWidgetItem('('+str(coord[2])+','+str(coord[1])+','+str(coord[0])+')'))
 
@@ -99,18 +114,48 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Nobj_class = len(ol.get_class(self.objl, label))
         self.table_classes.setItem(self.table_classes.currentRow(), 1, QtWidgets.QTableWidgetItem(str(Nobj_class)))
 
-        # Display selected point:
+        # Add selected point to display window:
         new_obj = [self.objl[-1]]
         radius_list = [5]*max(self.label_list)
+        self.tarBuild.remove_flag = False
         self.lmap = self.tarBuild.generate_with_spheres(new_obj, self.lmap, radius_list)
         self.winDisp.dwidget.set_lmap(self.lmap)
 
-    # TODO: no remove if no object is selected
+        ol.disp(self.objl)
+
+    # TODO: no remove if no object is selected and no remove if objl is empty
     def on_object_remove(self):
         row_idx = self.table_objects.currentRow()
+        objid = int(self.table_objects.item(row_idx, 0).text())
+        objl_to_remove = ol.get_obj(self.objl, objid)
+        self.objl = ol.remove_obj(self.objl, objid)
         self.table_objects.removeRow(row_idx)
-        self.objl.pop(row_idx)
-        self.obj_id_list.pop(row_idx+1)
+        ol.disp(self.objl)
+
+        x = objl_to_remove[0]['x']
+        y = objl_to_remove[0]['y']
+        z = objl_to_remove[0]['z']
+        print('target value: '+str(self.lmap[z,y,x]))
+        # Remove selected point from display window:
+        self.tarBuild.remove_flag = True
+        radius_list = [5]*max(self.label_list)
+        self.lmap = self.tarBuild.generate_with_spheres(objl_to_remove, self.lmap, radius_list)
+        self.winDisp.dwidget.set_lmap(self.lmap)
+        print('target value after remove: ' + str(self.lmap[z, y, x]))
+
+        self.winDisp.dwidget.goto_coord([z, y, x]) # to refresh lmap display
+
+
+    def on_object_selected(self):
+        row_idx = self.table_objects.currentRow()
+        objid = int(self.table_objects.item(row_idx,0).text())
+
+        obj = ol.get_obj(self.objl, objid)
+        x = obj[0]['x']
+        y = obj[0]['y']
+        z = obj[0]['z']
+        self.winDisp.dwidget.goto_coord([z,y,x])
+
 
     def place_windows(self):
         ag = QtWidgets.QDesktopWidget().availableGeometry()
@@ -122,8 +167,6 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         winD_w = 3*winA_w
         self.winDisp.resize(winD_w, ag.height())
         self.winDisp.move(0,0)
-
-    def on_object_selected(self):
 
 
 # qtcreator_file  = '../display/gui_display.ui'

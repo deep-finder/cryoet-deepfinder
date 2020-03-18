@@ -8,16 +8,17 @@ from copy import deepcopy
 #from sklearn.metrics import pairwise_distances
 from contextlib import redirect_stdout # for writing txt file
 
-def add_obj(objlIN, label, coord, tomo_idx=None, orient=(None,None,None), cluster_size=None):
+def add_obj(objlIN, label, coord, obj_id=None, tomo_idx=None, orient=(None,None,None), cluster_size=None):
     obj = {
         'tomo_idx': tomo_idx,
-        'label': label,
-        'x'    :coord[2] ,
-        'y'    :coord[1] ,
-        'z'    :coord[0] ,
-        'psi'  :orient[0],
-        'phi'  :orient[1],
-        'the'  :orient[2],
+        'obj_id'  : obj_id  ,
+        'label'   : label   ,
+        'x'       :coord[2] ,
+        'y'       :coord[1] ,
+        'z'       :coord[0] ,
+        'psi'     :orient[0],
+        'phi'     :orient[1],
+        'the'     :orient[2],
         'cluster_size':cluster_size
     }
     # return objlIN.append(obj)
@@ -28,6 +29,7 @@ def disp(objlIN):
     """Prints objl in terminal"""
     for p in range(len(objlIN)):
         tidx  = objlIN[p]['tomo_idx']
+        objid = objlIN[p]['obj_id']
         lbl   = objlIN[p]['label']
         x     = objlIN[p]['x']
         y     = objlIN[p]['y']
@@ -40,6 +42,8 @@ def disp(objlIN):
         strout = 'obj ' + str(p) + ': ('
         if tidx!=None:
             strout = strout + 'tomo_idx:' + str(tidx) + ', '
+        if objid!=None:
+            strout = strout + 'obj_id:' + str(objid) + ', '
         strout = strout + 'lbl:' + str(lbl) + ', x:' + str(x) + ', y:' + str(y) + ', z:' + str(z) + ', '
         if psi!=None or phi!=None or the!=None:
             strout = strout + 'psi:' + str(psi) + ', phi:' + str(phi) + ', the:' + str(the) + ', '
@@ -56,6 +60,7 @@ def read_xml(filename):
     objlOUT = []
     for p in range(len(objl_xml)):
         tidx  = objl_xml[p].get('tomo_idx')
+        objid = objl_xml[p].get('obj_id')
         lbl   = objl_xml[p].get('class_label')
         x     = objl_xml[p].get('x')
         y     = objl_xml[p].get('y')
@@ -68,6 +73,8 @@ def read_xml(filename):
         # if facultative attributes exist, then cast to correct type:
         if tidx!=None:
             tidx = int(tidx)
+        if objid!=None:
+            objid = int(objid)
         if csize!=None:
             csize = int(csize)
         if psi!=None or phi!=None or the!=None:
@@ -75,13 +82,14 @@ def read_xml(filename):
             phi = float(phi)
             the = float(the)
 
-        add_obj(objlOUT, tomo_idx=tidx, label=lbl, coord=(float(x), float(y), float(z)), orient=(psi,phi,the), cluster_size=csize)
+        add_obj(objlOUT, tomo_idx=tidx, obj_id=objid, label=lbl, coord=(float(x), float(y), float(z)), orient=(psi,phi,the), cluster_size=csize)
     return objlOUT
 
 def write_xml(objlIN, filename):
     objl_xml = etree.Element('objlist')
     for idx in range(len(objlIN)):
         tidx  = objlIN[idx]['tomo_idx']
+        objid = objlIN[idx]['obj_id']
         lbl   = objlIN[idx]['label']
         x     = objlIN[idx]['x']
         y     = objlIN[idx]['y']
@@ -94,6 +102,8 @@ def write_xml(objlIN, filename):
         obj = etree.SubElement(objl_xml, 'object')
         if tidx!=None:
             obj.set('tomo_idx', str(tidx))
+        if objid!=None:
+            obj.set('obj_id', str(objid))
         obj.set('class_label' , str(lbl))
         obj.set('x'           , '%.3f' % x)
         obj.set('y'           , '%.3f' % y)
@@ -228,6 +238,45 @@ def get_tomo(objlIN, tomo_idx):
     for idx in range(len(idx_tomo)):
         objlOUT.append(objlIN[idx_tomo[idx]])
     return objlOUT
+
+def get_obj(objl, obj_id):
+    """
+    This function has been created for annotation tool.
+    Args:
+        objl (list of dict): input object list
+        obj_id (int): object ID of wanted object
+
+    Returns:
+        list of dict: contains object(s) with obj ID 'obj_id'
+    """
+    idx_obj  = []
+    for idx in range(len(objl)):
+        if objl[idx]['obj_id'] == obj_id:
+            idx_obj.append(idx)
+
+    objlOUT = []
+    for idx in range(len(idx_obj)):
+        objlOUT.append(objl[idx_obj[idx]])
+    return objlOUT
+
+def remove_obj(objl, obj_id):
+    """
+    This function has been created for annotation tool.
+    Args:
+        objl (list of dict): input object list
+        obj_id (int): object ID of wanted object
+
+    Returns:
+        list of dict: same as input object list but with object(s) 'obj_id' removed
+    """
+    idx_obj = []
+    for idx in range(len(objl)):
+        if objl[idx]['obj_id'] == obj_id:
+            idx_obj.append(idx)
+
+    for idx in range(len(idx_obj)):
+        objl.pop(idx_obj[idx])
+    return objl
 
 # # /!\ for now this function does not know how to handle empty objlists
 # def get_Ntp(objl_gt, objl_df, tol_pos_err):
