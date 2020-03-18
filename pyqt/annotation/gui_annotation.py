@@ -51,6 +51,8 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.button_objects_add.clicked.connect(self.add_object)
         self.button_objects_remove.clicked.connect(self.on_object_remove)
 
+        self.table_objects.itemSelectionChanged.connect(self.on_object_selected)
+
         # Set display window:
         self.winDisp = DisplayWindow()
         #self.winDisp.connect_coord_signal(coord_signal)
@@ -120,6 +122,9 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         winD_w = 3*winA_w
         self.winDisp.resize(winD_w, ag.height())
         self.winDisp.move(0,0)
+
+    def on_object_selected(self):
+
 
 # qtcreator_file  = '../display/gui_display.ui'
 # Ui_DispWindow, QtBaseClass = uic.loadUiType(qtcreator_file)

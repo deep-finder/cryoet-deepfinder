@@ -215,6 +215,28 @@ class DisplayOrthoslicesWidget(QWidget):
     #     self.vb_zy.scaleBy(s=scale, center=(self.z,self.y))
     #     self.vb_zx.scaleBy(s=scale, center=(self.x,self.z))
 
+    def goto_coord(self, coord=[None,None,None]):
+        if coord!=[None,None,None]:
+            self.x = coord[2]
+            self.y = coord[1]
+            self.z = coord[0]
+        slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
+        self.img_xy.setImage(slice_xy, levels=self.levels)
+        self.img_zy.setImage(slice_zy, levels=self.levels)
+        self.img_zx.setImage(slice_zx, levels=self.levels)
+        if self.flag_lmap:
+            lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
+            self.img_lmap_xy.setImage(lmap_xy)
+            self.img_lmap_zy.setImage(lmap_zy)
+            self.img_lmap_zx.setImage(lmap_zx)
+        self.lineV_xy.setPos(self.x)
+        self.lineH_xy.setPos(self.y)
+        self.lineV_zx.setPos(self.x)
+        self.lineH_zx.setPos(self.z)
+        self.lineV_zy.setPos(self.z)
+        self.lineH_zy.setPos(self.y)
+        self.set_zoom_centers()
+
     def mouseClick(self,evt):
         pos = evt.scenePos()
         if self.vb_xy.sceneBoundingRect().contains(pos):
@@ -224,18 +246,19 @@ class DisplayOrthoslicesWidget(QWidget):
             if x >= 0 and x < self.dim[2] and y >= 0 and y < self.dim[1]:
                 self.x = x
                 self.y = y
-                slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
-                self.img_zy.setImage(slice_zy, levels=self.levels)
-                self.img_zx.setImage(slice_zx, levels=self.levels)
-                if self.flag_lmap:
-                    lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
-                    self.img_lmap_zy.setImage(lmap_zy)
-                    self.img_lmap_zx.setImage(lmap_zx)
-                self.lineV_xy.setPos(x)
-                self.lineH_xy.setPos(y)
-                self.lineV_zx.setPos(x)
-                self.lineH_zy.setPos(y)
-                self.set_zoom_centers()
+                # slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
+                # self.img_zy.setImage(slice_zy, levels=self.levels)
+                # self.img_zx.setImage(slice_zx, levels=self.levels)
+                # if self.flag_lmap:
+                #     lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
+                #     self.img_lmap_zy.setImage(lmap_zy)
+                #     self.img_lmap_zx.setImage(lmap_zx)
+                # self.lineV_xy.setPos(x)
+                # self.lineH_xy.setPos(y)
+                # self.lineV_zx.setPos(x)
+                # self.lineH_zy.setPos(y)
+                # self.set_zoom_centers()
+                self.goto_coord()
 
         if self.vb_zy.sceneBoundingRect().contains(pos):
             mousePoint = self.vb_zy.mapSceneToView(pos)
@@ -244,18 +267,19 @@ class DisplayOrthoslicesWidget(QWidget):
             if z >= 0 and z < self.dim[0] and y >= 0 and y < self.dim[1]:
                 self.y = y
                 self.z = z
-                slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
-                self.img_xy.setImage(slice_xy, levels=self.levels)
-                self.img_zx.setImage(slice_zx, levels=self.levels)
-                if self.flag_lmap:
-                    lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
-                    self.img_lmap_xy.setImage(lmap_xy)
-                    self.img_lmap_zx.setImage(lmap_zx)
-                self.lineV_zy.setPos(z)
-                self.lineH_zy.setPos(y)
-                self.lineH_xy.setPos(y)
-                self.lineH_zx.setPos(z)
-                self.set_zoom_centers()
+                # slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
+                # self.img_xy.setImage(slice_xy, levels=self.levels)
+                # self.img_zx.setImage(slice_zx, levels=self.levels)
+                # if self.flag_lmap:
+                #     lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
+                #     self.img_lmap_xy.setImage(lmap_xy)
+                #     self.img_lmap_zx.setImage(lmap_zx)
+                # self.lineV_zy.setPos(z)
+                # self.lineH_zy.setPos(y)
+                # self.lineH_xy.setPos(y)
+                # self.lineH_zx.setPos(z)
+                # self.set_zoom_centers()
+                self.goto_coord()
 
         if self.vb_zx.sceneBoundingRect().contains(pos):
             mousePoint = self.vb_zx.mapSceneToView(pos)
@@ -264,18 +288,19 @@ class DisplayOrthoslicesWidget(QWidget):
             if x >= 0 and x < self.dim[2] and z >= 0 and z < self.dim[0]:
                 self.x = x
                 self.z = z
-                slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
-                self.img_xy.setImage(slice_xy, levels=self.levels)
-                self.img_zy.setImage(slice_zy, levels=self.levels)
-                if self.flag_lmap:
-                    lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
-                    self.img_lmap_xy.setImage(lmap_xy)
-                    self.img_lmap_zy.setImage(lmap_zy)
-                self.lineV_zx.setPos(x)
-                self.lineH_zx.setPos(z)
-                self.lineV_xy.setPos(x)
-                self.lineV_zy.setPos(z)
-                self.set_zoom_centers()
+                # slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
+                # self.img_xy.setImage(slice_xy, levels=self.levels)
+                # self.img_zy.setImage(slice_zy, levels=self.levels)
+                # if self.flag_lmap:
+                #     lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
+                #     self.img_lmap_xy.setImage(lmap_xy)
+                #     self.img_lmap_zy.setImage(lmap_zy)
+                # self.lineV_zx.setPos(x)
+                # self.lineH_zx.setPos(z)
+                # self.lineV_xy.setPos(x)
+                # self.lineV_zy.setPos(z)
+                # self.set_zoom_centers()
+                self.goto_coord()
 
         self.label.setText('(x,y,z)=' + '(' + str(self.x) + ',' + str(self.y) + ',' + str(self.z) + ')')
 
