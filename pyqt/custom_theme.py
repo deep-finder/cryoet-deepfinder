@@ -1,7 +1,7 @@
-# based on code found here: https://gist.github.com/gph03n1x/7281135
-
 from PyQt5 import QtCore, QtGui
+from PyQt5.QtWidgets import QMessageBox
 
+# based on code found here: https://gist.github.com/gph03n1x/7281135
 def set_custom_theme(app):
     app.setStyle('Fusion')
     palette = QtGui.QPalette()
@@ -18,3 +18,11 @@ def set_custom_theme(app):
     palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor(220, 91, 31))#(168, 113, 50)#.lighter())
     palette.setColor(QtGui.QPalette.HighlightedText, QtCore.Qt.black)
     app.setPalette(palette)
+
+def display_message_box(message):
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Critical)
+    msg.setWindowTitle('Warning')
+    msg.setText(message)
+    msg.setStandardButtons(QMessageBox.Ok)
+    msg.exec_()

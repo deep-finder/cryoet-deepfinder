@@ -2,7 +2,7 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
 sys.path.append('../')
-from custom_theme import set_custom_theme
+from custom_theme import set_custom_theme, display_message_box
 
 from widget_display import DisplayOrthoslicesWidget
 from deepfinder.utils import common as cm
@@ -111,8 +111,11 @@ class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
 
     @QtCore.pyqtSlot()
     def on_button_denoised(self):
-        sigma_noise = float( self.le_sigma_noise.text() )
-        self.dwidget.denoise_slices(sigma_noise)
+        if self.dwidget.isTomoLoaded:
+            sigma_noise = float( self.le_sigma_noise.text() )
+            self.dwidget.denoise_slices(sigma_noise)
+        else:
+            display_message_box('Please load a tomogram first')
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

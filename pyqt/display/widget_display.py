@@ -1,7 +1,11 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QMessageBox
 import pyqtgraph as pg
 import numpy as np
 from deepfinder.utils import common as cm
+
+import sys
+sys.path.append('../')
+from custom_theme import display_message_box
 
 class DisplayOrthoslicesWidget(QWidget):
     def __init__(self):
@@ -64,13 +68,13 @@ class DisplayOrthoslicesWidget(QWidget):
         #self.gl.addLabel('Z', col=0, row=2)
 
         # Add zoomed version:
-        self.vb_zoom = self.gl.addViewBox(row=1, col=1)
-        self.img_zoom = pg.ImageItem()
-        self.vb_zoom.addItem(self.img_zoom)
-
-        self.p = 20
-        self.slices_zoom = np.zeros((4*self.p, 4*self.p))
-        self.patch = np.zeros((2*self.p, 2*self.p, 2*self.p))
+        # self.vb_zoom = self.gl.addViewBox(row=1, col=1)
+        # self.img_zoom = pg.ImageItem()
+        # self.vb_zoom.addItem(self.img_zoom)
+        #
+        # self.p = 20
+        # self.slices_zoom = np.zeros((4*self.p, 4*self.p))
+        # self.patch = np.zeros((2*self.p, 2*self.p, 2*self.p))
 
         # Label displaying coordinates:
         self.label = pg.LabelItem()
@@ -87,6 +91,7 @@ class DisplayOrthoslicesWidget(QWidget):
         self.x = None
         self.y = None
         self.z = None
+        self.isTomoLoaded = False
 
         # Relative to displayed label map, needs to be initialized by set_lmap()
         self.img_lmap_xy = None
@@ -95,7 +100,7 @@ class DisplayOrthoslicesWidget(QWidget):
         self.flag_lmap = False
 
         # Connect click signal to dedicated function:
-        self.gl.scene().sigMouseClicked.connect(self.mouseClick)
+        self.gl.scene().sigMouseClicked.connect(self.mouseClick_secure)
 
         # Link axis of orthoslices:
         self.vb_xy.sigRangeChangedManually.connect(self.link_axes_vb_xy)
@@ -121,6 +126,7 @@ class DisplayOrthoslicesWidget(QWidget):
         return slice_xy, slice_zx, slice_zy
 
     def set_vol(self, vol):
+        self.isTomoLoaded = True
         self.vol = vol
         self.dim = self.vol.shape
         self.x = np.int(np.round(self.dim[2] / 2))
@@ -236,6 +242,13 @@ class DisplayOrthoslicesWidget(QWidget):
         self.lineV_zy.setPos(self.z)
         self.lineH_zy.setPos(self.y)
         self.set_zoom_centers()
+
+    def mouseClick_secure(self,evt):
+        if self.isTomoLoaded == True:
+            self.mouseClick(evt)
+        else:
+            display_message_box('Please load a tomogram first')
+
 
     def mouseClick(self,evt):
         pos = evt.scenePos()
