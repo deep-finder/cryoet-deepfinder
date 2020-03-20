@@ -97,7 +97,7 @@ class DisplayOrthoslicesWidget(QWidget):
         self.img_lmap_xy = None
         self.img_lmap_zy = None
         self.img_lmap_zx = None
-        self.flag_lmap = False
+        self.isLmapLoaded = False
 
         # Connect click signal to dedicated function:
         self.gl.scene().sigMouseClicked.connect(self.mouseClick_secure)
@@ -177,7 +177,7 @@ class DisplayOrthoslicesWidget(QWidget):
         self.img_zy.setLevels(levels)
 
     def set_lmap(self, lmap):
-        self.flag_lmap = True
+        self.isLmapLoaded = True
         self.lmap = lmap
         lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(lmap)
 
@@ -216,6 +216,10 @@ class DisplayOrthoslicesWidget(QWidget):
         self.img_lmap_zy.setOpacity(opacity)
         self.img_lmap_zx.setOpacity(opacity)
 
+    def update_lmap(self, lmap):
+        self.isLmapLoaded = True
+        self.lmap = lmap
+
     # def zoom_slices(self, scale): # TODO: erase
     #     self.vb_xy.scaleBy(s=scale, center=(self.x,self.y))
     #     self.vb_zy.scaleBy(s=scale, center=(self.z,self.y))
@@ -230,7 +234,7 @@ class DisplayOrthoslicesWidget(QWidget):
         self.img_xy.setImage(slice_xy, levels=self.levels)
         self.img_zy.setImage(slice_zy, levels=self.levels)
         self.img_zx.setImage(slice_zx, levels=self.levels)
-        if self.flag_lmap:
+        if self.isLmapLoaded:
             lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
             self.img_lmap_xy.setImage(lmap_xy)
             self.img_lmap_zy.setImage(lmap_zy)

@@ -80,24 +80,31 @@ class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
 
     @QtCore.pyqtSlot()
     def on_slider_value_changed_opacity(self):
-        opacity = float(self.slider_opacity.value()) / 100
-        self.dwidget.set_lmap_opacity(opacity)
+        if self.dwidget.isLmapLoaded:
+            opacity = float(self.slider_opacity.value()) / 100
+            self.dwidget.set_lmap_opacity(opacity)
+        else:
+            display_message_box('Please load a label map first')
 
     @QtCore.pyqtSlot()
     def on_slider_value_changed_contrast_min(self):
-        levels = self.dwidget.levels
-        cmin = self.slider_contrast_min.value()
-        #self.slider_contrast_max.setMinimum(cmin)
-        cmin = self.sliderToDataValue(float(cmin))
-        self.dwidget.set_vol_levels((cmin, levels[1]))
+        if self.dwidget.isTomoLoaded:
+            levels = self.dwidget.levels
+            cmin = self.slider_contrast_min.value()
+            cmin = self.sliderToDataValue(float(cmin))
+            self.dwidget.set_vol_levels((cmin, levels[1]))
+        else:
+            display_message_box('Please load a tomogram first')
 
     @QtCore.pyqtSlot()
     def on_slider_value_changed_contrast_max(self):
-        levels = self.dwidget.levels
-        cmax = self.slider_contrast_max.value()
-        #self.slider_contrast_min.setMaximum(cmax)
-        cmax = self.sliderToDataValue(float(cmax))
-        self.dwidget.set_vol_levels((levels[0], cmax))
+        if self.dwidget.isTomoLoaded:
+            levels = self.dwidget.levels
+            cmax = self.slider_contrast_max.value()
+            cmax = self.sliderToDataValue(float(cmax))
+            self.dwidget.set_vol_levels((levels[0], cmax))
+        else:
+            display_message_box('Please load a tomogram first')
 
     def dataToSliderValue(self, val):
         return 100*(val-self.dwidget.vol_min)/(self.dwidget.vol_max-self.dwidget.vol_min)

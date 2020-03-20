@@ -68,9 +68,10 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.isTomoLoaded = False
 
     def on_signal_tomo_loaded(self):
+        self.isTomoLoaded = True
         tomodim = self.winDisp.dwidget.dim
         self.lmap = np.zeros(tomodim)
-        self.isTomoLoaded = True
+        self.winDisp.dwidget.set_lmap(self.lmap)
 
     def on_class_add(self):
         Nclasses = len(self.label_list)
@@ -119,7 +120,9 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         radius_list = [5]*max(self.label_list)
         self.tarBuild.remove_flag = False
         self.lmap = self.tarBuild.generate_with_spheres(new_obj, self.lmap, radius_list)
-        self.winDisp.dwidget.set_lmap(self.lmap)
+
+        self.winDisp.dwidget.update_lmap(self.lmap)
+        self.winDisp.dwidget.goto_coord(coord)  # to refresh lmap display
 
         ol.disp(self.objl)
 
@@ -135,15 +138,15 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         x = objl_to_remove[0]['x']
         y = objl_to_remove[0]['y']
         z = objl_to_remove[0]['z']
-        print('target value: '+str(self.lmap[z,y,x]))
+
         # Remove selected point from display window:
         self.tarBuild.remove_flag = True
         radius_list = [5]*max(self.label_list)
         self.lmap = self.tarBuild.generate_with_spheres(objl_to_remove, self.lmap, radius_list)
-        self.winDisp.dwidget.set_lmap(self.lmap)
-        print('target value after remove: ' + str(self.lmap[z, y, x]))
 
-        self.winDisp.dwidget.goto_coord([z, y, x]) # to refresh lmap display
+        self.winDisp.dwidget.update_lmap(self.lmap)
+        self.winDisp.dwidget.goto_coord([z, y, x])  # to refresh lmap display
+
 
 
     def on_object_selected(self):
