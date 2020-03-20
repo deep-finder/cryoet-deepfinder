@@ -216,6 +216,7 @@ class DisplayOrthoslicesWidget(QWidget):
         self.img_lmap_zy.setOpacity(opacity)
         self.img_lmap_zx.setOpacity(opacity)
 
+    # For interactive lmap creation in annotation tool:
     def update_lmap(self, lmap):
         self.isLmapLoaded = True
         self.lmap = lmap

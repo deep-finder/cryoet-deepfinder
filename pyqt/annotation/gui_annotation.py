@@ -2,7 +2,7 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
 sys.path.append('../')
-from custom_theme import set_custom_theme
+from custom_theme import set_custom_theme, display_message_box
 
 sys.path.append('../display/')
 from gui_display import DisplayWindow
@@ -42,14 +42,17 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.button_classes_remove.clicked.connect(self.on_class_remove)
 
         # Objects section:
-        self.table_objects.setColumnCount(3)
+        self.table_objects.setColumnCount(4)
         self.table_objects.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem('Index'))
         self.table_objects.setHorizontalHeaderItem(1, QtWidgets.QTableWidgetItem('Class'))
         self.table_objects.setHorizontalHeaderItem(2, QtWidgets.QTableWidgetItem('Coordinates'))
-        self.table_objects.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        self.table_objects.setHorizontalHeaderItem(3, QtWidgets.QTableWidgetItem('Delete'))
 
-        self.button_objects_add.clicked.connect(self.add_object)
-        self.button_objects_remove.clicked.connect(self.on_object_remove)
+        self.table_objects.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        self.table_objects.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+
+        self.button_objects_add.clicked.connect(self.add_object_secure)
+        self.button_objects_remove.clicked.connect(self.on_object_remove_secure)
 
         self.table_objects.itemSelectionChanged.connect(self.on_object_selected)
 
@@ -82,9 +85,18 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.table_classes.setItem(Nclasses, 1, QtWidgets.QTableWidgetItem('0'))
 
     def on_class_remove(self):
-        row_idx = self.table_classes.currentRow()
-        self.table_classes.removeRow(row_idx)
-        self.label_list.pop(row_idx)
+        if len(self.label_list)>0:
+            row_idx = self.table_classes.currentRow()
+            self.table_classes.removeRow(row_idx)
+            self.label_list.pop(row_idx)
+        else:
+            display_message_box('Class list is already empty')
+
+    def add_object_secure(self):
+        if self.winDisp.dwidget.isTomoLoaded:
+            self.add_object()
+        else:
+            display_message_box('Please load a tomogram first')
 
     # TODO: implement double click on orthoslices for adding obj
     def add_object(self):
@@ -110,6 +122,9 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.table_objects.setItem(Nobjects, 1, QtWidgets.QTableWidgetItem(str(label)))
         self.table_objects.setItem(Nobjects, 2, QtWidgets.QTableWidgetItem('('+str(coord[2])+','+str(coord[1])+','+str(coord[0])+')'))
 
+        checkBox = QtGui.QCheckBox()
+        self.table_objects.setCellWidget(Nobjects, 3, checkBox)
+
         # Count object in table_classes:
         # TODO: problem: when no class is selected, obj count is not displayed
         Nobj_class = len(ol.get_class(self.objl, label))
@@ -125,6 +140,12 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.winDisp.dwidget.goto_coord(coord)  # to refresh lmap display
 
         ol.disp(self.objl)
+
+    def on_object_remove_secure(self):
+        if len(self.objl)>0:
+            self.on_object_remove()
+        else:
+            display_message_box('Object list is already empty')
 
     # TODO: no remove if no object is selected and no remove if objl is empty
     def on_object_remove(self):
