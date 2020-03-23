@@ -281,6 +281,27 @@ def remove_obj(objl, obj_id):
         objl.pop(idx)
     return objl
 
+def remove_class(objl, label_list):
+    """
+    This function has been created for annotation tool.
+    Args:
+        objl (list of dict): input object list
+        label_list (list of int): label of objects to remove
+
+    Returns:
+        list of dict: same as input object list but with objects from classes 'label_list' removed
+    """
+    idx_obj = []
+    for idx in range(len(objl)):
+        for lbl in label_list:
+            if objl[idx]['label'] == lbl:
+                idx_obj.append(idx)
+    idx_obj.sort(reverse=True)  # we have to remove obj from bottom to top of list, else problems with idx
+
+    for idx in idx_obj:
+        objl.pop(idx)
+    return objl
+
 # # /!\ for now this function does not know how to handle empty objlists
 # def get_Ntp(objl_gt, objl_df, tol_pos_err):
 #     # tolerated position error (in voxel)

@@ -44,7 +44,7 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Objects section:
         self.table_objects.setColumnCount(3)
-        self.table_objects.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem('Index'))
+        self.table_objects.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem('Obj ID'))
         self.table_objects.setHorizontalHeaderItem(1, QtWidgets.QTableWidgetItem('Class'))
         self.table_objects.setHorizontalHeaderItem(2, QtWidgets.QTableWidgetItem('Coordinates'))
 
@@ -99,7 +99,17 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             # Count number of objects of selected class(es):
             Nobj = 0
-            for row in selected_rows: Nobj += int(self.table_classes.item(row, 1).text())
+            lbl_list_to_remove = []
+            for row in selected_rows:
+                # Count objects:
+                Nobj += int(self.table_classes.item(row, 1).text())
+                # Get labels to remove:
+                lbl_string = self.table_classes.item(row, 0).text()
+                lbl = int(lbl_string[-1]) # 'Class 1' -> 1
+                lbl_list_to_remove.append(lbl)
+
+            print('labels to remove:')
+            print(lbl_list_to_remove)
 
             if Nobj==0: # if class is empty, delete right away
                 for row in selected_rows:  # delete
@@ -110,9 +120,22 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 reply = QtGui.QMessageBox.question(self, 'Remove class', message,
                                                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
                 if reply == QtGui.QMessageBox.Yes:
-                    for row in selected_rows:  # delete
+                    # Remove from table_objects and objl:
+                    objid_list = []
+                    for lbl in lbl_list_to_remove:
+                        objl = ol.get_class(self.objl, lbl)
+                        for idx in range(len(objl)):
+                            objid_list.append(objl[idx]['obj_id'])
+                    self.remove_objects(objid_list)
+
+                    # Remove from table_classes:
+                    for row in selected_rows:
                         self.table_classes.removeRow(row)
                         self.label_list.pop(row)
+
+                    # Test:
+                    print('Remove class!')
+                    ol.disp(self.objl)
 
         else:
             display_message_box('Class list is already empty')
@@ -178,46 +201,26 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             display_message_box('Object list is already empty')
 
-    # TODO: no remove if no object is selected and no remove if objl is empty
-    def on_object_remove_old(self):
-        row_idx = self.table_objects.currentRow()
-        objid = int(self.table_objects.item(row_idx, 0).text())
-        objl_to_remove = ol.get_obj(self.objl, objid)
-        self.objl = ol.remove_obj(self.objl, objid)
-        self.table_objects.removeRow(row_idx)
-        ol.disp(self.objl)
-
-        x = objl_to_remove[0]['x']
-        y = objl_to_remove[0]['y']
-        z = objl_to_remove[0]['z']
-
-        # Remove selected point from display window:
-        self.tarBuild.remove_flag = True
-        radius_list = [5]*max(self.label_list)
-        self.lmap = self.tarBuild.generate_with_spheres(objl_to_remove, self.lmap, radius_list)
-
-        self.winDisp.dwidget.update_lmap(self.lmap)
-        self.winDisp.dwidget.goto_coord([z, y, x])  # to refresh lmap display
-
     def on_object_remove(self):
         selected_rows = self.get_selected_rows(self.table_objects)
         objid_list =  []
         for row in selected_rows:
             objid_list.append( int(self.table_objects.item(row, 0).text()) )
 
-        objl_to_remove = ol.get_obj(self.objl, objid_list)
-        self.objl = ol.remove_obj(self.objl, objid_list)
-
-        for row_idx in selected_rows: # in different loop cause else row count changes dynamically and crashes
-            self.table_objects.removeRow(row_idx)
-
-        # Remove selected point from display window:
-        self.tarBuild.remove_flag = True
-        radius_list = [5] * max(self.label_list)
-        self.lmap = self.tarBuild.generate_with_spheres(objl_to_remove, self.lmap, radius_list)
-
-        self.winDisp.dwidget.update_lmap(self.lmap)
-        self.winDisp.dwidget.goto_coord()  # to refresh lmap display
+        # objl_to_remove = ol.get_obj(self.objl, objid_list)
+        # self.objl = ol.remove_obj(self.objl, objid_list)
+        #
+        # for row_idx in selected_rows: # in different loop cause else row count changes dynamically and crashes
+        #     self.table_objects.removeRow(row_idx)
+        #
+        # # Remove selected point from display window:
+        # self.tarBuild.remove_flag = True
+        # radius_list = [5] * max(self.label_list)
+        # self.lmap = self.tarBuild.generate_with_spheres(objl_to_remove, self.lmap, radius_list)
+        #
+        # self.winDisp.dwidget.update_lmap(self.lmap)
+        # self.winDisp.dwidget.goto_coord()  # to refresh lmap display
+        self.remove_objects(objid_list)
 
         # Update object count in table_classes:
         label = self.label_list[self.table_classes.currentRow()]
@@ -226,7 +229,32 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         ol.disp(self.objl)
 
-    #def remove_objects(self, objid_list):
+    def remove_objects(self, objid_list):
+        # Remove objects from objl:
+        objl_to_remove = ol.get_obj(self.objl, objid_list)
+        self.objl = ol.remove_obj(self.objl, objid_list)
+
+        # Get table row idx of objects to remove:
+        Nobj = self.table_objects.rowCount()
+        rows_to_remove = []
+        for row in range(Nobj):
+            objid = int(self.table_objects.item(row, 0).text())
+            for idx in range(len(objl_to_remove)):
+                if objid == objl_to_remove[idx]['obj_id']:
+                    rows_to_remove.append(row)
+        rows_to_remove.sort(reverse=True)
+
+        # Remove objects from table:
+        for row in rows_to_remove:
+            self.table_objects.removeRow(row)
+
+        # Remove objects from display window:
+        self.tarBuild.remove_flag = True
+        radius_list = [5] * max(self.label_list)
+        self.lmap = self.tarBuild.generate_with_spheres(objl_to_remove, self.lmap, radius_list)
+
+        self.winDisp.dwidget.update_lmap(self.lmap)
+        self.winDisp.dwidget.goto_coord()  # to refresh lmap display
 
     def get_checked_list(self, tableWidget, col):
         Nrows = tableWidget.rowCount()
