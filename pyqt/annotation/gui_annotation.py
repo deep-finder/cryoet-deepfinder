@@ -42,14 +42,12 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.button_classes_remove.clicked.connect(self.on_class_remove)
 
         # Objects section:
-        self.table_objects.setColumnCount(4)
+        self.table_objects.setColumnCount(3)
         self.table_objects.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem('Index'))
         self.table_objects.setHorizontalHeaderItem(1, QtWidgets.QTableWidgetItem('Class'))
         self.table_objects.setHorizontalHeaderItem(2, QtWidgets.QTableWidgetItem('Coordinates'))
-        self.table_objects.setHorizontalHeaderItem(3, QtWidgets.QTableWidgetItem('Delete'))
 
         self.table_objects.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        self.table_objects.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
 
         self.button_objects_add.clicked.connect(self.add_object_secure)
         self.button_objects_remove.clicked.connect(self.on_object_remove_secure)
@@ -76,6 +74,13 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.lmap = np.zeros(tomodim)
         self.winDisp.dwidget.set_lmap(self.lmap)
 
+    def get_selected_rows(self, tableWidget):
+        selected_rows = []
+        for idx in tableWidget.selectedIndexes():
+            selected_rows.append(idx.row())
+        selected_rows.sort(reverse=True)
+        return selected_rows
+
     def on_class_add(self):
         Nclasses = len(self.label_list)
         self.table_classes.setRowCount(Nclasses + 1)
@@ -86,17 +91,25 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def on_class_remove(self):
         if len(self.label_list)>0:
-            row_idx = self.table_classes.currentRow()
-            self.table_classes.removeRow(row_idx)
-            self.label_list.pop(row_idx)
+            selected_rows = self.get_selected_rows(self.table_classes)
+            for row in selected_rows:
+                self.table_classes.removeRow(row)
+                self.label_list.pop(row)
         else:
             display_message_box('Class list is already empty')
 
     def add_object_secure(self):
-        if self.winDisp.dwidget.isTomoLoaded:
-            self.add_object()
-        else:
+        selected_rows = self.get_selected_rows(self.table_classes)
+
+        if self.winDisp.dwidget.isTomoLoaded == False:
             display_message_box('Please load a tomogram first')
+        elif len(selected_rows)==0:
+            display_message_box('Please select a class before adding an object')
+        elif len(selected_rows)>1:
+            display_message_box('Only one class at a time must be selected when adding an object')
+        else:
+            self.add_object()
+
 
     # TODO: implement double click on orthoslices for adding obj
     def add_object(self):
@@ -122,11 +135,7 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.table_objects.setItem(Nobjects, 1, QtWidgets.QTableWidgetItem(str(label)))
         self.table_objects.setItem(Nobjects, 2, QtWidgets.QTableWidgetItem('('+str(coord[2])+','+str(coord[1])+','+str(coord[0])+')'))
 
-        checkBox = QtGui.QCheckBox()
-        self.table_objects.setCellWidget(Nobjects, 3, checkBox)
-
         # Count object in table_classes:
-        # TODO: problem: when no class is selected, obj count is not displayed
         Nobj_class = len(ol.get_class(self.objl, label))
         self.table_classes.setItem(self.table_classes.currentRow(), 1, QtWidgets.QTableWidgetItem(str(Nobj_class)))
 
@@ -139,7 +148,10 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.winDisp.dwidget.update_lmap(self.lmap)
         self.winDisp.dwidget.goto_coord(coord)  # to refresh lmap display
 
+        # Test:
         ol.disp(self.objl)
+        print(self.get_selected_rows(self.table_classes))
+
 
     def on_object_remove_secure(self):
         if len(self.objl)>0:
@@ -148,7 +160,7 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             display_message_box('Object list is already empty')
 
     # TODO: no remove if no object is selected and no remove if objl is empty
-    def on_object_remove(self):
+    def on_object_remove_old(self):
         row_idx = self.table_objects.currentRow()
         objid = int(self.table_objects.item(row_idx, 0).text())
         objl_to_remove = ol.get_obj(self.objl, objid)
@@ -168,17 +180,52 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.winDisp.dwidget.update_lmap(self.lmap)
         self.winDisp.dwidget.goto_coord([z, y, x])  # to refresh lmap display
 
+    def on_object_remove(self):
+        selected_rows = self.get_selected_rows(self.table_objects)
+        objid_list =  []
+        for row in selected_rows:
+            objid_list.append( int(self.table_objects.item(row, 0).text()) )
 
+        objl_to_remove = ol.get_obj(self.objl, objid_list)
+        self.objl = ol.remove_obj(self.objl, objid_list)
+
+        for row_idx in selected_rows: # in different loop cause else row count changes dynamically and crashes
+            self.table_objects.removeRow(row_idx)
+
+        # Remove selected point from display window:
+        self.tarBuild.remove_flag = True
+        radius_list = [5] * max(self.label_list)
+        self.lmap = self.tarBuild.generate_with_spheres(objl_to_remove, self.lmap, radius_list)
+
+        self.winDisp.dwidget.update_lmap(self.lmap)
+        self.winDisp.dwidget.goto_coord()  # to refresh lmap display
+
+        # Update object count in table_classes:
+        label = self.label_list[self.table_classes.currentRow()]
+        Nobj_class = len(ol.get_class(self.objl, label))
+        self.table_classes.setItem(self.table_classes.currentRow(), 1, QtWidgets.QTableWidgetItem(str(Nobj_class)))
+
+        ol.disp(self.objl)
+
+    def get_checked_list(self, tableWidget, col):
+        Nrows = tableWidget.rowCount()
+        checked_list = []
+        for row in range(Nrows):
+            if tableWidget.cellWidget(row,col).isChecked():
+                checked_list.append(row)
+        return checked_list
 
     def on_object_selected(self):
-        row_idx = self.table_objects.currentRow()
-        objid = int(self.table_objects.item(row_idx,0).text())
-
-        obj = ol.get_obj(self.objl, objid)
-        x = obj[0]['x']
-        y = obj[0]['y']
-        z = obj[0]['z']
-        self.winDisp.dwidget.goto_coord([z,y,x])
+        selected_rows = self.get_selected_rows(self.table_objects)
+        if len(selected_rows)==1:
+            row_idx = selected_rows[0]
+            objid = int(self.table_objects.item(row_idx,0).text())
+            obj = ol.get_obj(self.objl, [objid])
+            if len(obj)==1:
+                x = obj[0]['x']
+                y = obj[0]['y']
+                z = obj[0]['z']
+                self.winDisp.dwidget.goto_coord([z,y,x])
 
 
     def place_windows(self):

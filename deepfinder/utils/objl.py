@@ -244,19 +244,20 @@ def get_obj(objl, obj_id):
     This function has been created for annotation tool.
     Args:
         objl (list of dict): input object list
-        obj_id (int): object ID of wanted object
+        obj_id (list of int): object ID of wanted object(s)
 
     Returns:
         list of dict: contains object(s) with obj ID 'obj_id'
     """
-    idx_obj  = []
+    idx_obj = []
     for idx in range(len(objl)):
-        if objl[idx]['obj_id'] == obj_id:
-            idx_obj.append(idx)
+        for id in obj_id:
+            if objl[idx]['obj_id'] == id:
+                idx_obj.append(idx)
 
     objlOUT = []
-    for idx in range(len(idx_obj)):
-        objlOUT.append(objl[idx_obj[idx]])
+    for idx in idx_obj:
+        objlOUT.append(objl[idx])
     return objlOUT
 
 def remove_obj(objl, obj_id):
@@ -264,18 +265,20 @@ def remove_obj(objl, obj_id):
     This function has been created for annotation tool.
     Args:
         objl (list of dict): input object list
-        obj_id (int): object ID of wanted object
+        obj_id (list of int): object ID of wanted object(s)
 
     Returns:
         list of dict: same as input object list but with object(s) 'obj_id' removed
     """
     idx_obj = []
     for idx in range(len(objl)):
-        if objl[idx]['obj_id'] == obj_id:
-            idx_obj.append(idx)
+        for id in obj_id:
+            if objl[idx]['obj_id'] == id:
+                idx_obj.append(idx)
+    idx_obj.sort(reverse=True) # we have to remove obj from bottom to top of list, else problems with idx
 
-    for idx in range(len(idx_obj)):
-        objl.pop(idx_obj[idx])
+    for idx in idx_obj:
+        objl.pop(idx)
     return objl
 
 # # /!\ for now this function does not know how to handle empty objlists
