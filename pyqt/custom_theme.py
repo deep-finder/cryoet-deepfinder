@@ -26,3 +26,12 @@ def display_message_box(message):
     msg.setText(message)
     msg.setStandardButtons(QMessageBox.Ok)
     msg.exec_()
+
+#def display_question_box(question):
+    #msg = QMessageBox()
+    #msg.setIcon(QMessageBox.Question)
+    #msg.setStandardButtons(QMessageBox.Yes)
+    #msg.setStandardButtons(QMessageBox.No)
+    #msg.setText(question)
+    #reply = msg.exec_()
+    #return reply

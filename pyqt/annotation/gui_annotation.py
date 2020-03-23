@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
 sys.path.append('../')
@@ -54,6 +55,9 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.table_objects.itemSelectionChanged.connect(self.on_object_selected)
 
+        # Save button:
+        self.button_save.clicked.connect(self.on_button_save)
+
         # Set display window:
         self.winDisp = DisplayWindow()
         self.winDisp.button_load_lmap.hide() # hide load lmap button
@@ -92,9 +96,24 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def on_class_remove(self):
         if len(self.label_list)>0:
             selected_rows = self.get_selected_rows(self.table_classes)
-            for row in selected_rows:
-                self.table_classes.removeRow(row)
-                self.label_list.pop(row)
+
+            # Count number of objects of selected class(es):
+            Nobj = 0
+            for row in selected_rows: Nobj += int(self.table_classes.item(row, 1).text())
+
+            if Nobj==0: # if class is empty, delete right away
+                for row in selected_rows:  # delete
+                    self.table_classes.removeRow(row)
+                    self.label_list.pop(row)
+            else:       # else ask if user is sure
+                message = str(Nobj)+' objects will be removed. Proceed?'
+                reply = QtGui.QMessageBox.question(self, 'Remove class', message,
+                                                   QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+                if reply == QtGui.QMessageBox.Yes:
+                    for row in selected_rows:  # delete
+                        self.table_classes.removeRow(row)
+                        self.label_list.pop(row)
+
         else:
             display_message_box('Class list is already empty')
 
@@ -207,6 +226,8 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         ol.disp(self.objl)
 
+    #def remove_objects(self, objid_list):
+
     def get_checked_list(self, tableWidget, col):
         Nrows = tableWidget.rowCount()
         checked_list = []
@@ -226,6 +247,16 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 y = obj[0]['y']
                 z = obj[0]['z']
                 self.winDisp.dwidget.goto_coord([z,y,x])
+
+    def on_button_save(self):
+        if len(self.objl)==0:
+            display_message_box('The object list is empty')
+        else:
+            filename = QtGui.QFileDialog.getSaveFileName(self, 'Save object list')
+            filename = filename[0]
+            s = os.path.splitext(filename)
+            filename = s[0]+'.xml' # force extension to be xml
+            ol.write_xml(self.objl, filename)
 
 
     def place_windows(self):
