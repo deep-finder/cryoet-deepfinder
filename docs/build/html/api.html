@@ -1,0 +1,636 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API &mdash; DeepFinder 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Guide" href="guide.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> DeepFinder
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#deepfinder">DeepFinder</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#training">Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference">Inference</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities">Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-deepfinder.utils.common">Common utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-deepfinder.utils.objl">Object list utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-deepfinder.utils.smap">Scoremap utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DeepFinder</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api">
+<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="deepfinder">
+<h2>DeepFinder<a class="headerlink" href="#deepfinder" title="Permalink to this headline">¶</a></h2>
+<p>Each step of the DeepFinder workflow is coded as a class. The parameters of each method are stored as class attributes
+and are given default values in the constructor. These parameters can easily be given custom values as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">deepfinder.training</span> <span class="k">import</span> <span class="n">Train</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Train</span><span class="p">(</span><span class="n">Ncl</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="c1"># initialize training task, where default batch_size=25</span>
+<span class="n">trainer</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">16</span> <span class="c1"># customize batch_size value</span>
+</pre></div>
+</div>
+<p>Each class has a main method called ‘launch’ to execute the procedure. These classes all inherit from a mother class
+‘DeepFinder’ that possesses features useful for communicating with the GUI.</p>
+<div class="section" id="training">
+<h3>Training<a class="headerlink" href="#training" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="deepfinder.training.TargetBuilder">
+<em class="property">class </em><code class="sig-prename descclassname">deepfinder.training.</code><code class="sig-name descname">TargetBuilder</code><a class="headerlink" href="#deepfinder.training.TargetBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="deepfinder.training.TargetBuilder.generate_with_shapes">
+<code class="sig-name descname">generate_with_shapes</code><span class="sig-paren">(</span><em class="sig-param">objl</em>, <em class="sig-param">target_array</em>, <em class="sig-param">ref_list</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.training.TargetBuilder.generate_with_shapes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates segmentation targets from object list. Here macromolecules are annotated with their shape.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objl</strong> (<em>list of dictionaries</em>) – Needs to contain [phi,psi,the] Euler angles for orienting the shapes.</p></li>
+<li><p><strong>target_array</strong> (<em>3D numpy array</em>) – array that initializes the training target. Allows to pass an array already containing annotated structures like membranes.
+index order of array should be [z,y,x]</p></li>
+<li><p><strong>ref_list</strong> (<em>list of 3D numpy arrays</em>) – These reference arrays are expected to be cubic and to contain the shape of macromolecules (‘1’ for ‘is object’ and ‘0’ for ‘is not object’)
+The references order in list should correspond to the class label.
+For ex: 1st element of list -&gt; reference of class 1; 2nd element of list -&gt; reference of class 2 etc.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Target array, where ‘0’ for background class, {‘1’,’2’,…} for object classes.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>3D numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="deepfinder.training.TargetBuilder.generate_with_spheres">
+<code class="sig-name descname">generate_with_spheres</code><span class="sig-paren">(</span><em class="sig-param">objl</em>, <em class="sig-param">target_array</em>, <em class="sig-param">radius_list</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.training.TargetBuilder.generate_with_spheres" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates segmentation targets from object list. Here macromolecules are annotated with spheres.
+This method does not require knowledge of the macromolecule shape nor Euler angles in the objl.
+On the other hand, it can be that a network trained with ‘sphere targets’ is less accurate than with ‘shape targets’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objl</strong> (<em>list of dictionaries</em>) – </p></li>
+<li><p><strong>target_array</strong> (<em>3D numpy array</em>) – array that initializes the training target. Allows to pass an array already containing annotated structures like membranes.
+index order of array should be [z,y,x]</p></li>
+<li><p><strong>radius_list</strong> (<em>list of int</em>) – contains sphere radii per class (in voxels).
+The radii order in list should correspond to the class label.
+For ex: 1st element of list -&gt; sphere radius for class 1, 2nd element of list -&gt; sphere radius for class 2 etc.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Target array, where ‘0’ for background class, {‘1’,’2’,…} for object classes.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>3D numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="deepfinder.training.Train">
+<em class="property">class </em><code class="sig-prename descclassname">deepfinder.training.</code><code class="sig-name descname">Train</code><span class="sig-paren">(</span><em class="sig-param">Ncl</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.training.Train" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="deepfinder.training.Train.launch">
+<code class="sig-name descname">launch</code><span class="sig-paren">(</span><em class="sig-param">path_data</em>, <em class="sig-param">path_target</em>, <em class="sig-param">objlist_train</em>, <em class="sig-param">objlist_valid</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.training.Train.launch" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function launches the training procedure. For each epoch, an image is plotted, displaying the progression
+with different metrics: loss, accuracy, f1-score, recall, precision. Every 10 epochs, the current network weights
+are saved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_data</strong> (<em>list of string</em>) – contains paths to data files (i.e. tomograms)</p></li>
+<li><p><strong>path_target</strong> (<em>list of string</em>) – contains paths to target files (i.e. annotated volumes)</p></li>
+<li><p><strong>objlist_train</strong> (<em>list of dictionaries</em>) – contains information about annotated objects (e.g. class, position)
+In particular, the tomo_idx should correspond to the index of ‘path_data’ and ‘path_target’.
+See utils/objl.py for more info about object lists.
+During training, these coordinates are used for guiding the patch sampling procedure.</p></li>
+<li><p><strong>objlist_valid</strong> (<em>list of dictionaries</em>) – same as ‘objlist_train’, but objects contained in this list are not
+used for training, but for validation. It allows to monitor the training and check for over/under-fitting.
+Ideally, the validation objects should originate from different tomograms than training objects.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<dl>
+<dt>The function saves following files at regular intervals:</dt><dd><p>net_weights_epoch*.h5: contains current network weights</p>
+<p>net_train_history.h5: contains arrays with all metrics per training iteration</p>
+<p>net_train_history_plot.png: plotted metric curves</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="inference">
+<h3>Inference<a class="headerlink" href="#inference" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="deepfinder.inference.Segment">
+<em class="property">class </em><code class="sig-prename descclassname">deepfinder.inference.</code><code class="sig-name descname">Segment</code><span class="sig-paren">(</span><em class="sig-param">Ncl</em>, <em class="sig-param">path_weights</em>, <em class="sig-param">patch_size=192</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.inference.Segment" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="deepfinder.inference.Segment.launch">
+<code class="sig-name descname">launch</code><span class="sig-paren">(</span><em class="sig-param">dataArray</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.inference.Segment.launch" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function enables to segment a tomogram. As tomograms are too large to be processed in one take, the
+tomogram is decomposed in smaller overlapping 3D patches.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataArray</strong> (<em>3D numpy array</em>) – the volume to be segmented</p></li>
+<li><p><strong>weights_path</strong> (<em>str</em>) – path to the .h5 file containing the network weights obtained by the training procedure</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>contains predicted score maps. Array with index order [class,z,y,x]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="deepfinder.inference.Cluster">
+<em class="property">class </em><code class="sig-prename descclassname">deepfinder.inference.</code><code class="sig-name descname">Cluster</code><span class="sig-paren">(</span><em class="sig-param">clustRadius</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.inference.Cluster" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="deepfinder.inference.Cluster.launch">
+<code class="sig-name descname">launch</code><span class="sig-paren">(</span><em class="sig-param">labelmap</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.inference.Cluster.launch" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function analyzes the segmented tomograms (i.e. labelmap), identifies individual macromolecules and outputs
+their coordinates. This is achieved with a clustering algorithm (meanshift).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>labelmap</strong> (<em>3D numpy array</em>) – segmented tomogram</p></li>
+<li><p><strong>clustRadius</strong> (<em>int</em>) – parameter for clustering algorithm. Corresponds to average object radius (in voxels)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the object list with coordinates and class labels of identified macromolecules</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="utilities">
+<h2>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-deepfinder.utils.common">
+<span id="common-utils"></span><h3>Common utils<a class="headerlink" href="#module-deepfinder.utils.common" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="deepfinder.utils.common.bin_array">
+<code class="sig-prename descclassname">deepfinder.utils.common.</code><code class="sig-name descname">bin_array</code><span class="sig-paren">(</span><em class="sig-param">array</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.common.bin_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subsamples a 3D array by a factor 2. Subsampling is performed by averaging voxel values in 2x2x2 tiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>array</strong> (<em>numpy array</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>binned array</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deepfinder.utils.common.plot_volume_orthoslices">
+<code class="sig-prename descclassname">deepfinder.utils.common.</code><code class="sig-name descname">plot_volume_orthoslices</code><span class="sig-paren">(</span><em class="sig-param">vol</em>, <em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.common.plot_volume_orthoslices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes an image file containing ortho-slices of the input volume. Generates same visualization as matlab function
+‘tom_volxyz’ from TOM toolbox.
+If volume type is int8, the function assumes that the volume is a labelmap, and hence plots in color scale.
+Else, it assumes that the volume is tomographic data, and plots in gray scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vol</strong> (<em>3D numpy array</em>) – </p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – ‘/path/to/file.png’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deepfinder.utils.common.read_array">
+<code class="sig-prename descclassname">deepfinder.utils.common.</code><code class="sig-name descname">read_array</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">dset_name='dataset'</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.common.read_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads arrays. Handles .h5 and .mrc files, according to what extension the file has.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – ‘/path/to/file.ext’ with ‘.ext’ either ‘.h5’ or ‘.mrc’</p></li>
+<li><p><strong>dset_name</strong> (<em>str</em><em>, </em><em>optional</em>) – h5 dataset name. Not necessary to specify when reading .mrc</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deepfinder.utils.common.write_array">
+<code class="sig-prename descclassname">deepfinder.utils.common.</code><code class="sig-name descname">write_array</code><span class="sig-paren">(</span><em class="sig-param">array</em>, <em class="sig-param">filename</em>, <em class="sig-param">dset_name='dataset'</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.common.write_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes array. Can write .h5 and .mrc files, according to the extension specified in filename.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array</strong> (<em>numpy array</em>) – </p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – ‘/path/to/file.ext’ with ‘.ext’ either ‘.h5’ or ‘.mrc’</p></li>
+<li><p><strong>dset_name</strong> (<em>str</em><em>, </em><em>optional</em>) – h5 dataset name. Not necessary to specify when reading .mrc</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-deepfinder.utils.objl">
+<span id="object-list-utils"></span><h3>Object list utils<a class="headerlink" href="#module-deepfinder.utils.objl" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="deepfinder.utils.objl.above_thr">
+<code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">above_thr</code><span class="sig-paren">(</span><em class="sig-param">objlIN</em>, <em class="sig-param">thr</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.above_thr" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objl</strong> (<em>list of dict</em>) – </p></li>
+<li><p><strong>thr</strong> (<em>float</em>) – threshold</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>contains only objects with cluster size &gt;= thr</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deepfinder.utils.objl.disp">
+<code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">disp</code><span class="sig-paren">(</span><em class="sig-param">objlIN</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.disp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints objl in terminal</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="deepfinder.utils.objl.get_class">
+<code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">get_class</code><span class="sig-paren">(</span><em class="sig-param">objlIN</em>, <em class="sig-param">label</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.get_class" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objl</strong> (<em>list of dict</em>) – </p></li>
+<li><p><strong>label</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>contains only objects from class ‘label’</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deepfinder.utils.objl.get_obj">
+<code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">get_obj</code><span class="sig-paren">(</span><em class="sig-param">objl</em>, <em class="sig-param">obj_id</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.get_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function has been created for annotation tool.
+:param objl: input object list
+:type objl: list of dict
+:param obj_id: object ID of wanted object(s)
+:type obj_id: list of int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>contains object(s) with obj ID ‘obj_id’</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deepfinder.utils.objl.get_tomo">
+<code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">get_tomo</code><span class="sig-paren">(</span><em class="sig-param">objlIN</em>, <em class="sig-param">tomo_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.get_tomo" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objlIN</strong> (<em>list of dict</em>) – contains objects from various tomograms</p></li>
+<li><p><strong>tomo_idx</strong> (<em>int</em>) – tomogram index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>contains objects from tomogram ‘tomo_idx’</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deepfinder.utils.objl.remove_class">
+<code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">remove_class</code><span class="sig-paren">(</span><em class="sig-param">objl</em>, <em class="sig-param">label_list</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.remove_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function has been created for annotation tool.
+:param objl: input object list
+:type objl: list of dict
+:param label_list: label of objects to remove
+:type label_list: list of int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>same as input object list but with objects from classes ‘label_list’ removed</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deepfinder.utils.objl.remove_obj">
+<code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">remove_obj</code><span class="sig-paren">(</span><em class="sig-param">objl</em>, <em class="sig-param">obj_id</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.remove_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function has been created for annotation tool.
+:param objl: input object list
+:type objl: list of dict
+:param obj_id: object ID of wanted object(s)
+:type obj_id: list of int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>same as input object list but with object(s) ‘obj_id’ removed</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-deepfinder.utils.smap">
+<span id="scoremap-utils"></span><h3>Scoremap utils<a class="headerlink" href="#module-deepfinder.utils.smap" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="deepfinder.utils.smap.bin">
+<code class="sig-prename descclassname">deepfinder.utils.smap.</code><code class="sig-name descname">bin</code><span class="sig-paren">(</span><em class="sig-param">scoremaps</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.smap.bin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subsamples the scoremaps by a factor 2. Subsampling is performed by averaging voxel values in 2x2x2 tiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scoremaps</strong> (<em>4D numpy array</em>) – array with index order [class,z,y,x]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>4D numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deepfinder.utils.smap.read_h5">
+<code class="sig-prename descclassname">deepfinder.utils.smap.</code><code class="sig-name descname">read_h5</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.smap.read_h5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads scormaps stored in .h5 file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – path to file
+This .h5 file has one dataset per class (dataset ‘/class*’ contains scoremap of class <a href="#id1"><span class="problematic" id="id2">*</span></a>)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>scoremaps array with index order [class,z,y,x]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>4D numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deepfinder.utils.smap.to_labelmap">
+<code class="sig-prename descclassname">deepfinder.utils.smap.</code><code class="sig-name descname">to_labelmap</code><span class="sig-paren">(</span><em class="sig-param">scoremaps</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.smap.to_labelmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts scoremaps into a labelmap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scoremaps</strong> (<em>4D numpy array</em>) – array with index order [class,z,y,x]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>array with index order [z,y,x]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>3D numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deepfinder.utils.smap.write_h5">
+<code class="sig-prename descclassname">deepfinder.utils.smap.</code><code class="sig-name descname">write_h5</code><span class="sig-paren">(</span><em class="sig-param">scoremaps</em>, <em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.smap.write_h5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes scoremaps in .h5 file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scoremaps</strong> (<em>4D numpy array</em>) – array with index order [class,z,y,x]</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – path to file
+This .h5 file has one dataset per class (dataset ‘/class*’ contains scoremap of class <a href="#id3"><span class="problematic" id="id4">*</span></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="guide.html" class="btn btn-neutral float-left" title="Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Emmanuel Moebel
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

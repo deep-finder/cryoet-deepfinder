@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Guide &mdash; DeepFinder 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API" href="api.html" />
+    <link rel="prev" title="Introduction" href="intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> DeepFinder
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#annotation">Annotation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-object-list">The object list</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#display-window">Display window</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#annotation-gui">Annotation GUI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#target-generation">Target generation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sphere-targets">Sphere targets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#shape-targets">Shape targets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#training">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#segmentation">Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clustering">Clustering</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DeepFinder</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Guide</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/guide.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="guide">
+<h1>Guide<a class="headerlink" href="#guide" title="Permalink to this headline">¶</a></h1>
+<p>DeepFinder consists of 5 steps (blue boxes below), which constitute a workflow that allows to locate macromolecular
+complexes in crowded cells, when executed in depicted order. Each step can be executed either using a script (see examples/)
+or using the graphical user interface (see pyqt/). These steps may be used in other workflows, e.g. if the user
+needs only the segmentation step.</p>
+<div class="figure align-center" id="id1">
+<img alt="_images/deepfinder_workflow.png" src="_images/deepfinder_workflow.png" />
+<p class="caption"><span class="caption-text">DeepFinder workflow</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p><strong>Vocabulary:</strong></p>
+<ul class="simple">
+<li><p><strong>Object list:</strong> contains information on annotated or found macromolecular complexes</p></li>
+<li><p><strong>Label map:</strong> segmentation map, i.e. a 3D array of integers {0,…,Nclasses}, where ‘0’ is reserved for the background class.</p></li>
+<li><p><strong>Target:</strong> a label map used for training</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>DeepFinder can read and write tomograms in <strong>mrc</strong>, <strong>map</strong> and <strong>h5</strong> formats.</p>
+</div>
+<div class="section" id="annotation">
+<h2>Annotation<a class="headerlink" href="#annotation" title="Permalink to this headline">¶</a></h2>
+<p>DeepFinder provides a GUI for annotating your tomograms. The goal is to constitute an object list per tomogram.
+The term ‘object’ corresponds here to a macromolecular complex.</p>
+<div class="section" id="the-object-list">
+<h3>The object list<a class="headerlink" href="#the-object-list" title="Permalink to this headline">¶</a></h3>
+<p>An object list contains following information:</p>
+<ul class="simple">
+<li><p>Class label</p></li>
+<li><p>Coordinates (x,y,z)</p></li>
+<li><p>Orientation (phi,psi,theta): needed for generating shape targets</p></li>
+<li><p>Tomogram index: needed for training</p></li>
+<li><p>Cluster size: obtained after clustering step</p></li>
+</ul>
+<p>A list contains at least class label and coordinates of each object. Other information (e.g. orientation etc) is included
+depending on considered operation (e.g. shape target generation).</p>
+</div>
+<div class="section" id="display-window">
+<h3>Display window<a class="headerlink" href="#display-window" title="Permalink to this headline">¶</a></h3>
+<p>This window allows to explore a tomogram with ortho-slices (i.e. 2D slices in each dimension). By clicking on the slices,
+you can scan through the volume in x, y and z directions. Furthermore, you can adjust the contrast interactively and
+denoise the slices to improve visibility. Denoising is performed by averaging neighboring slices, the number of neighbors
+being configurable by the user.</p>
+<p>Also, a label map (i.e. segmentation map) can be superimposed on the tomogram slices and its opacity can be adapted.</p>
+</div>
+<div class="section" id="annotation-gui">
+<h3>Annotation GUI<a class="headerlink" href="#annotation-gui" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-center" id="id2">
+<img alt="_images/gui_annotation.png" src="_images/gui_annotation.png" />
+<p class="caption"><span class="caption-text">Annotation GUI</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<p>The annotation graphical interface is constituted of a display window and an annotation window, and allows you to
+interactively annotate your tomograms. First, select desired class. Then browse your tomogram to find instances of
+desired macromolecule species, and double-clic on their position. You will see a dot appearing on the tomogram slices
+and a row appear in the object table, confirming that the position has been saved. Repeat the process until all visible
+macromolecules have been annotated. To finish, save your object list. In the same way, annotate as many tomograms as you
+can, then proceed to the next step.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As annotation is a time-consuming task, you can save the current state and resume the task where you left it by
+saving the object list.</p>
+</div>
+</div>
+</div>
+<div class="section" id="target-generation">
+<h2>Target generation<a class="headerlink" href="#target-generation" title="Permalink to this headline">¶</a></h2>
+<p>This step converts an object list (i.e. position-wise annotations) into a label map (i.e. voxel-wise annotation).
+We propose two strategies to do so: <strong>spheres</strong> and <strong>shapes</strong>.</p>
+<div class="figure align-center" id="id3">
+<img alt="_images/gui_target_generation.png" src="_images/gui_target_generation.png" />
+<p class="caption"><span class="caption-text">Target generation GUI</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<ul class="simple">
+<li><p><strong>Object list path</strong>: path to the object list obtained from the annotation procedure.</p></li>
+<li><p><strong>Initialize target</strong>: allow you to initialize the target with an array already containing annotated structures like membranes.</p></li>
+<li><p><strong>Target size</strong> (in voxels): if you don’t use the target initialization option, you need to specify the size of your target volume, which should be the same size as the tomogram it describes.</p></li>
+<li><p><strong>Target path</strong>: where the target volume should be saved.</p></li>
+</ul>
+<div class="section" id="sphere-targets">
+<h3>Sphere targets<a class="headerlink" href="#sphere-targets" title="Permalink to this headline">¶</a></h3>
+<p>Here, targets are generated by placing a sphere at positions contained in the object list. You can specify a different
+radius per class. This radius should correspond to the size of the object. This technique is quick to execute in comparison
+to ‘shapes’ and yields decent results.</p>
+<ul class="simple">
+<li><p><strong>Radius list</strong> (in voxels): sphere radius per class. The list order should correspond to the class label as follows: 1st line -&gt; radius of class 1 ; 2nd line -&gt; radius of class 2 …</p></li>
+</ul>
+</div>
+<div class="section" id="shape-targets">
+<h3>Shape targets<a class="headerlink" href="#shape-targets" title="Permalink to this headline">¶</a></h3>
+<p>This strategy is more precise but needs more time and external tools to execute. Instead of using spheres, more precise
+masks (corresponding to macromolecule shapes) are placed at specified positions. However, to obtain these masks and also
+the orientation of each object, a sub-tomogram averaging procedure is needed (as available in PyTOM or Scipion).
+So using this strategy involves more efforts and time, but yields better results, especially for small objects.</p>
+<ul class="simple">
+<li><p><strong>Shape mask paths</strong>: list of mask paths (1 mask per class). The masks are 3D arrays which contain the shape of the macromolecules (‘1’ for ‘is object’ and ‘0’ for ‘is not object’). The path order should correspond to the class label as follows: 1st line -&gt; path to mask of class 1 ; 2nd line -&gt; path to mask of class 2 …</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When the ‘shapes’ strategy is selected, the object list needs to contain the orientation (i.e. Euler angles) of each object.</p>
+</div>
+</div>
+</div>
+<div class="section" id="training">
+<h2>Training<a class="headerlink" href="#training" title="Permalink to this headline">¶</a></h2>
+<p>Before running the training procedure, it is good practice to define a validation set, which is a subset of your training set.
+Then, this validation set will not be used for training, but for computing metrics to evaluate training performance.
+This is helpful for checking for <strong>overfitting</strong>.
+Intuitively, overfitting happens when instead of learning discriminating features of objects,
+the network learns them by heart. Consequently, like a bad student, the network is unable to generalize its knowledge to
+new data and produces a classification of poor quality.
+You can detect overfitting by comparing training loss and validation loss curves (or accuracy curves). If they have similar values, then training is efficient.
+If they diverge, then there is overfitting.</p>
+<p>You can define which of your annotated objects you want to use for training and for validation by storing them in separate
+object lists (see image below). Ideally, the validation objects should originate from a different tomogram than the
+training objects. If this is not possible, try to choose validation objects that are not too close to training
+objects. The minimum size of validation set should be <strong>at least</strong> few dozen objects per class, <strong>ideally</strong> a few hundreds.</p>
+<div class="figure align-center" id="id4">
+<img alt="_images/gui_train.png" src="_images/gui_train.png" />
+<p class="caption"><span class="caption-text">Training GUI</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</div>
+<ul class="simple">
+<li><p><strong>Tomogram and target paths</strong>: list here the paths to the tomograms an their corresponding targets. Should correspond line per line</p></li>
+<li><p><strong>Object list paths</strong>: tomogram index in these object lists should correspond to the order of above listed tomo/target pairs.</p></li>
+<li><p><strong>Output path</strong>: where network weights and training metrics will be saved.</p></li>
+</ul>
+<p><strong>Training parameters:</strong></p>
+<ul class="simple">
+<li><p><strong>Number of classes</strong> (background class included)</p></li>
+<li><p><strong>Patch size</strong> (in voxels): must be a multiple of 4, due to the network architecture.</p></li>
+<li><p><strong>Batch size</strong>: number of patches used to compute average loss.</p></li>
+<li><p><strong>Number of epochs</strong>: at the end of each epoch, evaluation on validation set is performed (usefull to check if network overfits).</p></li>
+<li><p><strong>Steps per epoch</strong>: number of batches trained on per epoch. In the end, the total number of training iterations is [number of epochs]x[steps per epoch].</p></li>
+<li><p><strong>Steps per validation</strong>: number of batches used for validation.</p></li>
+<li><p><strong>Direct read</strong>: if checked, only the current batch is loaded into memory, instead of the whole dataset. Usefull when running out of memory. Transmission speed between dataset storage and GPU should be high enough.</p></li>
+<li><p><strong>Bootstrap</strong>: if checked, applies re-sampling to batch generation, so that each class has an equal chance to be sampled. Usefull when in presence of unbalanced classes. Can remain checked.</p></li>
+<li><p><strong>Random shift</strong> (in voxels): applied to positions in object list when sampling patches. Enhances network robustness. Make sure that objects are still contained in patches after the shift is applied.</p></li>
+</ul>
+<p>Once you filled out all required fields, hit the ‘Launch’ button. A second window will appear, displaying training metrics in real time,
+allowing you to monitor the progress of the procedure.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If your machine runs <strong>out of memory</strong>, you can reduce patch size and batch size values.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Every 10 epochs, the network weights are saved at the output path. If your training procedure is interrupted for any reason,
+this allows you to resume the training at last saved network state, instead of starting over from scratch.</p>
+</div>
+</div>
+<div class="section" id="segmentation">
+<h2>Segmentation<a class="headerlink" href="#segmentation" title="Permalink to this headline">¶</a></h2>
+<p>Now that your network is trained, it is time to apply it to segment new tomograms. As a tomogram is too large to be
+processed in one take, the procedure splits the volume in smaller overlapping 3D patches. You can adapt the patch size
+to the available memory on your machine.</p>
+<div class="figure align-center" id="id5">
+<img alt="_images/gui_segment.png" src="_images/gui_segment.png" />
+<p class="caption"><span class="caption-text">Segmentation GUI</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</div>
+<ul class="simple">
+<li><p><strong>Tomogram path</strong></p></li>
+<li><p><strong>Net weights path</strong>: path to the .h5 file containing the network weights obtained by the training procedure.</p></li>
+<li><p><strong>Number of classes</strong> (background class included)</p></li>
+<li><p><strong>Patch size</strong> (in voxels): must be a multiple of 4, due to the network architecture.</p></li>
+<li><p><strong>Label map path</strong>: where the segmented tomogram should be saved.</p></li>
+<li><p><strong>Bin label map</strong>: when checked, also saves a sub-sampled version of the label map. Smaller label maps reduces computing time of clustering step.</p></li>
+</ul>
+<p>Once the segmentation is achieved, a display window appears, allowing you to check the consistency of the result.</p>
+</div>
+<div class="section" id="clustering">
+<h2>Clustering<a class="headerlink" href="#clustering" title="Permalink to this headline">¶</a></h2>
+<p>This procedure analyzes the segmented tomogram (i.e. label map), identifies individual macromolecules and outputs
+their coordinates, stored as an object list. This analysis is achieved with the mean-shift clustering algorithm.</p>
+<div class="figure align-center" id="id6">
+<img alt="_images/gui_cluster.png" src="_images/gui_cluster.png" />
+<p class="caption"><span class="caption-text">Clustering GUI</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+</div>
+<ul class="simple">
+<li><p><strong>Label map path</strong>: path to input label map.</p></li>
+<li><p><strong>Cluster radius</strong> (in voxels): parameter for clustering algorithm. Corresponds to average object radius.</p></li>
+<li><p><strong>Object list path</strong>: where the output object list should be saved.</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="intro.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Emmanuel Moebel
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
