@@ -17,6 +17,8 @@ import numpy as np
 qtcreator_file  = 'gui_annotation.ui'
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtcreator_file)
 
+# TODO: open objl
+# TODO: rename classes
 class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     #coord_signal = QtCore.pyqtSignal(list) # signal for getting coords from display window
     signal_tomo_loaded = QtCore.pyqtSignal()
@@ -88,7 +90,10 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def on_class_add(self):
         Nclasses = len(self.label_list)
         self.table_classes.setRowCount(Nclasses + 1)
-        new_label = max(self.label_list)+1
+        if len(self.label_list)==0:
+            new_label = 1
+        else:
+            new_label = max(self.label_list)+1
         self.label_list.append(new_label)
         self.table_classes.setItem(Nclasses, 0, QtWidgets.QTableWidgetItem('Class ' + str(new_label)))
         self.table_classes.setItem(Nclasses, 1, QtWidgets.QTableWidgetItem('0'))
@@ -107,9 +112,6 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 lbl_string = self.table_classes.item(row, 0).text()
                 lbl = int(lbl_string[-1]) # 'Class 1' -> 1
                 lbl_list_to_remove.append(lbl)
-
-            print('labels to remove:')
-            print(lbl_list_to_remove)
 
             if Nobj==0: # if class is empty, delete right away
                 for row in selected_rows:  # delete
@@ -192,7 +194,6 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Test:
         ol.disp(self.objl)
-        print(self.get_selected_rows(self.table_classes))
 
 
     def on_object_remove_secure(self):
@@ -207,19 +208,6 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for row in selected_rows:
             objid_list.append( int(self.table_objects.item(row, 0).text()) )
 
-        # objl_to_remove = ol.get_obj(self.objl, objid_list)
-        # self.objl = ol.remove_obj(self.objl, objid_list)
-        #
-        # for row_idx in selected_rows: # in different loop cause else row count changes dynamically and crashes
-        #     self.table_objects.removeRow(row_idx)
-        #
-        # # Remove selected point from display window:
-        # self.tarBuild.remove_flag = True
-        # radius_list = [5] * max(self.label_list)
-        # self.lmap = self.tarBuild.generate_with_spheres(objl_to_remove, self.lmap, radius_list)
-        #
-        # self.winDisp.dwidget.update_lmap(self.lmap)
-        # self.winDisp.dwidget.goto_coord()  # to refresh lmap display
         self.remove_objects(objid_list)
 
         # Update object count in table_classes:
@@ -298,16 +286,6 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.winDisp.resize(winD_w, ag.height())
         self.winDisp.move(0,0)
 
-
-# qtcreator_file  = '../display/gui_display.ui'
-# Ui_DispWindow, QtBaseClass = uic.loadUiType(qtcreator_file)
-#
-# class AnnotationDisplayWindow(QtWidgets.QMainWindow, Ui_DispWindow, DisplayWindow):
-#     def __init__(self):
-#         QtWidgets.QMainWindow.__init__(self)
-#         Ui_DispWindow.__init__(self)
-#         self.setupUi(self)
-#         DisplayWindow.__init__(self)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

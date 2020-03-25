@@ -64,8 +64,8 @@ class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
         self.slider_contrast_max.setValue(self.dataToSliderValue(self.dwidget.levels[1]))
 
         # Automatically propose a value for sigma_noise:
-        sigma_noise = int( 0.7*self.dwidget.vol_sig )
-        self.le_sigma_noise.setText(str(sigma_noise))
+        #sigma_noise = int( 0.7*self.dwidget.vol_sig )
+        #self.le_sigma_noise.setText(str(sigma_noise))
 
         # Inform other windows that tomo is loaded (if they exist):
         if self.signal_tomo_loaded != None:
@@ -119,8 +119,8 @@ class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
     @QtCore.pyqtSlot()
     def on_button_denoised(self):
         if self.dwidget.isTomoLoaded:
-            sigma_noise = float( self.le_sigma_noise.text() )
-            self.dwidget.denoise_slices(sigma_noise)
+            N = int( self.spinb_denoise_param.value() )
+            self.dwidget.denoise_slices(N)
         else:
             display_message_box('Please load a tomogram first')
 

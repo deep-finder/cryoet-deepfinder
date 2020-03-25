@@ -198,6 +198,23 @@ def save_history(history, filename):
     h5file.close()
     return
 
+def read_history(filename):
+    history = {'acc': None, 'loss': None, 'val_acc': None, 'val_loss': None, 'val_f1': None, 'val_precision': None, 'val_recall': None}
+
+    h5file = h5py.File(filename, 'r')
+    # train and val loss & accuracy:
+    history['acc']      = h5file['acc'][:]
+    history['loss']     = h5file['loss'][:]
+    history['val_acc']  = h5file['val_acc'][:]
+    history['val_loss'] = h5file['val_loss'][:]
+    # val precision, recall, F1:
+    history['val_f1']        = h5file['val_f1'][:]
+    history['val_precision'] = h5file['val_precision'][:]
+    history['val_recall']    = h5file['val_recall'][:]
+
+    h5file.close()
+    return history
+
 # Plots the training history as several graphs and saves them in an image file.
 # Validation score is averaged over all batches tested in validation step (steps_per_valid)
 # Training score is averaged over last N=steps_per_valid batches of each epoch.

@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QMessageBox
 import pyqtgraph as pg
 import numpy as np
+import matplotlib # for lmap colormap
 from deepfinder.utils import common as cm
 
 import sys
@@ -177,6 +178,7 @@ class DisplayOrthoslicesWidget(QWidget):
         self.img_zy.setLevels(levels)
 
     def set_lmap(self, lmap):
+        print('set_lmap called')
         self.isLmapLoaded = True
         self.lmap = lmap
         lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(lmap)
@@ -186,21 +188,30 @@ class DisplayOrthoslicesWidget(QWidget):
         self.img_lmap_zx = pg.ImageItem(lmap_zx)
 
         # Set color map:
-        colors = [
-            (0, 0, 0),
-            (45, 5, 61),
-            (84, 42, 55),
-            (150, 87, 60),
-            (208, 171, 141),
-            (255, 255, 255)
-        ]
-        cmap = pg.ColorMap(pos=np.linspace(0.0, 1.0, 6), color=colors)
-        lut = cmap.getLookupTable(alpha=True)
+        # colors = [
+        #     (0, 0, 0),
+        #     (45, 5, 61),
+        #     (84, 42, 55),
+        #     (150, 87, 60),
+        #     (208, 171, 141),
+        #     (255, 255, 255)
+        # ]
+        # cmap = pg.ColorMap(pos=np.linspace(0.0, 1.0, 6), color=colors)
+        # lut = cmap.getLookupTable(alpha=True)
+        # # add alpha channel so that '0'->transparent
+        # alpha = np.ones((lut.shape[0], 1)) * 255
+        # alpha[0] = 0
+        # lut = np.concatenate((lut, alpha), axis=1)
 
-        # add alpha channel so that '0'->transparent
-        alpha = np.ones((lut.shape[0], 1)) * 255
+        colormap = matplotlib.cm.get_cmap('CMRmap')
+        colormap._init()
+        lut = (colormap._lut * 255).view(np.ndarray)
+        # edit alpha channel so that '0'->transparent
+        alpha = np.ones(lut.shape[0]) * 255
         alpha[0] = 0
-        lut = np.concatenate((lut, alpha), axis=1)
+        lut[:,3] = alpha
+
+
         self.img_lmap_xy.setLookupTable(lut)
         self.img_lmap_zy.setLookupTable(lut)
         self.img_lmap_zx.setLookupTable(lut)
@@ -291,30 +302,32 @@ class DisplayOrthoslicesWidget(QWidget):
         self.vb_zy.set_zoom_center(self.z, self.y)
         self.vb_zx.set_zoom_center(self.x, self.z)
 
-    def denoise_slices(self, sigma): # by averaging neighboring slices
-        n = 5
-        min0 = self.z-n
-        max0 = self.z+n
-        if min0 < 0          : min0 = 0
-        if max0 > self.dim[0]: max0 = self.dim[0]
-        slice_xy = self.vol[min0:max0, :, :]
-        slice_xy = np.mean(slice_xy, axis=0)
-        slice_xy = np.transpose(slice_xy)
+    def denoise_slices(self, n): # by averaging neighboring slices
+        if n==0: # return noisy slices
+            slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
+        else:
+            min0 = self.z-n
+            max0 = self.z+n
+            if min0 < 0          : min0 = 0
+            if max0 > self.dim[0]: max0 = self.dim[0]
+            slice_xy = self.vol[min0:max0, :, :]
+            slice_xy = np.mean(slice_xy, axis=0)
+            slice_xy = np.transpose(slice_xy)
 
-        min1 = self.y - n
-        max1 = self.y + n
-        if min1 < 0          : min1 = 0
-        if max1 > self.dim[1]: max1 = self.dim[1]
-        slice_zx = self.vol[:, min1:max1, :]
-        slice_zx = np.mean(slice_zx, axis=1)
-        slice_zx = np.transpose(slice_zx)
+            min1 = self.y - n
+            max1 = self.y + n
+            if min1 < 0          : min1 = 0
+            if max1 > self.dim[1]: max1 = self.dim[1]
+            slice_zx = self.vol[:, min1:max1, :]
+            slice_zx = np.mean(slice_zx, axis=1)
+            slice_zx = np.transpose(slice_zx)
 
-        min2 = self.z - n
-        max2 = self.z + n
-        if min2 < 0          : min2 = 0
-        if max2 > self.dim[2]: max2 = self.dim[2]
-        slice_zy = self.vol[:, :, min2:max2]
-        slice_zy = np.mean(slice_zy, axis=2)
+            min2 = self.z - n
+            max2 = self.z + n
+            if min2 < 0          : min2 = 0
+            if max2 > self.dim[2]: max2 = self.dim[2]
+            slice_zy = self.vol[:, :, min2:max2]
+            slice_zy = np.mean(slice_zy, axis=2)
 
         self.img_xy.setImage(slice_xy, levels=self.levels)
         self.img_zx.setImage(slice_zx, levels=self.levels)

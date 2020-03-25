@@ -169,6 +169,8 @@ class Cluster(core.DeepFinder):
             labelmap (3D numpy array): segmented tomogram
             clustRadius (int): parameter for clustering algorithm. Corresponds to average object radius (in voxels)
 
+        Returns:
+            list of dict: the object list with coordinates and class labels of identified macromolecules
         """
         self.check_arguments(labelmap)
 

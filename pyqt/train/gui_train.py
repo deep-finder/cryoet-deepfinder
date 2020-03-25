@@ -12,6 +12,8 @@ from deepfinder.training import Train
 from deepfinder.utils import core
 from deepfinder.utils import objl as ol
 
+from plot_window import TrainMetricsPlotWindow
+
 qtcreator_file  = 'gui_train.ui'
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtcreator_file)
 
@@ -24,6 +26,9 @@ class TrainingWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.print_signal.connect(self.on_print_signal)
         self.button_launch.clicked.connect(self.on_clicked)
+
+        # Plot window:
+        self.winPlot = TrainMetricsPlotWindow()
 
     @QtCore.pyqtSlot(str)
     def on_print_signal(self, message): # is called when signal is emmited. Signal passes str 'message' to slot
@@ -76,10 +81,25 @@ class TrainingWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # Launch training:
         trainer.launch(path_data, path_target, objl_train, objl_valid)
 
+    def place_windows(self):
+        ag = QtWidgets.QDesktopWidget().availableGeometry()
+        # Resize and place annotation window:
+        winT_w = int(ag.width()/2)
+        winT_h = 2*int(ag.height()/3)
+        self.resize(winT_w, winT_h)
+        self.move(0, 0)
+        # Resize and place display window:
+        self.winPlot.win.resize(winT_w, winT_h)
+        self.winPlot.win.move(ag.width()-winT_w,0)
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     set_custom_theme(app)
-    window = TrainingWindow()
-    window.show()
+
+    win = TrainingWindow()
+    win.place_windows()
+    win.winPlot.win.show()
+    win.show()
+
     sys.exit(app.exec_())

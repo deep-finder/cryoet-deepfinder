@@ -130,6 +130,7 @@ class TargetBuilder(core.DeepFinder):
         return target_array
 
 
+# TODO: add method for resuming training. It should load existing weights and train_history. So when restarting, the plot curves show prececedent epochs
 class Train(core.DeepFinder):
     def __init__(self, Ncl):
         core.DeepFinder.__init__(self)

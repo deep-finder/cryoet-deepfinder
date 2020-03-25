@@ -21,7 +21,24 @@
        <string>Tomogram</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="2">
+       <item row="1" column="0">
+        <widget class="QLabel" name="lbl_contrast">
+         <property name="text">
+          <string>Contrast</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="2">
+        <widget class="QSlider" name="slider_contrast_min">
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
         <widget class="QSlider" name="slider_contrast_max">
          <property name="maximum">
           <number>100</number>
@@ -34,41 +51,37 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QSlider" name="slider_contrast_min">
-         <property name="maximum">
-          <number>100</number>
+       <item row="2" column="0" colspan="2">
+        <widget class="QLabel" name="lbl_denoise_param">
+         <property name="toolTip">
+          <string>Number of slices in both directions used for averaging</string>
          </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="lbl_contrast">
          <property name="text">
-          <string>Contrast</string>
+          <string>Neighbor slices</string>
          </property>
         </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="lbl_sigma_noise">
-         <property name="text">
-          <string>Noise STD</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="le_sigma_noise"/>
        </item>
        <item row="2" column="2">
+        <widget class="QSpinBox" name="spinb_denoise_param">
+         <property name="toolTip">
+          <string>Number of slices in both directions used for averaging</string>
+         </property>
+         <property name="maximum">
+          <number>20</number>
+         </property>
+         <property name="value">
+          <number>5</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
         <widget class="QPushButton" name="button_denoise">
          <property name="text">
           <string>Denoise</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="0" colspan="3">
+       <item row="0" column="0" colspan="4">
         <widget class="QPushButton" name="button_load_tomo">
          <property name="text">
           <string>Load</string>
