@@ -43,7 +43,7 @@ Before installation, you need a python environment on your machine. If this is n
 Then, you need to download the present repository. Next, open a terminal, place yourself in your deep-finder folder and run:
 ```
 cd /path/to/deep-finder/
-pip install -r requirements.txt
+pip install -r requirements_gpu.txt
 ```
 Also, in order for Keras to work with your Nvidia GPU, you need to install CUDA. For more details about installing Keras and CUDA, please see [Keras installation instructions](https://keras.io/#installation).
 
