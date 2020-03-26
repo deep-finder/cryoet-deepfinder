@@ -234,7 +234,7 @@ saving the object list.</p>
 <p>This step converts an object list (i.e. position-wise annotations) into a label map (i.e. voxel-wise annotation).
 We propose two strategies to do so: <strong>spheres</strong> and <strong>shapes</strong>.</p>
 <div class="figure align-center" id="id3">
-<img alt="_images/gui_target_generation.png" src="_images/gui_target_generation.png" />
+<a class="reference internal image-reference" href="_images/gui_target_generation.png"><img alt="_images/gui_target_generation.png" src="_images/gui_target_generation.png" style="height: 400px;" /></a>
 <p class="caption"><span class="caption-text">Target generation GUI</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
 </div>
 <ul class="simple">
@@ -259,7 +259,7 @@ masks (corresponding to macromolecule shapes) are placed at specified positions.
 the orientation of each object, a sub-tomogram averaging procedure is needed (as available in PyTOM or Scipion).
 So using this strategy involves more efforts and time, but yields better results, especially for small objects.</p>
 <ul class="simple">
-<li><p><strong>Shape mask paths</strong>: list of mask paths (1 mask per class). The masks are 3D arrays which contain the shape of the macromolecules (‘1’ for ‘is object’ and ‘0’ for ‘is not object’). The path order should correspond to the class label as follows: 1st line -&gt; path to mask of class 1 ; 2nd line -&gt; path to mask of class 2 …</p></li>
+<li><p><strong>Shape mask paths</strong>: list of mask paths (1 mask per class). The masks are 3D arrays which contain the shape of macromolecules (‘1’ for ‘is object’ and ‘0’ for ‘is not object’). The path order should correspond to the class label as follows: 1st line -&gt; path to mask of class 1 ; 2nd line -&gt; path to mask of class 2 …</p></li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -282,7 +282,7 @@ object lists (see image below). Ideally, the validation objects should originate
 training objects. If this is not possible, try to choose validation objects that are not too close to training
 objects. The minimum size of validation set should be <strong>at least</strong> few dozen objects per class, <strong>ideally</strong> a few hundreds.</p>
 <div class="figure align-center" id="id4">
-<img alt="_images/gui_train.png" src="_images/gui_train.png" />
+<a class="reference internal image-reference" href="_images/gui_train.png"><img alt="_images/gui_train.png" src="_images/gui_train.png" style="height: 400px;" /></a>
 <p class="caption"><span class="caption-text">Training GUI</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
 </div>
 <ul class="simple">
@@ -338,7 +338,7 @@ to the available memory on your machine.</p>
 <p>This procedure analyzes the segmented tomogram (i.e. label map), identifies individual macromolecules and outputs
 their coordinates, stored as an object list. This analysis is achieved with the mean-shift clustering algorithm.</p>
 <div class="figure align-center" id="id6">
-<img alt="_images/gui_cluster.png" src="_images/gui_cluster.png" />
+<a class="reference internal image-reference" href="_images/gui_cluster.png"><img alt="_images/gui_cluster.png" src="_images/gui_cluster.png" style="height: 400px;" /></a>
 <p class="caption"><span class="caption-text">Clustering GUI</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
 </div>
 <ul class="simple">

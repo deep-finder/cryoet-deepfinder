@@ -75,6 +75,7 @@ We propose two strategies to do so: **spheres** and **shapes**.
 
 .. figure::  ../../images/gui_target_generation.png
    :align:   center
+   :height:   400
 
    Target generation GUI
 
@@ -124,6 +125,7 @@ objects. The minimum size of validation set should be **at least** few dozen obj
 
 .. figure::  ../../images/gui_train.png
    :align:   center
+   :height:   400
 
    Training GUI
 
@@ -183,6 +185,7 @@ their coordinates, stored as an object list. This analysis is achieved with the 
 
 .. figure::  ../../images/gui_cluster.png
    :align:   center
+   :height:   400
 
    Clustering GUI
 

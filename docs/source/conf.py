@@ -24,6 +24,10 @@ author = 'Emmanuel Moebel'
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
 
+# eml modif: for readthedocs compilation, else error "contents.rst not found"
+# (by default, readthedocs expects master doc to be contents)
+master_doc = 'index'
+
 
 # -- General configuration ---------------------------------------------------
 
