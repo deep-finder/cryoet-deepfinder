@@ -9,7 +9,7 @@ warnings.simplefilter('ignore') # to mute some warnings produced when opening th
 from skimage.measure import block_reduce
 from scipy.spatial.transform import Rotation as R
 from scipy.ndimage import map_coordinates
-from bm3d import bm3d, BM3DProfileLC, BM3DStages
+#from bm3d import bm3d, BM3DProfileLC, BM3DStages
 
 import matplotlib
 matplotlib.use('agg') # necessary else: AttributeError: 'NoneType' object has no attribute 'is_interactive'
@@ -242,7 +242,7 @@ def create_sphere(dim, R): # TODO move to core_utils?
 #   sigma_noise: noise standard deviation
 # OUTPUT:
 #   img_den: denoised 2D numpy array
-def denoise2D(img, sigma_noise):
-    img_den = bm3d(z=img, sigma_psd=sigma_noise, profile=BM3DProfileLC(), stage_arg=BM3DStages.HARD_THRESHOLDING)
-    return img_den
+#def denoise2D(img, sigma_noise):
+#    img_den = bm3d(z=img, sigma_psd=sigma_noise, profile=BM3DProfileLC(), stage_arg=BM3DStages.HARD_THRESHOLDING)
+#    return img_den
 

@@ -1,0 +1,98 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'gui_display.ui'
+#
+# Created by: PyQt5 UI code generator 5.13.2
+#
+# WARNING! All changes made in this file will be lost!
+
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(547, 599)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.gridLayout_3 = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.gb_tomo = QtWidgets.QGroupBox(self.centralwidget)
+        self.gb_tomo.setObjectName("gb_tomo")
+        self.gridLayout = QtWidgets.QGridLayout(self.gb_tomo)
+        self.gridLayout.setObjectName("gridLayout")
+        self.lbl_contrast = QtWidgets.QLabel(self.gb_tomo)
+        self.lbl_contrast.setObjectName("lbl_contrast")
+        self.gridLayout.addWidget(self.lbl_contrast, 1, 0, 1, 1)
+        self.slider_contrast_min = QtWidgets.QSlider(self.gb_tomo)
+        self.slider_contrast_min.setMaximum(100)
+        self.slider_contrast_min.setOrientation(QtCore.Qt.Horizontal)
+        self.slider_contrast_min.setObjectName("slider_contrast_min")
+        self.gridLayout.addWidget(self.slider_contrast_min, 1, 1, 1, 2)
+        self.slider_contrast_max = QtWidgets.QSlider(self.gb_tomo)
+        self.slider_contrast_max.setMaximum(100)
+        self.slider_contrast_max.setSliderPosition(100)
+        self.slider_contrast_max.setOrientation(QtCore.Qt.Horizontal)
+        self.slider_contrast_max.setObjectName("slider_contrast_max")
+        self.gridLayout.addWidget(self.slider_contrast_max, 1, 3, 1, 1)
+        self.lbl_denoise_param = QtWidgets.QLabel(self.gb_tomo)
+        self.lbl_denoise_param.setObjectName("lbl_denoise_param")
+        self.gridLayout.addWidget(self.lbl_denoise_param, 2, 0, 1, 2)
+        self.spinb_denoise_param = QtWidgets.QSpinBox(self.gb_tomo)
+        self.spinb_denoise_param.setMaximum(20)
+        self.spinb_denoise_param.setProperty("value", 5)
+        self.spinb_denoise_param.setObjectName("spinb_denoise_param")
+        self.gridLayout.addWidget(self.spinb_denoise_param, 2, 2, 1, 1)
+        self.button_denoise = QtWidgets.QPushButton(self.gb_tomo)
+        self.button_denoise.setObjectName("button_denoise")
+        self.gridLayout.addWidget(self.button_denoise, 2, 3, 1, 1)
+        self.button_load_tomo = QtWidgets.QPushButton(self.gb_tomo)
+        self.button_load_tomo.setObjectName("button_load_tomo")
+        self.gridLayout.addWidget(self.button_load_tomo, 0, 0, 1, 4)
+        self.gridLayout_3.addWidget(self.gb_tomo, 0, 1, 1, 2)
+        self.gb_lmap = QtWidgets.QGroupBox(self.centralwidget)
+        self.gb_lmap.setObjectName("gb_lmap")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.gb_lmap)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.slider_opacity = QtWidgets.QSlider(self.gb_lmap)
+        self.slider_opacity.setMaximum(100)
+        self.slider_opacity.setProperty("value", 100)
+        self.slider_opacity.setOrientation(QtCore.Qt.Horizontal)
+        self.slider_opacity.setObjectName("slider_opacity")
+        self.gridLayout_2.addWidget(self.slider_opacity, 1, 1, 1, 2)
+        self.lbl_opacity = QtWidgets.QLabel(self.gb_lmap)
+        self.lbl_opacity.setObjectName("lbl_opacity")
+        self.gridLayout_2.addWidget(self.lbl_opacity, 1, 0, 1, 1)
+        self.button_load_lmap = QtWidgets.QPushButton(self.gb_lmap)
+        self.button_load_lmap.setObjectName("button_load_lmap")
+        self.gridLayout_2.addWidget(self.button_load_lmap, 0, 0, 1, 3)
+        self.gridLayout_3.addWidget(self.gb_lmap, 1, 1, 1, 2)
+        self.layout = QtWidgets.QVBoxLayout()
+        self.layout.setObjectName("layout")
+        self.gridLayout_3.addLayout(self.layout, 0, 0, 3, 1)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 547, 22))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "Display"))
+        self.gb_tomo.setTitle(_translate("MainWindow", "Tomogram"))
+        self.lbl_contrast.setText(_translate("MainWindow", "Contrast"))
+        self.lbl_denoise_param.setToolTip(_translate("MainWindow", "Number of slices in both directions used for averaging"))
+        self.lbl_denoise_param.setText(_translate("MainWindow", "Neighbor slices"))
+        self.spinb_denoise_param.setToolTip(_translate("MainWindow", "Number of slices in both directions used for averaging"))
+        self.button_denoise.setText(_translate("MainWindow", "Denoise"))
+        self.button_load_tomo.setText(_translate("MainWindow", "Load"))
+        self.gb_lmap.setTitle(_translate("MainWindow", "Label map"))
+        self.lbl_opacity.setText(_translate("MainWindow", "Opacity"))
+        self.button_load_lmap.setText(_translate("MainWindow", "Load"))

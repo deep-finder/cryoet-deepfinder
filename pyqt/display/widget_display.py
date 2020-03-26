@@ -334,14 +334,14 @@ class DisplayOrthoslicesWidget(QWidget):
         self.img_zy.setImage(slice_zy, levels=self.levels)
 
 
-    def denoise_slices_old(self, sigma): # with bm3d
-        slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
-        slice_xy = cm.denoise2D(slice_xy, sigma)
-        slice_zx = cm.denoise2D(slice_zx, sigma)
-        slice_zy = cm.denoise2D(slice_zy, sigma)
-        self.img_xy.setImage(slice_xy, levels=self.levels)
-        self.img_zx.setImage(slice_zx, levels=self.levels)
-        self.img_zy.setImage(slice_zy, levels=self.levels)
+    #def denoise_slices_old(self, sigma): # with bm3d
+    #    slice_xy, slice_zx, slice_zy = self.get_orthoslices(self.vol)
+    #    slice_xy = cm.denoise2D(slice_xy, sigma)
+    #    slice_zx = cm.denoise2D(slice_zx, sigma)
+    #    slice_zy = cm.denoise2D(slice_zy, sigma)
+    #    self.img_xy.setImage(slice_xy, levels=self.levels)
+    #    self.img_zx.setImage(slice_zx, levels=self.levels)
+    #    self.img_zy.setImage(slice_zy, levels=self.levels)
 
 
 # ViewBox has been subclassed to override wheelEvent. In default version, mouse wheel controls zoom towards where the
