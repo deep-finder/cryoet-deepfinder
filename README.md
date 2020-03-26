@@ -15,14 +15,14 @@ __News__: (29/01/20) A first version of the GUI is now available in folder pyqt/
 ## System requirements
 __Deep Finder__ has been implemented using __Python 3__ and is based on the __Keras__ package. It has been tested on Linux (Debian 8.6), and should also work on Mac OSX as well as Windows.
 
-The algorithm needs an Nvidia GPU to run at reasonable speed (in particular for training). The present code has been tested on Tesla K80 and M40 GPUs. For running on other GPUs, some parameter values (e.g. patch and batch sizes) may need to be changed to adapt to available memory.
+The algorithm needs an __Nvidia GPU__ and __CUDA__ to run at reasonable speed (in particular for training). The present code has been tested on Tesla K80 and M40 GPUs. For running on other GPUs, some parameter values (e.g. patch and batch sizes) may need to be changed to adapt to available memory.
 
 ```diff
 - If above conditions are not met, we cannot guarantee the functionality of our code at this time.
 ```
 
 ### Package dependencies
-Users should install following packages in order to run Deep Finder. The package versions for which our software has been tested are displayed in brackets:
+Deep Finder depends on following packages. The package versions for which our software has been tested are displayed in brackets:
 ```
 tensorflow-gpu (1.14.0)
 keras          (2.3.1)
@@ -34,16 +34,20 @@ scikit-image   (0.15.0)
 matplotlib     (3.1.0)
 mrcfile        (1.1.2)
 PyQt5          (5.13.2)
+pyqtgraph      (0.10.0)
 ```
 
 ## Installation guide
-First install the packages:
-```
-pip install numpy tensorflow-gpu keras sklearn h5py lxml scikit-learn scikit-image matplotlib mrcfile PyQt5
-```
-For more details about installing Keras, please see [Keras installation instructions](https://keras.io/#installation).
+Before installation, you need a python environment on your machine. If this is not the case, we advise installing [Miniconda](https://docs.conda.io/en/latest/miniconda.html).
 
-Once the dependencies are installed, the user should be able to run Deep Finder.
+Then, you need to download the present repository. Next, open a terminal, place yourself in your deep-finder folder and run:
+```
+cd /path/to/deep-finder/
+pip install -r requirements.txt
+```
+Also, in order for Keras to work with your Nvidia GPU, you need to install CUDA. For more details about installing Keras and CUDA, please see [Keras installation instructions](https://keras.io/#installation).
+
+Once these steps have been achieved, the user should be able to run Deep Finder.
 
 ## Instructions for use
 ### Using the scripts
@@ -54,7 +58,7 @@ python step1_generate_target.py
 ```
 
 ### Using the GUI
-The GUI (Graphical User Interface) is available in folder pyqt/, and should be more intuitive for those who are not used to work with script. For now, 5 GUIs are available (target generation, training, segmentation, clustering) and allow the same functionalities as the scripts in example/. To run a GUI, first place yourself in its folder. For example, to run the target generation GUI:
+The GUI (Graphical User Interface) is available in folder pyqt/, and should be more intuitive for those who are not used to work with script. Currently, 6 GUIs are available (tomogram annotation, target generation, training, segmentation, clustering) and allow the same functionalities as the scripts in example/. To run a GUI, first place yourself in its folder. For example, to run the target generation GUI:
 ```
 cd pyqt/generate_target/
 python gui_target.py
