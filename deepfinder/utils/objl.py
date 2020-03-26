@@ -147,6 +147,8 @@ def write_txt(objlIN, filename):
 # label can be int or str (is casted to str)
 def get_class(objlIN, label):
     """
+    Get all objects of specified class.
+
     Args:
         objl (list of dict)
         label (int)
@@ -197,6 +199,17 @@ def above_thr_per_class(objlIN, lbl_list, thr_list):
 
 # TODO check why np.round is used
 def scale_coord(objlIN, scale):
+    """
+    Scales coordinates by specified factor. Useful when using binned (sub-sampled) volumes, where coordinates need to be
+    multiplied or divided by 2.
+
+    Args:
+        objlIN (list of dict)
+        scale (float)
+
+    Returns:
+        list of dict: object list with scaled coordinates
+    """
     objlOUT = deepcopy(objlIN) # necessary else the original objl is scaled too
     for idx in range(len(objlIN)):
         x = int(np.round(float(objlIN[idx]['x'])))
@@ -223,6 +236,8 @@ def get_labels(objlIN):
 #   objlOUT: object list with objects from tomogram 'tomo_idx'
 def get_tomo(objlIN, tomo_idx):
     """
+    Get all objects originating from tomo 'tomo_idx'.
+
     Args:
         objlIN (list of dict): contains objects from various tomograms
         tomo_idx (int): tomogram index
@@ -241,7 +256,8 @@ def get_tomo(objlIN, tomo_idx):
 
 def get_obj(objl, obj_id):
     """
-    This function has been created for annotation tool.
+    Get objects with specified object ID.
+
     Args:
         objl (list of dict): input object list
         obj_id (list of int): object ID of wanted object(s)
@@ -262,7 +278,8 @@ def get_obj(objl, obj_id):
 
 def remove_obj(objl, obj_id):
     """
-    This function has been created for annotation tool.
+    Removes objects by object ID.
+
     Args:
         objl (list of dict): input object list
         obj_id (list of int): object ID of wanted object(s)
@@ -283,7 +300,8 @@ def remove_obj(objl, obj_id):
 
 def remove_class(objl, label_list):
     """
-    This function has been created for annotation tool.
+    Removes all objects from specified classes.
+
     Args:
         objl (list of dict): input object list
         label_list (list of int): label of objects to remove
