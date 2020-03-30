@@ -142,6 +142,10 @@ class Train(core.DeepFinder):
         self.dim_in = 56  # /!\ has to a multiple of 4 (because of 2 pooling layers), so that dim_in=dim_out
         self.net = models.my_model(self.dim_in, self.Ncl)
 
+        self.label_list = []
+        for l in range(self.Ncl): self.label_list.append(l) # for precision_recall_fscore_support
+                                                            # (else bug if not all labels exist in batch)
+
         # Training parameters:
         self.batch_size = 25
         self.epochs = 100
@@ -270,7 +274,7 @@ class Train(core.DeepFinder):
                 loss_val = self.net.evaluate(batch_data_valid, batch_target_valid, verbose=0) # TODO replace by loss() to reduce computation
                 batch_pred = self.net.predict(batch_data_valid)
                 #loss_val = K.eval(losses.tversky_loss(K.constant(batch_target_valid), K.constant(batch_pred)))
-                scores = precision_recall_fscore_support(batch_target_valid.argmax(axis=-1).flatten(), batch_pred.argmax(axis=-1).flatten(), average=None)
+                scores = precision_recall_fscore_support(batch_target_valid.argmax(axis=-1).flatten(), batch_pred.argmax(axis=-1).flatten(), average=None, labels=self.label_list)
 
                 list_loss_valid.append(loss_val[0])
                 list_acc_valid.append(loss_val[1])

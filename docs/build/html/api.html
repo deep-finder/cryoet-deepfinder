@@ -426,7 +426,8 @@ Else, it assumes that the volume is tomographic data, and plots in gray scale.</
 <dl class="function">
 <dt id="deepfinder.utils.objl.get_class">
 <code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">get_class</code><span class="sig-paren">(</span><em class="sig-param">objlIN</em>, <em class="sig-param">label</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.get_class" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Get all objects of specified class.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>objl</strong> (<em>list of dict</em>) – </p></li>
@@ -445,17 +446,19 @@ Else, it assumes that the volume is tomographic data, and plots in gray scale.</
 <dl class="function">
 <dt id="deepfinder.utils.objl.get_obj">
 <code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">get_obj</code><span class="sig-paren">(</span><em class="sig-param">objl</em>, <em class="sig-param">obj_id</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.get_obj" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function has been created for annotation tool.
-:param objl: input object list
-:type objl: list of dict
-:param obj_id: object ID of wanted object(s)
-:type obj_id: list of int</p>
+<dd><p>Get objects with specified object ID.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>contains object(s) with obj ID ‘obj_id’</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objl</strong> (<em>list of dict</em>) – input object list</p></li>
+<li><p><strong>obj_id</strong> (<em>list of int</em>) – object ID of wanted object(s)</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list of dict</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>contains object(s) with obj ID ‘obj_id’</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -463,7 +466,8 @@ Else, it assumes that the volume is tomographic data, and plots in gray scale.</
 <dl class="function">
 <dt id="deepfinder.utils.objl.get_tomo">
 <code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">get_tomo</code><span class="sig-paren">(</span><em class="sig-param">objlIN</em>, <em class="sig-param">tomo_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.get_tomo" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Get all objects originating from tomo ‘tomo_idx’.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>objlIN</strong> (<em>list of dict</em>) – contains objects from various tomograms</p></li>
@@ -482,17 +486,19 @@ Else, it assumes that the volume is tomographic data, and plots in gray scale.</
 <dl class="function">
 <dt id="deepfinder.utils.objl.remove_class">
 <code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">remove_class</code><span class="sig-paren">(</span><em class="sig-param">objl</em>, <em class="sig-param">label_list</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.remove_class" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function has been created for annotation tool.
-:param objl: input object list
-:type objl: list of dict
-:param label_list: label of objects to remove
-:type label_list: list of int</p>
+<dd><p>Removes all objects from specified classes.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>same as input object list but with objects from classes ‘label_list’ removed</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objl</strong> (<em>list of dict</em>) – input object list</p></li>
+<li><p><strong>label_list</strong> (<em>list of int</em>) – label of objects to remove</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list of dict</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>same as input object list but with objects from classes ‘label_list’ removed</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -500,17 +506,40 @@ Else, it assumes that the volume is tomographic data, and plots in gray scale.</
 <dl class="function">
 <dt id="deepfinder.utils.objl.remove_obj">
 <code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">remove_obj</code><span class="sig-paren">(</span><em class="sig-param">objl</em>, <em class="sig-param">obj_id</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.remove_obj" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function has been created for annotation tool.
-:param objl: input object list
-:type objl: list of dict
-:param obj_id: object ID of wanted object(s)
-:type obj_id: list of int</p>
+<dd><p>Removes objects by object ID.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>same as input object list but with object(s) ‘obj_id’ removed</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objl</strong> (<em>list of dict</em>) – input object list</p></li>
+<li><p><strong>obj_id</strong> (<em>list of int</em>) – object ID of wanted object(s)</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list of dict</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>same as input object list but with object(s) ‘obj_id’ removed</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deepfinder.utils.objl.scale_coord">
+<code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">scale_coord</code><span class="sig-paren">(</span><em class="sig-param">objlIN</em>, <em class="sig-param">scale</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.scale_coord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scales coordinates by specified factor. Useful when using binned (sub-sampled) volumes, where coordinates need to be
+multiplied or divided by 2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objlIN</strong> (<em>list of dict</em>) – </p></li>
+<li><p><strong>scale</strong> (<em>float</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>object list with scaled coordinates</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of dict</p>
 </dd>
 </dl>
 </dd></dl>

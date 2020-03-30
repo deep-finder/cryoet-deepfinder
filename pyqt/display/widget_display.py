@@ -98,6 +98,7 @@ class DisplayOrthoslicesWidget(QWidget):
         self.img_lmap_xy = None
         self.img_lmap_zy = None
         self.img_lmap_zx = None
+        self.levels_lmap = (0, 20) # supposed max nb of classes TODO: adapt if >25
         self.isLmapLoaded = False
 
         # Connect click signal to dedicated function:
@@ -183,9 +184,12 @@ class DisplayOrthoslicesWidget(QWidget):
         self.lmap = lmap
         lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(lmap)
 
-        self.img_lmap_xy = pg.ImageItem(lmap_xy)
-        self.img_lmap_zy = pg.ImageItem(lmap_zy)
-        self.img_lmap_zx = pg.ImageItem(lmap_zx)
+        #self.img_lmap_xy = pg.ImageItem(lmap_xy)
+        #self.img_lmap_zy = pg.ImageItem(lmap_zy)
+        #self.img_lmap_zx = pg.ImageItem(lmap_zx)
+        self.img_lmap_xy = pg.ImageItem()
+        self.img_lmap_zy = pg.ImageItem()
+        self.img_lmap_zx = pg.ImageItem()
 
         # Set color map:
         # colors = [
@@ -203,18 +207,23 @@ class DisplayOrthoslicesWidget(QWidget):
         # alpha[0] = 0
         # lut = np.concatenate((lut, alpha), axis=1)
 
-        colormap = matplotlib.cm.get_cmap('CMRmap')
+        colormap = matplotlib.cm.get_cmap('gist_ncar') #CMRmap
         colormap._init()
         lut = (colormap._lut * 255).view(np.ndarray)
+        lut = np.random.permutation(lut) # so that adjacent classes (e.g. 1 & 2) colors are not too similar
         # edit alpha channel so that '0'->transparent
         alpha = np.ones(lut.shape[0]) * 255
         alpha[0] = 0
         lut[:,3] = alpha
 
 
-        self.img_lmap_xy.setLookupTable(lut)
-        self.img_lmap_zy.setLookupTable(lut)
-        self.img_lmap_zx.setLookupTable(lut)
+        #self.img_lmap_xy.setLookupTable(lut)
+        #self.img_lmap_zy.setLookupTable(lut)
+        #self.img_lmap_zx.setLookupTable(lut)
+
+        self.img_lmap_xy.setImage(lmap_xy, levels=self.levels_lmap, lut=lut)
+        self.img_lmap_zy.setImage(lmap_zy, levels=self.levels_lmap, lut=lut)
+        self.img_lmap_zx.setImage(lmap_zx, levels=self.levels_lmap, lut=lut)
 
         # Overlay lmap to tomo data:
         self.vb_xy.addItem(self.img_lmap_xy)
@@ -248,9 +257,9 @@ class DisplayOrthoslicesWidget(QWidget):
         self.img_zx.setImage(slice_zx, levels=self.levels)
         if self.isLmapLoaded:
             lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(self.lmap)
-            self.img_lmap_xy.setImage(lmap_xy)
-            self.img_lmap_zy.setImage(lmap_zy)
-            self.img_lmap_zx.setImage(lmap_zx)
+            self.img_lmap_xy.setImage(lmap_xy, levels=self.levels_lmap)
+            self.img_lmap_zy.setImage(lmap_zy, levels=self.levels_lmap)
+            self.img_lmap_zx.setImage(lmap_zx, levels=self.levels_lmap)
         self.lineV_xy.setPos(self.x)
         self.lineH_xy.setPos(self.y)
         self.lineV_zx.setPos(self.x)
