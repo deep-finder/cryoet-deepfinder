@@ -157,6 +157,8 @@ class Train(core.DeepFinder):
         self.flag_batch_bootstrap = 0
         self.Lrnd = 13  # random shifts applied when sampling data- and target-patches (in voxels)
 
+        self.class_weight = None
+
         self.check_attributes()
 
     def check_attributes(self):
@@ -252,7 +254,7 @@ class Train(core.DeepFinder):
                     batch_data, batch_target = self.generate_batch_direct_read(path_data, path_target, self.batch_size, objlist_train)
                 else:
                     batch_data, batch_target = self.generate_batch_from_array(data_list, target_list, self.batch_size, objlist_train)
-                loss_train = self.net.train_on_batch(batch_data, batch_target)
+                loss_train = self.net.train_on_batch(batch_data, batch_target, class_weight=self.class_weight)
 
                 self.display('epoch %d/%d - it %d/%d - loss: %0.3f - acc: %0.3f' % (e + 1, self.epochs, it + 1, self.steps_per_epoch, loss_train[0], loss_train[1]))
                 list_loss_train.append(loss_train[0])
