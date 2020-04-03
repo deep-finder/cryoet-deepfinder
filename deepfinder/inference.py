@@ -30,14 +30,6 @@ class Segment(core.DeepFinder):
         self.is_h5_path(self.path_weights, 'path_weights')
         self.is_multiple_4_int(self.P, 'patch_size')
 
-    # This function enables to segment a tomogram. As tomograms are too large to be processed in one take, the tomogram is decomposed in smaller overlapping 3D patches.
-    # INPUTS:
-    #   dataArray: the volume to be segmented (3D numpy array)
-    #   weights_path: path to the .h5 file containing the network weights obtained by the training procedure (string)
-    # OUTPUT:
-    #   predArray: a numpy array containing the predicted score maps.
-    # Note: in this function x,y,z is actually z,y,x. Has no incidence when used. This note is for someone who wants
-    #       to understand this code.
     def launch(self, dataArray):
         """This function enables to segment a tomogram. As tomograms are too large to be processed in one take, the
         tomogram is decomposed in smaller overlapping 3D patches.
@@ -61,8 +53,7 @@ class Segment(core.DeepFinder):
         step = np.int(2 * l + 1 - self.poverlap)
 
         # Get patch centers:
-        pcenterX = list(range(l, dim[0] - l,
-                              step))  # list() necessary for py3 (in py2 range() returns type 'list' but in py3 it returns type 'range')
+        pcenterX = list(range(l, dim[0] - l, step))  # list() necessary for py3
         pcenterY = list(range(l, dim[1] - l, step))
         pcenterZ = list(range(l, dim[2] - l, step))
 

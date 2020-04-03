@@ -7,6 +7,8 @@ from lxml import etree
 from copy import deepcopy
 #from sklearn.metrics import pairwise_distances
 from contextlib import redirect_stdout # for writing txt file
+from openpyxl import load_workbook # for excel files
+from openpyxl import Workbook
 
 def add_obj(objlIN, label, coord, obj_id=None, tomo_idx=None, orient=(None,None,None), cluster_size=None):
     obj = {
@@ -82,7 +84,7 @@ def read_xml(filename):
             phi = float(phi)
             the = float(the)
 
-        add_obj(objlOUT, tomo_idx=tidx, obj_id=objid, label=lbl, coord=(float(x), float(y), float(z)), orient=(psi,phi,the), cluster_size=csize)
+        add_obj(objlOUT, tomo_idx=tidx, obj_id=objid, label=int(lbl), coord=(float(z), float(y), float(x)), orient=(psi,phi,the), cluster_size=csize)
     return objlOUT
 
 def write_xml(objlIN, filename):
@@ -139,10 +141,73 @@ def write_txt(objlIN, filename):
                 z = objlIN[idx]['z']
                 csize = objlIN[idx]['cluster_size']
                 if csize==None:
-                    print(lbl + ' ' + str(z) + ' ' + str(y) + ' ' + str(x))
+                    print(str(lbl) + ' ' + str(z) + ' ' + str(y) + ' ' + str(x))
                 else:
-                    print(lbl + ' ' + str(z) + ' ' + str(y) + ' ' + str(x) + ' ' + str(csize))
+                    print(str(lbl) + ' ' + str(z) + ' ' + str(y) + ' ' + str(x) + ' ' + str(csize))
 
+def read_excel(filename):
+    wb = load_workbook(filename, enumerate)
+    sheet = wb.worksheets[0]
+    rows = sheet.max_row
+
+    objl = []
+    for idx in range(2,rows+1): # in excel, '0' is for col prop and '1' is col titles
+        tidx  = sheet['A'+str(idx)].value
+        objid = sheet['B'+str(idx)].value
+        lbl   = sheet['C'+str(idx)].value
+        x     = sheet['D'+str(idx)].value
+        y     = sheet['E'+str(idx)].value
+        z     = sheet['F'+str(idx)].value
+        psi   = sheet['G'+str(idx)].value
+        phi   = sheet['H'+str(idx)].value
+        the   = sheet['I'+str(idx)].value
+        csize = sheet['J'+str(idx)].value
+
+        # if facultative attributes exist, then cast to correct type:
+        if tidx != None:
+            tidx = int(tidx)
+        if objid != None:
+            objid = int(objid)
+        if csize != None:
+            csize = int(csize)
+        if psi != None or phi != None or the != None:
+            psi = float(psi)
+            phi = float(phi)
+            the = float(the)
+
+        add_obj(objl, tomo_idx=tidx, obj_id=objid, label=int(lbl), coord=(float(z), float(y), float(x)),
+                orient=(psi, phi, the), cluster_size=csize)
+    return objl
+
+def write_excel(objl, filename):
+    wb = Workbook()
+    #sheet = wb.create_sheet(title='Object list')
+    sheet = wb.active
+    sheet.title = "Object list"
+    sheet['A1'] = 'Tomo IDX' # col titles
+    sheet['B1'] = 'Object ID'
+    sheet['C1'] = 'Class label'
+    sheet['D1'] = 'x'
+    sheet['E1'] = 'y'
+    sheet['F1'] = 'z'
+    sheet['G1'] = 'psi'
+    sheet['H1'] = 'phi'
+    sheet['I1'] = 'theta'
+    sheet['J1'] = 'Cluster size'
+
+    for idx in range(len(objl)):
+        sheet['A'+str(idx+2)] = objl[idx]['tomo_idx']
+        sheet['B'+str(idx+2)] = objl[idx]['obj_id']
+        sheet['C'+str(idx+2)] = objl[idx]['label']
+        sheet['D'+str(idx+2)] = objl[idx]['x']
+        sheet['E'+str(idx+2)] = objl[idx]['y']
+        sheet['F'+str(idx+2)] = objl[idx]['z']
+        sheet['G'+str(idx+2)] = objl[idx]['psi']
+        sheet['H'+str(idx+2)] = objl[idx]['phi']
+        sheet['I'+str(idx+2)] = objl[idx]['the']
+        sheet['J'+str(idx+2)] = objl[idx]['cluster_size']
+
+    wb.save(filename=filename)
 
 # label can be int or str (is casted to str)
 def get_class(objlIN, label):
