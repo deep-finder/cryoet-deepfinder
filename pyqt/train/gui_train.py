@@ -28,23 +28,33 @@ class TrainingWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.button_launch.clicked.connect(self.on_clicked)
 
         # Plot window:
-        self.winPlot = TrainMetricsPlotWindow()
+        self.winPlot = None
 
     @QtCore.pyqtSlot(str)
     def on_print_signal(self, message): # is called when signal is emmited. Signal passes str 'message' to slot
         self.te_terminal_out.append(message)
+        # For each validation step, plot metrics:
+        if message=='=============================================================': # hack to detect from deepfinders prints if we are in a validation step
+            self.winPlot.update_plots(self.le_path_out.text()+'net_train_history.h5')
 
     def on_clicked(self):
         threading.Thread(target=self.launch_process, daemon=True).start()
 
+        #win.winPlot.win.show()
+        self.winPlot = TrainMetricsPlotWindow()
+        self.place_window_plot()
+
+
     def launch_process(self):
         # Get parameters from line edit widgets:
         Ntomo = int(self.te_path_tomo.document().blockCount())
+        Ntarget = int(self.te_path_target.document().blockCount())
 
         path_data = []
         path_target = []
         for idx in range(Ntomo):
             path_data.append(self.te_path_tomo.document().findBlockByLineNumber(idx).text())
+        for idx in range(Ntarget):
             path_target.append(self.te_path_target.document().findBlockByLineNumber(idx).text())
 
         path_objl_train  = self.le_path_objl_train.text()
@@ -61,9 +71,8 @@ class TrainingWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         rnd_shift        = int( self.le_rnd_shift.text() )
 
         # Initialize training:
-        trainer = Train(Ncl=Ncl)
+        trainer = Train(Ncl=Ncl, dim_in=psize)
         trainer.path_out        = path_out
-        trainer.dim_in          = psize
         trainer.batch_size      = bsize
         trainer.epochs          = nepochs
         trainer.steps_per_epoch = steps_per_e
@@ -81,16 +90,20 @@ class TrainingWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # Launch training:
         trainer.launch(path_data, path_target, objl_train, objl_valid)
 
-    def place_windows(self):
+    def place_window_train(self):
         ag = QtWidgets.QDesktopWidget().availableGeometry()
-        # Resize and place annotation window:
-        winT_w = int(ag.width()/2)
-        winT_h = 2*int(ag.height()/3)
-        self.resize(winT_w, winT_h)
+        win_w = int(ag.width()/2)
+        win_h = 2*int(ag.height()/3)
+        self.resize(win_w, win_h)
         self.move(0, 0)
-        # Resize and place display window:
-        self.winPlot.win.resize(winT_w, winT_h)
-        self.winPlot.win.move(ag.width()-winT_w,0)
+
+    def place_window_plot(self):
+        ag = QtWidgets.QDesktopWidget().availableGeometry()
+        win_w = int(ag.width() / 2)
+        win_h = 2 * int(ag.height() / 3)
+        self.winPlot.win.resize(win_w, win_h)
+        self.winPlot.win.move(ag.width() - win_w, 0)
+
 
 
 if __name__ == "__main__":
@@ -98,8 +111,7 @@ if __name__ == "__main__":
     set_custom_theme(app)
 
     win = TrainingWindow()
-    win.place_windows()
-    win.winPlot.win.show()
+    win.place_window_train()
     win.show()
 
     sys.exit(app.exec_())

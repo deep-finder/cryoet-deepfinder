@@ -66,6 +66,11 @@ class DeepFinder:
             self.display('DeepFinder message: variable "' + varname + '" is ' + str(type(v)) + '. Expected is list.')
             sys.exit()
 
+    def are_lists_same_length(self, v, varname):
+        if len(v[0])!=len(v[1]):
+            self.display('DeepFinder message: the lists "' + varname[0] + '" and "' + varname[1] + '" need to be of same length.')
+            sys.exit()
+
 # Following observer classes are needed to send prints to GUI:
 class observer_print:
     def display(message):

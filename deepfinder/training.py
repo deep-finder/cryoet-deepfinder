@@ -132,14 +132,14 @@ class TargetBuilder(core.DeepFinder):
 
 # TODO: add method for resuming training. It should load existing weights and train_history. So when restarting, the plot curves show prececedent epochs
 class Train(core.DeepFinder):
-    def __init__(self, Ncl):
+    def __init__(self, Ncl, dim_in):
         core.DeepFinder.__init__(self)
         self.path_out = './'
         self.h5_dset_name = 'dataset' # if training set is stored as .h5 file, specify here in which h5 dataset the arrays are stored
 
         # Network parameters:
         self.Ncl = Ncl  # Ncl
-        self.dim_in = 56  # /!\ has to a multiple of 4 (because of 2 pooling layers), so that dim_in=dim_out
+        self.dim_in = dim_in  # /!\ has to a multiple of 4 (because of 2 pooling layers), so that dim_in=dim_out
         self.net = models.my_model(self.dim_in, self.Ncl)
 
         self.label_list = []
@@ -295,7 +295,7 @@ class Train(core.DeepFinder):
             self.display('-------------------------------------------------------------')
             self.display('EPOCH %d/%d - valid loss: %0.3f - valid acc: %0.3f - %0.2fsec' % (
             e + 1, self.epochs, loss_val[0], loss_val[1], end - start))
-            self.display('=============================================================')
+
 
             # Save and plot training history:
             history = {'loss': hist_loss_train, 'acc': hist_acc_train, 'val_loss': hist_loss_valid,
@@ -303,6 +303,8 @@ class Train(core.DeepFinder):
                        'val_precision': hist_precision}
             core.save_history(history, self.path_out+'net_train_history.h5')
             core.plot_history(history, self.path_out+'net_train_history_plot.png')
+
+            self.display('=============================================================')
 
             if (e + 1) % 10 == 0:  # save weights every 10 epochs
                 self.net.save(self.path_out+'net_weights_epoch' + str(e + 1) + '.h5')
@@ -313,6 +315,7 @@ class Train(core.DeepFinder):
     def check_arguments(self, path_data, path_target, objlist_train, objlist_valid):
         self.is_list(path_data, 'path_data')
         self.is_list(path_target, 'path_target')
+        self.are_lists_same_length([path_data, path_target], ['data_list', 'target_list'])
         self.is_list(objlist_train, 'objlist_train')
         self.is_list(objlist_valid, 'objlist_valid')
 

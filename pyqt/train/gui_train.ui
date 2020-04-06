@@ -44,9 +44,9 @@
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.SF NS Text'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/path/to/target1.mrc&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/path/to/target2.mrc&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/path/to/target3.mrc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/emoebel/code/python/deep-finder/test/train/in/target0.mrc&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/emoebel/code/python/deep-finder/test/train/in/target1.mrc&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/emoebel/code/python/deep-finder/test/train/in/target2.mrc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -56,7 +56,7 @@ p, li { white-space: pre-wrap; }
           <string>The tomogram index in this object list should correspond to the order of above listed tomo/target pairs.</string>
          </property>
          <property name="text">
-          <string>../../examples/training/in/objlist_valid.xml</string>
+          <string>/Users/emoebel/code/python/deep-finder/test/train/in/objl_valid.xml</string>
          </property>
         </widget>
        </item>
@@ -96,9 +96,9 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.SF NS Text'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/path/to/tomo1.mrc&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/path/to/tomo2.mrc&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/path/to/tomo3.mrc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/emoebel/code/python/deep-finder/test/train/in/tomo0.mrc&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/emoebel/code/python/deep-finder/test/train/in/tomo1.mrc&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/emoebel/code/python/deep-finder/test/train/in/tomo2.mrc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -108,7 +108,7 @@ p, li { white-space: pre-wrap; }
           <string>The tomogram index in this object list should correspond to the order of above listed tomo/target pairs.</string>
          </property>
          <property name="text">
-          <string>../../examples/training/in/objlist_train.xml</string>
+          <string>/Users/emoebel/code/python/deep-finder/test/train/in/objl_train.xml</string>
          </property>
         </widget>
        </item>
@@ -144,7 +144,7 @@ p, li { white-space: pre-wrap; }
           <string>Including background class</string>
          </property>
          <property name="text">
-          <string>13</string>
+          <string>3</string>
          </property>
         </widget>
        </item>
@@ -173,7 +173,7 @@ p, li { white-space: pre-wrap; }
           <number>4</number>
          </property>
          <property name="value">
-          <number>56</number>
+          <number>40</number>
          </property>
         </widget>
        </item>
@@ -193,7 +193,7 @@ p, li { white-space: pre-wrap; }
           <string>Number of patches used to compute average loss</string>
          </property>
          <property name="text">
-          <string>25</string>
+          <string>5</string>
          </property>
         </widget>
        </item>
@@ -233,7 +233,7 @@ p, li { white-space: pre-wrap; }
           <string>Number of batches trained on per epoch</string>
          </property>
          <property name="text">
-          <string>100</string>
+          <string>2</string>
          </property>
         </widget>
        </item>
@@ -253,7 +253,7 @@ p, li { white-space: pre-wrap; }
           <string>Number of batches used for validation</string>
          </property>
          <property name="text">
-          <string>1</string>
+          <string>2</string>
          </property>
         </widget>
        </item>
@@ -354,7 +354,7 @@ p, li { white-space: pre-wrap; }
           <string>Path for saving network weights and training metrics</string>
          </property>
          <property name="text">
-          <string>./</string>
+          <string>/Users/emoebel/code/python/deep-finder/test/train/out/</string>
          </property>
         </widget>
        </item>
