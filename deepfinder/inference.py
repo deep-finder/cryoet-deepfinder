@@ -30,7 +30,7 @@ class Segment(core.DeepFinder):
         self.is_h5_path(self.path_weights, 'path_weights')
         self.is_multiple_4_int(self.P, 'patch_size')
 
-    def launch_bis(self, dataArray):
+    def launch(self, dataArray):
         """This function enables to segment a tomogram. As tomograms are too large to be processed in one take, the
         tomogram is decomposed in smaller overlapping 3D patches.
 
@@ -110,85 +110,6 @@ class Segment(core.DeepFinder):
         predArray = predArray[self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, :]  # unpad
         return predArray  # predArray is the array containing the scoremaps
 
-    def launch(self, dataArray):
-        """This function enables to segment a tomogram. As tomograms are too large to be processed in one take, the
-        tomogram is decomposed in smaller overlapping 3D patches.
-
-        Args:
-            dataArray (3D numpy array): the volume to be segmented
-            weights_path (str): path to the .h5 file containing the network weights obtained by the training procedure
-
-        Returns:
-            numpy array: contains predicted score maps. Array with index order [class,z,y,x]
-        """
-        self.check_attributes()
-        self.check_arguments(dataArray)
-
-        dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:])  # normalize
-        dataArray = np.pad(dataArray, self.pcrop, mode='constant', constant_values=0)  # zeropad
-        dim = dataArray.shape
-
-        l = np.int(self.P / 2)
-        lcrop = np.int(l - self.pcrop)
-        step = np.int(2 * l + 1 - self.poverlap)
-
-        # Get patch centers:
-        pcenterX = list(range(l, dim[0] - l, step))  # list() necessary for py3
-        pcenterY = list(range(l, dim[1] - l, step))
-        pcenterZ = list(range(l, dim[2] - l, step))
-
-        # If there are still few pixels at the end:
-        if pcenterX[-1] < dim[0] - l:
-            pcenterX = pcenterX + [dim[0] - l, ]
-        if pcenterY[-1] < dim[1] - l:
-            pcenterY = pcenterY + [dim[1] - l, ]
-        if pcenterZ[-1] < dim[2] - l:
-            pcenterZ = pcenterZ + [dim[2] - l, ]
-
-        Npatch = len(pcenterX) * len(pcenterY) * len(pcenterZ)
-        self.display('Data array is divided in ' + str(Npatch) + ' patches ...')
-
-        # ---------------------------------------------------------------
-        # Process data in patches:
-        start = time.time()
-
-        predArray = np.zeros(dim + (self.Ncl,))
-        normArray = np.zeros(dim)
-        patchCount = 1
-        for x in pcenterX:
-            for y in pcenterY:
-                for z in pcenterZ:
-                    self.display('Segmenting patch ' + str(patchCount) + ' / ' + str(Npatch) + ' ...')
-                    patch = dataArray[x - l:x + l, y - l:y + l, z - l:z + l]
-                    patch = np.reshape(patch, (1, self.P, self.P, self.P, 1))  # reshape for keras [batch,x,y,z,channel]
-                    pred = self.net.predict(patch, batch_size=1)
-
-                    predArray[x - lcrop:x + lcrop, y - lcrop:y + lcrop, z - lcrop:z + lcrop, :] = predArray[
-                                                                                                  x - lcrop:x + lcrop,
-                                                                                                  y - lcrop:y + lcrop,
-                                                                                                  z - lcrop:z + lcrop,
-                                                                                                  :] + pred[0,
-                                                                                                       l - lcrop:l + lcrop,
-                                                                                                       l - lcrop:l + lcrop,
-                                                                                                       l - lcrop:l + lcrop,
-                                                                                                       :]
-                    normArray[x - lcrop:x + lcrop, y - lcrop:y + lcrop, z - lcrop:z + lcrop] = normArray[
-                                                                                               x - lcrop:x + lcrop,
-                                                                                               y - lcrop:y + lcrop,
-                                                                                               z - lcrop:z + lcrop] + np.ones(
-                        (self.P - 2 * self.pcrop, self.P - 2 * self.pcrop, self.P - 2 * self.pcrop))
-
-                    patchCount += 1
-
-        # Normalize overlaping regions:
-        for C in range(0, self.Ncl):
-            predArray[:, :, :, C] = predArray[:, :, :, C] / normArray
-
-        end = time.time()
-        self.display("Model took %0.2f seconds to predict" % (end - start))
-
-        predArray = predArray[self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, :]  # unpad
-        return predArray  # predArray is the array containing the scoremaps
 
     # Similar to function 'segment', only here the tomogram is not decomposed in smaller patches, but processed in one take. However, the tomogram array should be cubic, and the cube length should be a multiple of 4. This function has been developped for tests on synthetic data. I recommend using 'segment' rather than 'segment_single_block'.
     # INPUTS:
