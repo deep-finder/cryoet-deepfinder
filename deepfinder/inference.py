@@ -42,7 +42,7 @@ class Segment(core.DeepFinder):
             numpy array: contains predicted score maps. Array with index order [class,z,y,x]
         """
         self.check_attributes()
-        self.check_arguments(dataArray)
+        self.check_arguments(dataArray, self.P)
 
         dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:])  # normalize
         dataArray = np.pad(dataArray, self.pcrop, mode='constant', constant_values=0)  # zeropad
@@ -131,8 +131,9 @@ class Segment(core.DeepFinder):
 
         return predArray
 
-    def check_arguments(self, dataArray):
-        self.is_3D_nparray(dataArray, 'dataArray')
+    def check_arguments(self, dataArray, patch_size):
+        self.is_3D_nparray(dataArray, 'tomogram')
+        self.check_array_minsize([dataArray, patch_size], ['tomogram', 'patch'])
 
 class Cluster(core.DeepFinder):
     def __init__(self, clustRadius):
