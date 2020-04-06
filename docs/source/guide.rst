@@ -39,6 +39,12 @@ An object list contains following information:
 A list contains at least class label and coordinates of each object. Other information (e.g. orientation etc) is included
 depending on considered operation (e.g. shape target generation).
 
+.. note::
+   An object list can be saved in **xlsx** or in **xml** format. This allows you to edit your object lists in Excel or in a text editor (for ex. for merging object lists).
+
+.. note::
+   The API provides several functions for editing object lists in your scripts. You can for ex. scale coordinates, extract all objects from a specific class etc. See API section for more information.
+
 Display window
 ++++++++++++++
 This window allows to explore a tomogram with ortho-slices (i.e. 2D slices in each dimension). By clicking on the slices,
