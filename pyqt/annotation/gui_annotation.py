@@ -17,7 +17,6 @@ import numpy as np
 qtcreator_file  = 'gui_annotation.ui'
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtcreator_file)
 
-# TODO: open objl
 # TODO: rename classes
 class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     #coord_signal = QtCore.pyqtSignal(list) # signal for getting coords from display window
@@ -52,13 +51,14 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.table_objects.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
 
-        self.button_objects_add.clicked.connect(self.add_object_secure)
+        self.button_objects_add.clicked.connect(self.on_add_object_secure)
         self.button_objects_remove.clicked.connect(self.on_object_remove_secure)
 
         self.table_objects.itemSelectionChanged.connect(self.on_object_selected)
 
-        # Save button:
+        # Open&Save buttons:
         self.button_save.clicked.connect(self.on_button_save)
+        self.button_open.clicked.connect(self.on_button_open)
 
         # Set display window:
         self.winDisp = DisplayWindow()
@@ -142,7 +142,7 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             display_message_box('Class list is already empty')
 
-    def add_object_secure(self):
+    def on_add_object_secure(self):
         selected_rows = self.get_selected_rows(self.table_classes)
 
         if self.winDisp.dwidget.isTomoLoaded == False:
@@ -152,11 +152,11 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         elif len(selected_rows)>1:
             display_message_box('Only one class at a time must be selected when adding an object')
         else:
-            self.add_object()
+            self.on_add_object()
 
 
     # TODO: implement double click on orthoslices for adding obj
-    def add_object(self):
+    def on_add_object(self):
         # Get coords:
         coord = self.winDisp.get_coord()
         # Get class label:
@@ -169,13 +169,17 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             new_objid = 1
         else:
             new_objid = max(objid_list)+1
+
+        self.add_object(label=label, coord=coord, obj_id=new_objid)
+
+    def add_object(self, label, coord, obj_id):
         # Add to objlist:
-        self.objl = ol.add_obj(self.objl, label=label, coord=coord, obj_id=new_objid)
+        self.objl = ol.add_obj(self.objl, label=label, coord=coord, obj_id=obj_id)
 
         # Add new row to table:
         Nobjects = self.table_objects.rowCount()
         self.table_objects.insertRow(Nobjects)
-        self.table_objects.setItem(Nobjects, 0, QtWidgets.QTableWidgetItem(str(new_objid)))
+        self.table_objects.setItem(Nobjects, 0, QtWidgets.QTableWidgetItem(str(obj_id)))
         self.table_objects.setItem(Nobjects, 1, QtWidgets.QTableWidgetItem(str(label)))
         self.table_objects.setItem(Nobjects, 2, QtWidgets.QTableWidgetItem('('+str(coord[2])+','+str(coord[1])+','+str(coord[0])+')'))
 
@@ -274,17 +278,51 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             filename = s[0]+'.xml' # force extension to be xml
             ol.write_xml(self.objl, filename)
 
+    def on_button_open(self):
+        if self.winDisp.dwidget.isTomoLoaded == False:
+            display_message_box('Please load a tomogram first')
+        else:
+            path_objl = ('', '')
+            if len(self.objl)!=0:
+                message = 'This will overwrite current object list. Proceed?'
+                reply = QtGui.QMessageBox.question(self, 'Remove class', message,
+                                                   QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+                if reply == QtGui.QMessageBox.Yes:
+                    path_objl = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
+            else:
+                path_objl = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
+
+            if path_objl[0]!='':
+                self.load_objl(path_objl[0])
+
+
+
+
+    def load_objl(self, path_objl):
+        objl = ol.read_xml(path_objl)
+        self.label_list = ol.get_labels(objl)
+
+        for idx in range(len(objl)):
+            x = int( objl[idx]['x'] )
+            y = int( objl[idx]['y'] )
+            z = int( objl[idx]['z'] )
+            label = int( objl[idx]['label'] )
+            obj_id = int( objl[idx]['obj_id'] )
+            print('label: '+str(label))
+            self.add_object(label, [z, y, x], obj_id)
+
+
 
     def place_windows(self):
         ag = QtWidgets.QDesktopWidget().availableGeometry()
         # Resize and place annotation window:
         winA_w = int(ag.width()/4)
         self.resize(winA_w, ag.height())
-        self.move(ag.width() - winA_w, 0)
+        self.move(0, 0)
         # Resize and place display window:
         winD_w = 3*winA_w
         self.winDisp.resize(winD_w, ag.height())
-        self.winDisp.move(0,0)
+        self.winDisp.move(ag.width() - winD_w,0)
 
 
 if __name__ == "__main__":
