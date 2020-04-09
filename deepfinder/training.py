@@ -420,22 +420,20 @@ class Train(core.DeepFinder):
             sample_data = data[tomoID]
             sample_target = target[tomoID]
 
-            dim = sample_data.shape
-
             # Get patch position:
             x, y, z = core.get_patch_position(tomodim, p_in, objlist[index], self.Lrnd)
 
             # Get patch:
-            patch_data  = sample_data[  z-p_in:z+p_in, y-p_in:y+p_in, x-p_in:x+p_in]
-            patch_batch = sample_target[z-p_in:z+p_in, y-p_in:y+p_in, x-p_in:x+p_in]
+            patch_data   = sample_data[  z-p_in:z+p_in, y-p_in:y+p_in, x-p_in:x+p_in]
+            patch_target = sample_target[z-p_in:z+p_in, y-p_in:y+p_in, x-p_in:x+p_in]
 
             # Process the patches in order to be used by network:
             patch_data = (patch_data - np.mean(patch_data)) / np.std(patch_data)  # normalize
-            patch_batch_onehot = to_categorical(patch_batch, self.Ncl)
+            patch_target_onehot = to_categorical(patch_target, self.Ncl)
 
             # Store into batch array:
             batch_data[i, :, :, :, 0] = patch_data
-            batch_target[i] = patch_batch_onehot
+            batch_target[i] = patch_target_onehot
 
             # Data augmentation (180degree rotation around tilt axis):
             if np.random.uniform() < 0.5:

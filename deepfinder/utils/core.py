@@ -114,8 +114,15 @@ def load_dataset(path_data, path_target, dset_name='dataset'):
     data_list   = []
     target_list = []
     for idx in range(0,len(path_data)):
-        data_list.append(  cm.read_array(path_data[idx]  , dset_name))
-        target_list.append(cm.read_array(path_target[idx], dset_name))
+        data   = cm.read_array(path_data[idx]  , dset_name)
+        target = cm.read_array(path_target[idx], dset_name)
+
+        if data.shape!=target.shape:
+            print('DeepFinder message: tomogram and target are not of same size!')
+            sys.exit()
+
+        data_list.append(data)
+        target_list.append(target)
     return data_list, target_list
 
 # This function applies bootstrap (i.e. re-sampling) in case of unbalanced classes.
