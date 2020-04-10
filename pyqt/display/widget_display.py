@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QMessageBox
 import pyqtgraph as pg
 import numpy as np
 import matplotlib # for lmap colormap
-from deepfinder.utils import common as cm
 
 import sys
 sys.path.append('../')
