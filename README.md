@@ -58,15 +58,13 @@ python step1_generate_target.py
 ```
 
 ### Using the GUI
-The GUI (Graphical User Interface) is available in folder pyqt/, and should be more intuitive for those who are not used to work with script. Currently, 5 GUIs are available (tomogram annotation, target generation, training, segmentation, clustering) and allow the same functionalities as the scripts in example/. To run a GUI, first place yourself in its folder. For example, to run the target generation GUI:
+The GUI (Graphical User Interface) is launchable from folder bin/, and should be more intuitive for those who are not used to work with script. Currently, 5 GUIs are available (tomogram annotation, target generation, training, segmentation, clustering) and allow the same functionalities as the scripts in example/. To run a GUI, first open a terminal. For example, to run the target generation GUI:
 ```
-cd pyqt/generate_target/
-python gui_target.py
+/path/to/deepfinder/bin/generate_target
 ```
 
 ![Training GUI](./images/gui_segment.png)
 
-In near future we plan to provide a data visualization tool.
 
 __Notes:__ 
 - working examples are contained in examples/analyze/, where Deep Finder processes the test tomogram from the [SHREC'19 challenge](http://www2.projects.science.uu.nl/shrec/cryo-et/2019/). 
