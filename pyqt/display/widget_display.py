@@ -97,7 +97,7 @@ class DisplayOrthoslicesWidget(QWidget):
         self.img_lmap_xy = None
         self.img_lmap_zy = None
         self.img_lmap_zx = None
-        self.levels_lmap = (0, 20) # supposed max nb of classes TODO: adapt if >25
+        self.levels_lmap = (0, 4) # supposed max nb of classes TODO: adapt if >25
         self.isLmapLoaded = False
 
         # Connect click signal to dedicated function:

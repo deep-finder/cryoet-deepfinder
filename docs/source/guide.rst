@@ -154,7 +154,10 @@ objects. The minimum size of validation set should be **at least** few dozen obj
 * **Random shift** (in voxels): applied to positions in object list when sampling patches. Enhances network robustness. Make sure that objects are still contained in patches after the shift is applied.
 
 Once you filled out all required fields, hit the 'Launch' button. A second window will appear, displaying training metrics in real time,
-allowing you to monitor the progress of the procedure.
+allowing you to monitor the progress of the procedure. Metrics per class are computed for the validation set (F1-score, precision, recall).
+It is common to obtain per-class score values around 0.6, which for our datasets was enough for satisfying localization.
+Indeed, even if macromolecules are segmented only partially, it is enough to find them in the Clustering step.
+
 
 .. note::
    If your machine runs **out of memory**, you can reduce patch size and batch size values.
