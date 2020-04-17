@@ -1,6 +1,6 @@
 # Deep Finder
 
-The code in this repository is described in [this pre-print](https://hal.inria.fr/hal-01966819/document). This paper has been submitted to Nature Communications and is currently under revision.
+The code in this repository is described in [this pre-print](https://www.biorxiv.org/content/10.1101/2020.04.15.042747v1). This paper has been submitted to Nature Methods and is currently under revision.
 
 __Disclaimer:__ this is a preliminary version of the code, which is subject to improvements. For ease of use, we also plan to create a graphical interface in forthcoming months.
 
