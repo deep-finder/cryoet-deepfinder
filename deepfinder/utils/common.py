@@ -195,8 +195,8 @@ def rotate_array(array, orient): # TODO move to core_utils?
                      coords[2].reshape(-1) - float(dim[2]) / 2])  # z coordinate, centered
 
     # create transformation matrix: the convention is not 'zxz' as announced in TOM toolbox
-    ##r = R.from_euler('YZY', [new_phi, new_psi, new_the], degrees=True)
-    r = R.from_euler('ZXZ', [the, psi, phi], degrees=True)
+    r = R.from_euler('YZY', [new_phi, new_psi, new_the], degrees=True)
+    ##r = R.from_euler('ZXZ', [the, psi, phi], degrees=True)
     mat = r.as_matrix()
 
     # apply transformation
