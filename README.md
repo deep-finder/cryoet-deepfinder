@@ -2,7 +2,9 @@
 
 The code in this repository is described in [this pre-print](https://www.biorxiv.org/content/10.1101/2020.04.15.042747v1). This paper has been submitted to Nature Methods and is currently under revision.
 
-__Disclaimer:__ this is a preliminary version of the code, which is subject to improvements. For ease of use, we also plan to create a graphical interface in forthcoming months.
+__To reviewers__: you can follow our [tutorial](https://deepfinder.readthedocs.io/en/latest/tutorial.html) to reproduce segmentations from our paper.
+
+__Disclaimer:__ DeepFinder is still in its early stages, any feedback is welcome for enhancing the user experience.
 
 __News__: (29/01/20) A first version of the GUI is now available in folder pyqt/. [More information...](###Using the GUI) 
 
