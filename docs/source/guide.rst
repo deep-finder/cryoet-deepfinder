@@ -1,3 +1,5 @@
+.. _guide:
+
 Guide
 =====
 
@@ -113,6 +115,9 @@ So using this strategy involves more efforts and time, but yields better results
 
 Training
 --------
+.. note::
+   If you are a beginner in deep learning, and would like to gain a general understanding, you can read Section 3 "An introduction to deep learning" of E. Moebel's (author of DeepFinder) `PhD thesis <https://hal.inria.fr/tel-02153877>`_ .
+
 Before running the training procedure, it is good practice to define a validation set, which is a subset of your training set.
 Then, this validation set will not be used for training, but for computing metrics to evaluate training performance.
 This is helpful for checking for **overfitting**.

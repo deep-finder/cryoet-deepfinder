@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Guide" href="guide.html" /> 
+    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -83,6 +83,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide.html">Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#deepfinder">DeepFinder</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#training">Training</a></li>
@@ -168,7 +169,7 @@
 <p>Each step of the DeepFinder workflow is coded as a class. The parameters of each method are stored as class attributes
 and are given default values in the constructor. These parameters can easily be given custom values as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">deepfinder.training</span> <span class="k">import</span> <span class="n">Train</span>
-<span class="n">trainer</span> <span class="o">=</span> <span class="n">Train</span><span class="p">(</span><span class="n">Ncl</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="c1"># initialize training task, where default batch_size=25</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Train</span><span class="p">(</span><span class="n">Ncl</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">dim_in</span><span class="o">=</span><span class="mi">56</span><span class="p">)</span> <span class="c1"># initialize training task, where default batch_size=25</span>
 <span class="n">trainer</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">16</span> <span class="c1"># customize batch_size value</span>
 </pre></div>
 </div>
@@ -233,7 +234,7 @@ For ex: 1st element of list -&gt; sphere radius for class 1, 2nd element of list
 
 <dl class="class">
 <dt id="deepfinder.training.Train">
-<em class="property">class </em><code class="sig-prename descclassname">deepfinder.training.</code><code class="sig-name descname">Train</code><span class="sig-paren">(</span><em class="sig-param">Ncl</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.training.Train" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">deepfinder.training.</code><code class="sig-name descname">Train</code><span class="sig-paren">(</span><em class="sig-param">Ncl</em>, <em class="sig-param">dim_in</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.training.Train" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="deepfinder.training.Train.launch">
 <code class="sig-name descname">launch</code><span class="sig-paren">(</span><em class="sig-param">path_data</em>, <em class="sig-param">path_target</em>, <em class="sig-param">objlist_train</em>, <em class="sig-param">objlist_valid</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.training.Train.launch" title="Permalink to this definition">¶</a></dt>
@@ -624,7 +625,7 @@ This .h5 file has one dataset per class (dataset ‘/class*’ contains scoremap
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="guide.html" class="btn btn-neutral float-left" title="Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tutorial.html" class="btn btn-neutral float-left" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

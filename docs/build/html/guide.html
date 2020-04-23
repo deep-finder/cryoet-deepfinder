@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API" href="api.html" />
+    <link rel="next" title="Tutorial" href="tutorial.html" />
     <link rel="prev" title="Introduction" href="intro.html" /> 
 </head>
 
@@ -100,6 +100,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#clustering">Clustering</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -166,14 +167,14 @@
            <div itemprop="articleBody">
             
   <div class="section" id="guide">
-<h1>Guide<a class="headerlink" href="#guide" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1>Guide<a class="headerlink" href="#guide" title="Permalink to this headline">¶</a></h1>
 <p>DeepFinder consists of 5 steps (blue boxes below), which constitute a workflow that allows to locate macromolecular
 complexes in crowded cells, when executed in depicted order. Each step can be executed either using a script (see examples/)
 or using the graphical user interface (see pyqt/). These steps may be used in other workflows, e.g. if the user
 needs only the segmentation step.</p>
-<div class="figure align-center" id="id1">
+<div class="figure align-center" id="id2">
 <img alt="_images/deepfinder_workflow.png" src="_images/deepfinder_workflow.png" />
-<p class="caption"><span class="caption-text">DeepFinder workflow</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-text">DeepFinder workflow</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
 <p><strong>Vocabulary:</strong></p>
 <ul class="simple">
@@ -220,9 +221,9 @@ being configurable by the user.</p>
 </div>
 <div class="section" id="annotation-gui">
 <h3>Annotation GUI<a class="headerlink" href="#annotation-gui" title="Permalink to this headline">¶</a></h3>
-<div class="figure align-center" id="id2">
+<div class="figure align-center" id="id3">
 <img alt="_images/gui_annotation.png" src="_images/gui_annotation.png" />
-<p class="caption"><span class="caption-text">Annotation GUI</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-text">Annotation GUI</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
 </div>
 <p>The annotation graphical interface is constituted of a display window and an annotation window, and allows you to
 interactively annotate your tomograms. First, select desired class. Then browse your tomogram to find instances of
@@ -241,9 +242,9 @@ saving the object list.</p>
 <h2>Target generation<a class="headerlink" href="#target-generation" title="Permalink to this headline">¶</a></h2>
 <p>This step converts an object list (i.e. position-wise annotations) into a label map (i.e. voxel-wise annotation).
 We propose two strategies to do so: <strong>spheres</strong> and <strong>shapes</strong>.</p>
-<div class="figure align-center" id="id3">
+<div class="figure align-center" id="id4">
 <a class="reference internal image-reference" href="_images/gui_target_generation.png"><img alt="_images/gui_target_generation.png" src="_images/gui_target_generation.png" style="height: 400px;" /></a>
-<p class="caption"><span class="caption-text">Target generation GUI</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-text">Target generation GUI</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
 </div>
 <ul class="simple">
 <li><p><strong>Object list path</strong>: path to the object list obtained from the annotation procedure.</p></li>
@@ -277,6 +278,10 @@ So using this strategy involves more efforts and time, but yields better results
 </div>
 <div class="section" id="training">
 <h2>Training<a class="headerlink" href="#training" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you are a beginner in deep learning, and would like to gain a general understanding, you can read Section 3 “An introduction to deep learning” of E. Moebel’s (author of DeepFinder) <a class="reference external" href="https://hal.inria.fr/tel-02153877">PhD thesis</a> .</p>
+</div>
 <p>Before running the training procedure, it is good practice to define a validation set, which is a subset of your training set.
 Then, this validation set will not be used for training, but for computing metrics to evaluate training performance.
 This is helpful for checking for <strong>overfitting</strong>.
@@ -289,9 +294,9 @@ If they diverge, then there is overfitting.</p>
 object lists (see image below). Ideally, the validation objects should originate from a different tomogram than the
 training objects. If this is not possible, try to choose validation objects that are not too close to training
 objects. The minimum size of validation set should be <strong>at least</strong> few dozen objects per class, <strong>ideally</strong> a few hundreds.</p>
-<div class="figure align-center" id="id4">
+<div class="figure align-center" id="id5">
 <a class="reference internal image-reference" href="_images/gui_train.png"><img alt="_images/gui_train.png" src="_images/gui_train.png" style="height: 400px;" /></a>
-<p class="caption"><span class="caption-text">Training GUI</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-text">Training GUI</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
 </div>
 <ul class="simple">
 <li><p><strong>Tomogram and target paths</strong>: list here the paths to the tomograms an their corresponding targets. Should correspond line per line</p></li>
@@ -311,7 +316,9 @@ objects. The minimum size of validation set should be <strong>at least</strong> 
 <li><p><strong>Random shift</strong> (in voxels): applied to positions in object list when sampling patches. Enhances network robustness. Make sure that objects are still contained in patches after the shift is applied.</p></li>
 </ul>
 <p>Once you filled out all required fields, hit the ‘Launch’ button. A second window will appear, displaying training metrics in real time,
-allowing you to monitor the progress of the procedure.</p>
+allowing you to monitor the progress of the procedure. Metrics per class are computed for the validation set (F1-score, precision, recall).
+It is common to obtain per-class score values around 0.6, which for our datasets was enough for satisfying localization.
+Indeed, even if macromolecules are segmented only partially, it is enough to find them in the Clustering step.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If your machine runs <strong>out of memory</strong>, you can reduce patch size and batch size values.</p>
@@ -327,9 +334,9 @@ this allows you to resume the training at last saved network state, instead of s
 <p>Now that your network is trained, it is time to apply it to segment new tomograms. As a tomogram is too large to be
 processed in one take, the procedure splits the volume in smaller overlapping 3D patches. You can adapt the patch size
 to the available memory on your machine.</p>
-<div class="figure align-center" id="id5">
+<div class="figure align-center" id="id6">
 <img alt="_images/gui_segment.png" src="_images/gui_segment.png" />
-<p class="caption"><span class="caption-text">Segmentation GUI</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-text">Segmentation GUI</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
 </div>
 <ul class="simple">
 <li><p><strong>Tomogram path</strong></p></li>
@@ -345,9 +352,9 @@ to the available memory on your machine.</p>
 <h2>Clustering<a class="headerlink" href="#clustering" title="Permalink to this headline">¶</a></h2>
 <p>This procedure analyzes the segmented tomogram (i.e. label map), identifies individual macromolecules and outputs
 their coordinates, stored as an object list. This analysis is achieved with the mean-shift clustering algorithm.</p>
-<div class="figure align-center" id="id6">
+<div class="figure align-center" id="id7">
 <a class="reference internal image-reference" href="_images/gui_cluster.png"><img alt="_images/gui_cluster.png" src="_images/gui_cluster.png" style="height: 400px;" /></a>
-<p class="caption"><span class="caption-text">Clustering GUI</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-text">Clustering GUI</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
 </div>
 <ul class="simple">
 <li><p><strong>Label map path</strong>: path to input label map.</p></li>
@@ -365,7 +372,7 @@ their coordinates, stored as an object list. This analysis is achieved with the 
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="api.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="tutorial.html" class="btn btn-neutral float-right" title="Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="intro.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
