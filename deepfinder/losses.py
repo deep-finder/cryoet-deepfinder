@@ -1,5 +1,13 @@
+# ============================================================================================
+# DeepFinder - a deep learning approach to localize macromolecules in cryo electron tomograms
+# ============================================================================================
+# Copyright (c) 2019 - now
+# Inria - Centre de Rennes Bretagne Atlantique, France
+# Author: Emmanuel Moebel (serpico team)
+# License: GPL v3.0. See <https://www.gnu.org/licenses/>
+# ============================================================================================
+
 from keras import backend as K
-import numpy as np
 
 # Ref: salehi17, "Twersky loss function for image segmentation using 3D FCDN"
 # -> the score is computed for each class separately and then summed

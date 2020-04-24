@@ -1,3 +1,12 @@
+# ============================================================================================
+# DeepFinder - a deep learning approach to localize macromolecules in cryo electron tomograms
+# ============================================================================================
+# Copyright (c) 2019 - now
+# Inria - Centre de Rennes Bretagne Atlantique, France
+# Author: Emmanuel Moebel (serpico team)
+# License: GPL v3.0. See <https://www.gnu.org/licenses/>
+# ============================================================================================
+
 import numpy as np
 
 import warnings

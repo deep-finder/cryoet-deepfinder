@@ -136,7 +136,6 @@ objects. The minimum size of validation set should be **at least** few dozen obj
 
 .. figure::  ../../images/gui_train.png
    :align:   center
-   :height:   400
 
    Training GUI
 

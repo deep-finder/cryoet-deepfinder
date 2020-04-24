@@ -5,7 +5,7 @@ This part describes how to reproduce the segmentations obtained in our `paper <h
 First, please follow installation `instructions <https://gitlab.inria.fr/serpico/deep-finder>`_ .
 
 
-Next, launch the segmentation GUI: :code:`/path/to/deep-finder/bin/segment`
+Next, launch the segmentation GUI by typing following command into the terminal: :code:`/path/to/deep-finder/bin/segment`
 	
 .. figure::  ../../images/gui_segment.png
    :align:   center
@@ -30,4 +30,7 @@ Download the example tomogram `here <https://www.ebi.ac.uk/pdbe/entry/emdb/EMD-3
 * **Net weights path**: :code:`/path/to/deep-finder/examples/training/out/net_weights_chlamydomonas.h5`
 * **Number of classes**: 4
 
-After setting the patch size and your output path, click on button **Launch**. Progress about computation should be printed in the box below the button. Once computation is finished, the display window should pop up, showing the obtained segmentation, super-imposed with the tomogram. Here you can inspect the result. For more details about segmentation and display windows, please see our :ref:`guide`.
+After setting the patch size and your output path, click on button **Launch**. Progress about computation should be
+printed in the box below the button. Once computation is finished, the display window should pop up, showing the
+obtained segmentation, super-imposed with the tomogram, allowing you to inspect the result. For more details about
+segmentation and display windows, please see our :ref:`guide`.
