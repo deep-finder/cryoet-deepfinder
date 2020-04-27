@@ -3,6 +3,13 @@
 import os
 import sys
 from os.path import dirname, abspath, join, basename
+import argparse
+
+parser = argparse.ArgumentParser(description='Annotate a tomogram.')
+parser.add_argument('-t', action='store', dest='path_tomo', help = 'path to tomogram')
+args = parser.parse_args()
+
+#print(args.path_tomo)
 
 # Set deepfindHome to the location of this file
 deepfindHome = dirname(abspath(__file__))
@@ -11,6 +18,10 @@ deepfindHome = os.path.split(deepfindHome)[0]+'/'
 gui_folder = 'pyqt/annotation/'
 gui_script = 'gui_annotation.py'
 
-cmd = 'cd '+deepfindHome+gui_folder+' ; python '+gui_script
+gui_options = ''
+if args.path_tomo != None:
+    gui_options += ' -t ' + args.path_tomo
+
+cmd = 'cd ' + deepfindHome + gui_folder + ' ; python ' + gui_script + gui_options
 
 os.system(cmd)
