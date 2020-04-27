@@ -1,3 +1,12 @@
+# ============================================================================================
+# DeepFinder - a deep learning approach to localize macromolecules in cryo electron tomograms
+# ============================================================================================
+# Copyright (c) 2019 - now
+# Inria - Centre de Rennes Bretagne Atlantique, France
+# Author: Emmanuel Moebel (Serpico team)
+# License: GPL v3.0. See <https://www.gnu.org/licenses/>
+# ============================================================================================
+
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
@@ -54,6 +63,9 @@ class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
         #path_tomo = self.le_path_tomo.text()
         path_tomo =  QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         vol = cm.read_array(path_tomo[0])
+        self.set_vol(vol)
+
+    def set_vol(self, vol):
         self.dwidget.set_vol(vol)
 
         # Set contrast sliders:

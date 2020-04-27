@@ -1,6 +1,17 @@
+# ============================================================================================
+# DeepFinder - a deep learning approach to localize macromolecules in cryo electron tomograms
+# ============================================================================================
+# Copyright (c) 2019 - now
+# Inria - Centre de Rennes Bretagne Atlantique, France
+# Author: Emmanuel Moebel (Serpico team)
+# License: GPL v3.0. See <https://www.gnu.org/licenses/>
+# ============================================================================================
+
 import sys
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
+
+import argparse
 
 sys.path.append('../')
 from custom_theme import set_custom_theme, display_message_box
@@ -11,6 +22,7 @@ from gui_display import DisplayWindow
 sys.path.append('../../')
 from deepfinder.utils import objl as ol
 from deepfinder.training import TargetBuilder
+from deepfinder.utils import common as cm
 
 import numpy as np
 
@@ -326,6 +338,10 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Annotate a tomogram.')
+    parser.add_argument('-t', action='store', dest='path_tomo', help = 'path to tomogram')
+    args = parser.parse_args()
+
     app = QtWidgets.QApplication(sys.argv)
     set_custom_theme(app)
 
@@ -333,5 +349,10 @@ if __name__ == "__main__":
     win.place_windows()
     win.winDisp.show()
     win.show()
+
+    if args.path_tomo != None:
+        tomo = cm.read_array(args.path_tomo)
+        win.winDisp.set_vol(tomo)
+        win.winDisp.button_load_tomo.hide()  # hide load tomo button
 
     sys.exit(app.exec_())

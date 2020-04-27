@@ -3,7 +3,7 @@
 # ============================================================================================
 # Copyright (c) 2019 - now
 # Inria - Centre de Rennes Bretagne Atlantique, France
-# Author: Emmanuel Moebel (serpico team)
+# Author: Emmanuel Moebel (Serpico team)
 # License: GPL v3.0. See <https://www.gnu.org/licenses/>
 # ============================================================================================
 
