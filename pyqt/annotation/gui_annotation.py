@@ -42,6 +42,7 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # Initialize object list:
         self.objl = []
         self.label_list = [1]
+        self.path_objl = None
 
         # Classes section:
         self.table_classes.setColumnCount(2)
@@ -284,11 +285,21 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if len(self.objl)==0:
             display_message_box('The object list is empty')
         else:
-            filename = QtGui.QFileDialog.getSaveFileName(self, 'Save object list')
-            filename = filename[0]
+            if self.path_objl == None: # if path not specified by -o option, then open dialog window
+                filename = QtGui.QFileDialog.getSaveFileName(self, 'Save object list')
+                filename = filename[0]
+            else:
+                filename = self.path_objl
             s = os.path.splitext(filename)
             filename = s[0]+'.xml' # force extension to be xml
             ol.write_xml(self.objl, filename)
+
+            message = 'Object list saved! Quit?'
+            reply = QtGui.QMessageBox.question(self, 'Quit?', message,
+                                               QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+            if reply == QtGui.QMessageBox.Yes:
+                sys.exit()
+
 
     def on_button_open(self):
         if self.winDisp.dwidget.isTomoLoaded == False:
@@ -340,6 +351,7 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Annotate a tomogram.')
     parser.add_argument('-t', action='store', dest='path_tomo', help = 'path to tomogram')
+    parser.add_argument('-o', action='store', dest='path_objl', help = 'output path for object list')
     args = parser.parse_args()
 
     app = QtWidgets.QApplication(sys.argv)
@@ -354,5 +366,7 @@ if __name__ == "__main__":
         tomo = cm.read_array(args.path_tomo)
         win.winDisp.set_vol(tomo)
         win.winDisp.button_load_tomo.hide()  # hide load tomo button
+    if args.path_objl != None:
+        win.path_objl = args.path_objl
 
     sys.exit(app.exec_())

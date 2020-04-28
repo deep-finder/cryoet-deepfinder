@@ -294,8 +294,10 @@ def scale_coord(objlIN, scale):
         objlOUT[idx]['z'] = scale * z
     return objlOUT
 
-# Returns a list with different (unique) labels contained in input objl
 def get_labels(objlIN):
+    """
+    Returns a list with different (unique) labels contained in input objl
+    """
     class_list = []
     for idx in range(len(objlIN)):
         class_list.append(objlIN[idx]['label'])
