@@ -10,6 +10,8 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
+import argparse
+
 sys.path.append('../')
 from custom_theme import set_custom_theme, display_message_box
 
@@ -138,10 +140,32 @@ class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
         else:
             display_message_box('Please load a tomogram first')
 
+    def place_window(self):
+        ag = QtWidgets.QDesktopWidget().availableGeometry()
+        width = 3*int(ag.width()/4)
+        self.resize(width, ag.height())
+        self.move(ag.width() - width, 0)
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Annotate a tomogram.')
+    parser.add_argument('-t', action='store', dest='path_tomo', help='path to tomogram')
+    parser.add_argument('-l', action='store', dest='path_lmap', help='path to label map')
+    args = parser.parse_args()
+
     app = QtWidgets.QApplication(sys.argv)
     set_custom_theme(app)
 
-    window = DisplayWindow()
-    window.show()
+    win = DisplayWindow()
+    win.place_window()
+    win.show()
+
+    if args.path_tomo != None:
+        tomo = cm.read_array(args.path_tomo)
+        win.set_vol(tomo)
+        win.button_load_tomo.hide()  # hide load tomo button
+    if args.path_lmap != None:
+        lmap = cm.read_array(args.path_lmap)
+        win.dwidget.set_lmap(lmap)
+        win.button_load_lmap.hide()  # hide load lmap button
+
     sys.exit(app.exec_())
