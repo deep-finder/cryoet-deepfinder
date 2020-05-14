@@ -103,6 +103,16 @@ class ParamsGenTarget():
             print('DeepFinder message: wrong params file.')
             sys.exit()
 
+    def display(self):
+        print('path_objl       : ' + self.path_objl)
+        print('path_initial_vol: ' + self.path_initial_vol)
+        print('tomo size       : ' + str(self.tomo_size))  # (dimZ,dimY,dimX)
+        print('strategy        : ' + self.strategy)
+        print('radius list     : ' + str(self.radius_list))
+        print('path_mask_list  : ' + str(self.path_mask_list))
+        print('path_target     : ' + self.path_target)
+
+
 class ParamsTrain():
     def __init__(self):
         self.path_out = str()

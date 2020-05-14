@@ -33,6 +33,7 @@ if args.path_params == None: # if no args are passed, then open GUI
 else:
     params = ParamsGenTarget()
     params.read(args.path_params)
+    #params.display()
 
     objl = ol.read_xml(params.path_objl)
 
@@ -42,7 +43,7 @@ else:
     if params.path_initial_vol != '':
         vol_initial = cm.read_array(params.path_initial_vol)
     else:
-        vol_initial = np.zeros(params.tomo_size)
+        vol_initial = np.zeros(params.tomo_size, dtype=np.int8)
 
     if params.strategy == 'shapes':
         target = tbuild.generate_with_shapes(objl, vol_initial, params.mask_list)

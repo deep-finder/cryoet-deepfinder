@@ -43,13 +43,21 @@ class DisplayOrthoslicesWidget(QWidget):
         # self.vb_zx.setMouseEnabled(x=False, y=False)
         # self.vb_zy.setMouseEnabled(x=False, y=False)
 
-        self.img_xy = pg.ImageItem()
+        self.img_xy = pg.ImageItem() # tomogram slices
         self.img_zy = pg.ImageItem()
         self.img_zx = pg.ImageItem()
 
-        self.vb_xy.addItem(self.img_xy)
+        self.vb_xy.addItem(self.img_xy) # link tomogram slices to viewboxes
         self.vb_zy.addItem(self.img_zy)
         self.vb_zx.addItem(self.img_zx)
+
+        self.img_lmap_xy = pg.ImageItem() # label map slices
+        self.img_lmap_zy = pg.ImageItem()
+        self.img_lmap_zx = pg.ImageItem()
+
+        self.vb_xy.addItem(self.img_lmap_xy) # link lmap slices to viewboxes
+        self.vb_zy.addItem(self.img_lmap_zy)
+        self.vb_zx.addItem(self.img_lmap_zx)
 
         # Cursor lines:
         self.lineV_xy = pg.InfiniteLine(angle=90, movable=False, pen='r')
@@ -86,12 +94,6 @@ class DisplayOrthoslicesWidget(QWidget):
 
         # Relative to displayed label map, needs to be initialized by set_lmap()
         self.lmap = None
-        self.img_lmap_xy = pg.ImageItem()
-        self.img_lmap_zy = pg.ImageItem()
-        self.img_lmap_zx = pg.ImageItem()
-        self.vb_xy.addItem(self.img_lmap_xy)
-        self.vb_zy.addItem(self.img_lmap_zy)
-        self.vb_zx.addItem(self.img_lmap_zx)
         self.levels_lmap = (0, 4) # supposed max nb of classes TODO: adapt if >25
         self.isLmapLoaded = False
 
@@ -125,9 +127,6 @@ class DisplayOrthoslicesWidget(QWidget):
         self.isTomoLoaded = True
         self.vol = vol
         self.dim = self.vol.shape
-        ###self.x = np.int(np.round(self.dim[2] / 2))
-        ###self.y = np.int(np.round(self.dim[1] / 2))
-        ###self.z = np.int(np.round(self.dim[0] / 2))
         self.vol_mu = np.mean(vol)
         self.vol_sig = np.std(vol)
         self.levels = (self.vol_mu-5*self.vol_sig,self.vol_mu+5*self.vol_sig)
@@ -141,26 +140,7 @@ class DisplayOrthoslicesWidget(QWidget):
         self.img_zx.setImage(slice_zx, levels=self.levels)
         self.img_zy.setImage(slice_zy, levels=self.levels)
 
-        ###self.lineV_xy.setPos(self.x)
-        ###self.lineH_xy.setPos(self.y)
-
-        ###self.lineV_zy.setPos(self.z)
-        ###self.lineH_zy.setPos(self.y)
-
-        ###self.lineV_zx.setPos(self.x)
-        ###self.lineH_zx.setPos(self.z)
-
-        # Initialize zoom centers:
-        ###self.set_zoom_centers()
-
         self.initialize_orthoslice_linking()
-
-        # Initialize coordinate display:
-        ###self.label.setText('(x,y,z)=' + '(' + str(self.x) + ',' + str(self.y) + ',' + str(self.z) + ')')
-
-
-
-
 
     def initialize_display(self): # /!\ self.dim needs to be declared first.
         # Stuff that needs to be intialized after loading a volume (tomogram or label map)
@@ -203,52 +183,12 @@ class DisplayOrthoslicesWidget(QWidget):
 
         lmap_xy, lmap_zx, lmap_zy = self.get_orthoslices(lmap) # (x,y,z) need to be initialized first, else crash
 
-
-        #self.img_lmap_xy = pg.ImageItem()
-        #self.img_lmap_zy = pg.ImageItem()
-        #self.img_lmap_zx = pg.ImageItem()
-
-
-        # # Set color map:
-        # # colors = [
-        # #     (0, 0, 0),
-        # #     (45, 5, 61),
-        # #     (84, 42, 55),
-        # #     (150, 87, 60),
-        # #     (208, 171, 141),
-        # #     (255, 255, 255)
-        # # ]
-        # # cmap = pg.ColorMap(pos=np.linspace(0.0, 1.0, 6), color=colors)
-        # # lut = cmap.getLookupTable(alpha=True)
-        # # # add alpha channel so that '0'->transparent
-        # # alpha = np.ones((lut.shape[0], 1)) * 255
-        # # alpha[0] = 0
-        # # lut = np.concatenate((lut, alpha), axis=1)
-        #
-        # colormap = matplotlib.cm.get_cmap('gist_ncar') #CMRmap
-        # colormap._init()
-        # lut = (colormap._lut * 255).view(np.ndarray)
-        # lut = np.random.permutation(lut) # so that adjacent classes (e.g. 1 & 2) colors are not too similar
-        # # edit alpha channel so that '0'->transparent
-        # alpha = np.ones(lut.shape[0]) * 255
-        # alpha[0] = 0
-        # lut[:,3] = alpha
-
         self.set_lmap_color_map()
-
-        #self.img_lmap_xy.setImage(lmap_xy, levels=self.levels_lmap, lut=lut)
-        #self.img_lmap_zy.setImage(lmap_zy, levels=self.levels_lmap, lut=lut)
-        #self.img_lmap_zx.setImage(lmap_zx, levels=self.levels_lmap, lut=lut)
         self.img_lmap_xy.setImage(lmap_xy, levels=self.levels_lmap)
         self.img_lmap_zy.setImage(lmap_zy, levels=self.levels_lmap)
         self.img_lmap_zx.setImage(lmap_zx, levels=self.levels_lmap)
 
-        # Overlay lmap to tomo data:
-        #self.vb_xy.addItem(self.img_lmap_xy)
-        #self.vb_zy.addItem(self.img_lmap_zy)
-        #self.vb_zx.addItem(self.img_lmap_zx)
         self.set_lmap_opacity(1)
-
         self.initialize_orthoslice_linking()
 
     def set_lmap_color_map(self):
