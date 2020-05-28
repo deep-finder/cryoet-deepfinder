@@ -8,6 +8,7 @@ Welcome to DeepFinder's documentation!
    intro
    guide
    tutorial
+   cmd_line_tools
    api
 
 Indices and tables

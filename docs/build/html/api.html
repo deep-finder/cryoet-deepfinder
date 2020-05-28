@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
+    <link rel="prev" title="Annotation" href="cmd_line_tools.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,6 +84,8 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide.html">Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_line_tools.html">Annotation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_line_tools.html#generate-target">Generate target</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#deepfinder">DeepFinder</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#training">Training</a></li>
@@ -445,6 +447,12 @@ Else, it assumes that the volume is tomographic data, and plots in gray scale.</
 </dd></dl>
 
 <dl class="function">
+<dt id="deepfinder.utils.objl.get_labels">
+<code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">get_labels</code><span class="sig-paren">(</span><em class="sig-param">objlIN</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.get_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list with different (unique) labels contained in input objl</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="deepfinder.utils.objl.get_obj">
 <code class="sig-prename descclassname">deepfinder.utils.objl.</code><code class="sig-name descname">get_obj</code><span class="sig-paren">(</span><em class="sig-param">objl</em>, <em class="sig-param">obj_id</em><span class="sig-paren">)</span><a class="headerlink" href="#deepfinder.utils.objl.get_obj" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get objects with specified object ID.</p>
@@ -625,7 +633,7 @@ This .h5 file has one dataset per class (dataset ‘/class*’ contains scoremap
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="tutorial.html" class="btn btn-neutral float-left" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="cmd_line_tools.html" class="btn btn-neutral float-left" title="Annotation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

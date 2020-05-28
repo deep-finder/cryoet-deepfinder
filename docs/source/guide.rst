@@ -157,6 +157,12 @@ objects. The minimum size of validation set should be **at least** few dozen obj
 * **Bootstrap**: if checked, applies re-sampling to batch generation, so that each class has an equal chance to be sampled. Usefull when in presence of unbalanced classes. Can remain checked.
 * **Random shift** (in voxels): applied to positions in object list when sampling patches. Enhances network robustness. Make sure that objects are still contained in patches after the shift is applied.
 
+.. figure::  ../../images/sampling_rnd_shift.png
+   :align:   center
+   :height:  200
+
+   Patch sampling and random shift
+
 Once you filled out all required fields, hit the 'Launch' button. A second window will appear, displaying training metrics in real time,
 allowing you to monitor the progress of the procedure. Metrics per class are computed for the validation set (F1-score, precision, recall).
 It is common to obtain per-class score values around 0.6, which for our datasets was enough for satisfying localization.

@@ -101,6 +101,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_line_tools.html">Command line tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -295,7 +296,7 @@ object lists (see image below). Ideally, the validation objects should originate
 training objects. If this is not possible, try to choose validation objects that are not too close to training
 objects. The minimum size of validation set should be <strong>at least</strong> few dozen objects per class, <strong>ideally</strong> a few hundreds.</p>
 <div class="figure align-center" id="id5">
-<a class="reference internal image-reference" href="_images/gui_train.png"><img alt="_images/gui_train.png" src="_images/gui_train.png" style="height: 400px;" /></a>
+<img alt="_images/gui_train.png" src="_images/gui_train.png" />
 <p class="caption"><span class="caption-text">Training GUI</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
 </div>
 <ul class="simple">
@@ -315,6 +316,10 @@ objects. The minimum size of validation set should be <strong>at least</strong> 
 <li><p><strong>Bootstrap</strong>: if checked, applies re-sampling to batch generation, so that each class has an equal chance to be sampled. Usefull when in presence of unbalanced classes. Can remain checked.</p></li>
 <li><p><strong>Random shift</strong> (in voxels): applied to positions in object list when sampling patches. Enhances network robustness. Make sure that objects are still contained in patches after the shift is applied.</p></li>
 </ul>
+<div class="figure align-center" id="id6">
+<a class="reference internal image-reference" href="_images/sampling_rnd_shift.png"><img alt="_images/sampling_rnd_shift.png" src="_images/sampling_rnd_shift.png" style="height: 200px;" /></a>
+<p class="caption"><span class="caption-text">Patch sampling and random shift</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+</div>
 <p>Once you filled out all required fields, hit the ‘Launch’ button. A second window will appear, displaying training metrics in real time,
 allowing you to monitor the progress of the procedure. Metrics per class are computed for the validation set (F1-score, precision, recall).
 It is common to obtain per-class score values around 0.6, which for our datasets was enough for satisfying localization.
@@ -334,9 +339,9 @@ this allows you to resume the training at last saved network state, instead of s
 <p>Now that your network is trained, it is time to apply it to segment new tomograms. As a tomogram is too large to be
 processed in one take, the procedure splits the volume in smaller overlapping 3D patches. You can adapt the patch size
 to the available memory on your machine.</p>
-<div class="figure align-center" id="id6">
+<div class="figure align-center" id="id7">
 <img alt="_images/gui_segment.png" src="_images/gui_segment.png" />
-<p class="caption"><span class="caption-text">Segmentation GUI</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-text">Segmentation GUI</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
 </div>
 <ul class="simple">
 <li><p><strong>Tomogram path</strong></p></li>
@@ -352,9 +357,9 @@ to the available memory on your machine.</p>
 <h2>Clustering<a class="headerlink" href="#clustering" title="Permalink to this headline">¶</a></h2>
 <p>This procedure analyzes the segmented tomogram (i.e. label map), identifies individual macromolecules and outputs
 their coordinates, stored as an object list. This analysis is achieved with the mean-shift clustering algorithm.</p>
-<div class="figure align-center" id="id7">
+<div class="figure align-center" id="id8">
 <a class="reference internal image-reference" href="_images/gui_cluster.png"><img alt="_images/gui_cluster.png" src="_images/gui_cluster.png" style="height: 400px;" /></a>
-<p class="caption"><span class="caption-text">Clustering GUI</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-text">Clustering GUI</span><a class="headerlink" href="#id8" title="Permalink to this image">¶</a></p>
 </div>
 <ul class="simple">
 <li><p><strong>Label map path</strong>: path to input label map.</p></li>
