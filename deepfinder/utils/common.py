@@ -132,7 +132,7 @@ def read_array(filename, dset_name='dataset'):
     data_format = os.path.splitext(filename)
     if data_format[1] == '.h5':
         array = read_h5array(filename, dset_name)
-    elif data_format[1] == '.mrc' or data_format[1] == '.map':
+    elif data_format[1] == '.mrc' or data_format[1] == '.map' or data_format[1] == '.rec':
         array = read_mrc(filename)
     else:
         print('/!\ DeepFinder can only read datasets in .h5 and .mrc formats')
