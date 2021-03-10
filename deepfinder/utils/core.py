@@ -143,19 +143,20 @@ def load_dataset(path_data, path_target, dset_name='dataset'):
 # OUTPUT:
 #   bs_idx : list of indexes corresponding to the bootstraped objects
 def get_bootstrap_idx(objlist,Nbs):
-    # Get a vector containing the object class labels (from objlist):
+    # Get a list containing the object class labels (from objlist):
     Nobj = len(objlist)
-    label_list = np.zeros((Nobj,))
-    for oo in range(0,Nobj):
-        label_list[oo] = float( objlist[oo]['label'] )
-        
-    lblTAB = np.unique(label_list) # vector containing unique class labels 
-        
+    label_list = []
+    for idx in range(0, Nobj):
+        label_list.append(objlist[idx]['label'])
+
+    lblTAB = np.unique(label_list)  # vector containing unique class labels
+
     # Bootstrap data so that we have equal frequencies (1/Nbs) for all classes:
     # ->from label_list, sample Nbs objects from each class
     bs_idx = []
     for l in lblTAB:
-        bs_idx.append( np.random.choice(np.squeeze(np.asarray(np.nonzero(label_list==l))), Nbs) ) # TODO: can be simplified
+        bs_idx.append(np.random.choice(np.array(np.nonzero(np.array(label_list) == l))[0], Nbs))
+
     bs_idx = np.concatenate(bs_idx)
     return bs_idx
 
