@@ -317,8 +317,8 @@ class DisplayOrthoslicesWidget(QWidget):
             slice_zx = np.mean(slice_zx, axis=1)
             slice_zx = np.transpose(slice_zx)
 
-            min2 = self.z - n
-            max2 = self.z + n
+            min2 = self.x - n
+            max2 = self.x + n
             if min2 < 0          : min2 = 0
             if max2 > self.dim[2]: max2 = self.dim[2]
             slice_zy = self.vol[:, :, min2:max2]
