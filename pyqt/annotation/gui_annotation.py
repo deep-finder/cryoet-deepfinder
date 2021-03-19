@@ -352,6 +352,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Annotate a tomogram.')
     parser.add_argument('-t', action='store', dest='path_tomo', help = 'path to tomogram')
     parser.add_argument('-o', action='store', dest='path_objl', help = 'output path for object list')
+    parser.add_argument('-scipion', action='store_true', help='option for launching in scipion (hides some buttons)')
     args = parser.parse_args()
 
     app = QtWidgets.QApplication(sys.argv)
@@ -368,5 +369,7 @@ if __name__ == "__main__":
         win.winDisp.button_load_tomo.hide()  # hide load tomo button
     if args.path_objl != None:
         win.path_objl = args.path_objl
+    if args.scipion:
+        win.button_open.hide()
 
     sys.exit(app.exec_())

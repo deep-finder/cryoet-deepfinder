@@ -8,6 +8,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Annotate a tomogram.')
 parser.add_argument('-t', action='store', dest='path_tomo', help = 'path to tomogram')
 parser.add_argument('-o', action='store', dest='path_objl', help = 'output path for object list')
+parser.add_argument('-scipion', action='store_true', help='option for launching in scipion (hides some buttons)')
 args = parser.parse_args()
 
 # Set deepfindHome to the location of this file
@@ -22,6 +23,8 @@ if args.path_tomo != None:
     gui_options += ' -t ' + args.path_tomo
 if args.path_objl != None:
     gui_options += ' -o ' + args.path_objl
+if args.scipion:
+    gui_options += ' -scipion '
 
 cmd = 'cd ' + deepfindHome + gui_folder + ' ; python ' + gui_script + gui_options
 
