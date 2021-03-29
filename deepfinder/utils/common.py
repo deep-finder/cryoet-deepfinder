@@ -24,6 +24,8 @@ import matplotlib
 matplotlib.use('agg') # necessary else: AttributeError: 'NoneType' object has no attribute 'is_interactive'
 import matplotlib.pyplot as plt
 
+from PIL import Image # for reading tif
+
 # Writes an image file containing ortho-slices of the input volume. Generates same visualization as matlab function
 # 'tom_volxyz' from TOM toolbox.
 # If volume type is int8, the function assumes that the volume is a labelmap, and hence plots in color scale.
@@ -113,6 +115,15 @@ def write_mrc(array, filename):
     with mrcfile.new(filename, overwrite=True) as mrc:
         mrc.set_data(array)
 
+# def read_tif(filename):
+#     dataset = Image.open(filename)
+#     h, w = np.shape(dataset)
+#     tiffarray = np.zeros((h, w, dataset.n_frames))
+#     for i in range(dataset.n_frames):
+#         dataset.seek(i)
+#         tiffarray[:, :, i] = np.array(dataset)
+#     return tiffarray.astype(np.single)
+
 # Reads arrays. Handles .h5 and .mrc files, according to what extension the file has.
 # INPUTS:
 #   filename : string '/path/to/file.ext' with '.ext' either '.h5' or '.mrc'
@@ -134,6 +145,8 @@ def read_array(filename, dset_name='dataset'):
         array = read_h5array(filename, dset_name)
     elif data_format[1] == '.mrc' or data_format[1] == '.map' or data_format[1] == '.rec':
         array = read_mrc(filename)
+    #elif data_format[1] == '.tif':
+    #    array = read_tif(filename)
     else:
         print('/!\ DeepFinder can only read datasets in .h5 and .mrc formats')
     return array
