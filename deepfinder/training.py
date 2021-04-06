@@ -79,9 +79,9 @@ class TargetBuilder(core.DeepFinder):
 
             # Get the coordinates of object voxels in target_array
             obj_voxels = np.nonzero(ref == 1)
-            x_vox = obj_voxels[2] + x - centeroffset +1
-            y_vox = obj_voxels[1] + y - centeroffset +1
-            z_vox = obj_voxels[0] + z - centeroffset +1
+            x_vox = obj_voxels[2] + x - centeroffset #+1
+            y_vox = obj_voxels[1] + y - centeroffset #+1
+            z_vox = obj_voxels[0] + z - centeroffset #+1
 
             for idx in range(x_vox.size):
                 xx = x_vox[idx]
