@@ -115,14 +115,14 @@ def write_mrc(array, filename):
     with mrcfile.new(filename, overwrite=True) as mrc:
         mrc.set_data(array)
 
-# def read_tif(filename):
-#     dataset = Image.open(filename)
-#     h, w = np.shape(dataset)
-#     tiffarray = np.zeros((h, w, dataset.n_frames))
-#     for i in range(dataset.n_frames):
-#         dataset.seek(i)
-#         tiffarray[:, :, i] = np.array(dataset)
-#     return tiffarray.astype(np.single)
+def read_tif(filename):
+    dataset = Image.open(filename)
+    h, w = np.shape(dataset)
+    tiffarray = np.zeros((dataset.n_frames, w, h))
+    for i in range(dataset.n_frames):
+        dataset.seek(i)
+        tiffarray[i, :, :] = np.transpose(np.array(dataset))
+    return tiffarray.astype(np.single)
 
 # Reads arrays. Handles .h5 and .mrc files, according to what extension the file has.
 # INPUTS:
@@ -145,8 +145,8 @@ def read_array(filename, dset_name='dataset'):
         array = read_h5array(filename, dset_name)
     elif data_format[1] == '.mrc' or data_format[1] == '.map' or data_format[1] == '.rec':
         array = read_mrc(filename)
-    #elif data_format[1] == '.tif':
-    #    array = read_tif(filename)
+    elif data_format[1] == '.tif':
+       array = read_tif(filename)
     else:
         print('/!\ DeepFinder can only read datasets in .h5 and .mrc formats')
     return array
