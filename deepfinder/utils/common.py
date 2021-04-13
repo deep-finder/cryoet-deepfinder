@@ -145,8 +145,8 @@ def read_array(filename, dset_name='dataset'):
         array = read_h5array(filename, dset_name)
     elif data_format[1] == '.mrc' or data_format[1] == '.map' or data_format[1] == '.rec':
         array = read_mrc(filename)
-    elif data_format[1] == '.tif':
-       array = read_tif(filename)
+    elif data_format[1] == '.tif' or data_format[1] == '.TIF':
+        array = read_tif(filename)
     else:
         print('/!\ DeepFinder can only read datasets in .h5 and .mrc formats')
     return array

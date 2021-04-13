@@ -279,19 +279,26 @@ def scale_coord(objlIN, scale):
 
     Args:
         objlIN (list of dict)
-        scale (float)
+        scale (float, int or tuple): if float or int, same scale is applied to all dim
 
     Returns:
         list of dict: object list with scaled coordinates
     """
+    if isinstance(scale, float) or isinstance(scale, int):
+        s = (scale, scale, scale)
+    elif isinstance(scale, tuple):
+        s = scale
+    else:
+        print('/!\ scale must be either float, int or tuple (z,y,x)')
+
     objlOUT = deepcopy(objlIN) # necessary else the original objl is scaled too
     for idx in range(len(objlIN)):
         x = int(np.round(float(objlIN[idx]['x'])))
         y = int(np.round(float(objlIN[idx]['y'])))
         z = int(np.round(float(objlIN[idx]['z'])))
-        objlOUT[idx]['x'] = scale * x
-        objlOUT[idx]['y'] = scale * y
-        objlOUT[idx]['z'] = scale * z
+        objlOUT[idx]['x'] = s[2] * x
+        objlOUT[idx]['y'] = s[1] * y
+        objlOUT[idx]['z'] = s[0] * z
     return objlOUT
 
 def get_labels(objlIN):
