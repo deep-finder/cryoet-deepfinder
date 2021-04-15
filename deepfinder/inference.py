@@ -127,7 +127,7 @@ class Segment(core.DeepFinder):
     # OUTPUT:
     #   predArray: a numpy array containing the predicted score maps.
     def launch_single_block(self, dataArray):
-        self.check_arguments(dataArray)
+        self.check_arguments(dataArray, self.P)
 
         dim = dataArray.shape
         dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:])  # normalize
