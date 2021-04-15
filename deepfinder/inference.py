@@ -132,11 +132,11 @@ class Segment(core.DeepFinder):
         dataArray = (dataArray[:] - np.mean(dataArray[:])) / np.std(dataArray[:])  # normalize
         dataArray = np.pad(dataArray, self.pcrop, mode='constant')  # zeropad
         dim = dataArray.shape
-        dataArray = np.reshape(dataArray, (1, dim[0], dim[1], dim[2], 1))  # reshape for keras [batch,x,y,z,channel]
+        #dataArray = np.reshape(dataArray, (1, dim[0], dim[1], dim[2], 1))  # reshape for keras [batch,x,y,z,channel]
 
         pred = self.net.predict(dataArray, batch_size=1)
         predArray = pred[0, :, :, :, :]
-        predArray = predArray[self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, :]  # unpad
+        #predArray = predArray[self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, self.pcrop:-self.pcrop, :]  # unpad
 
         return predArray
 
