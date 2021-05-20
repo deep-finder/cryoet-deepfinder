@@ -82,7 +82,7 @@ class DeepFinder:
 
     def check_array_minsize(self, v, varname):
         lmin = v[1] # is expected to be int (e.g. patch length)
-        if v[0].shape[0]<=lmin and v[0].shape[1]<=lmin and v[0].shape[2]<=lmin:
+        if v[0].shape[0] < lmin and v[0].shape[1] < lmin and v[0].shape[2] < lmin:
             self.display('DeepFinder message: the array "' + varname[0] + '" has shape '+str(v[0].shape)+'. Needs to be larger than array "'+varname[1]+'", which has shape ('+str(v[1])+','+str(v[1])+','+str(v[1])+').')
             sys.exit()
 
