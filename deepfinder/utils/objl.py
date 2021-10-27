@@ -5,6 +5,7 @@
 # License: GPL v3.0. See <https://www.gnu.org/licenses/>
 # =============================================================================================
 
+import os
 import numpy as np
 
 import warnings
@@ -61,6 +62,42 @@ def disp(objlIN):
         strout = strout + ')'
 
         print(strout)
+
+
+def read(filename):
+    """Reads object list. Handles .xml and .xlsx files, according to what extension the file has.
+
+    Args:
+        filename (str): '/path/to/file.ext' with '.ext' either '.xml' or '.xlsx'
+
+    Returns:
+        list of dict
+    """
+    data_format = os.path.splitext(filename)
+    if data_format[1] == '.xml':
+        objl = read_xml(filename)
+    elif data_format[1] == '.xlsx':
+        objl = read_excel(filename)
+    else:
+        print('/!\ DeepFinder can only read object lists in .xml and .xlsx formats')
+    return objl
+
+
+def write(objl, filename):
+    """Writes object list. Can write .xml and .xlsx files, according to the extension specified in filename.
+
+    Args:
+        objl (list of dict)
+        filename (str): '/path/to/file.ext' with '.ext' either '.xml' or '.xlsx'
+    """
+    data_format = os.path.splitext(filename)
+    if data_format[1] == '.xml':
+        write_xml(objl, filename)
+    elif data_format[1] == '.xlsx':
+        write_excel(objl, filename)
+    else:
+        print('/!\ DeepFinder can only write object lists in .xml and .xlsx formats')
+
 
 def read_xml(filename):
     tree = etree.parse(filename)

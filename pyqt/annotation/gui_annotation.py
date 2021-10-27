@@ -208,7 +208,7 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.winDisp.dwidget.goto_coord(coord)  # to refresh lmap display
 
         # Test:
-        ol.disp(self.objl)
+        #ol.disp(self.objl)
 
 
     def on_object_remove_secure(self):
@@ -288,9 +288,10 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 filename = filename[0]
             else:
                 filename = self.path_objl
-            s = os.path.splitext(filename)
-            filename = s[0]+'.xml' # force extension to be xml
-            ol.write_xml(self.objl, filename)
+            #s = os.path.splitext(filename)
+            #filename = s[0]+'.xml' # force extension to be xml
+            #ol.write_xml(self.objl, filename)
+            ol.write(self.objl, filename)
 
             message = 'Object list saved! Quit?'
             reply = QtGui.QMessageBox.question(self, 'Quit?', message,
@@ -305,7 +306,7 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             path_objl = ('', '')
             if len(self.objl)!=0:
-                message = 'This will overwrite current object list. Proceed?'
+                message = 'This will overwrite current object list. Proceed?' # TODO: DOES NOT OVERWRITE OBJL!!
                 reply = QtGui.QMessageBox.question(self, 'Remove class', message,
                                                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
                 if reply == QtGui.QMessageBox.Yes:
@@ -320,7 +321,8 @@ class AnnotationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
     def load_objl(self, path_objl):
-        objl = ol.read_xml(path_objl)
+        #objl = ol.read_xml(path_objl)
+        objl = ol.read(path_objl)
         self.label_list = ol.get_labels(objl)
 
         for idx in range(len(objl)):
