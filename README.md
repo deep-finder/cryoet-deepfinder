@@ -26,10 +26,10 @@ The algorithm needs an __Nvidia GPU__ and __CUDA__ to run at reasonable speed (i
 ### Package dependencies
 Deep Finder depends on following packages. The package versions for which our software has been tested are displayed in brackets:
 ```
-tensorflow-gpu (1.14.0)
-keras          (2.3.1)
-numpy          (1.16.4)
-h5py           (2.9.0)
+tensorflow-gpu (2.6.0)
+keras          (2.6.0)
+numpy          (1.19.5)
+h5py           (3.1.0)
 lxml           (4.3.4)
 scikit-learn   (0.21.2)     
 scikit-image   (0.15.0)  
