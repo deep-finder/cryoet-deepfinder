@@ -91,8 +91,8 @@ class TrainingWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         trainer.set_observer(core.observer_gui(self.print_signal))
 
         # Load objlists:
-        objl_train = ol.read_xml(path_objl_train)
-        objl_valid = ol.read_xml(path_objl_valid)
+        objl_train = ol.read(path_objl_train)
+        objl_valid = ol.read(path_objl_valid)
 
         # Launch training:
         trainer.launch(path_data, path_target, objl_train, objl_valid)

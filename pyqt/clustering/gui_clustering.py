@@ -62,7 +62,7 @@ class ClusteringWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         objlist = clust.launch(labelmap)
 
         # Save objlist:
-        ol.write_xml(objlist, path_objl)
+        ol.write(objlist, path_objl)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
