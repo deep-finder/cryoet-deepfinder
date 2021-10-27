@@ -8,9 +8,9 @@ import h5py
 import numpy as np
 import time
 
-from keras.optimizers import Adam
-from keras.utils import to_categorical
-import keras.backend as K
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.utils import to_categorical
+import tensorflow.keras.backend as K
 
 from sklearn.metrics import precision_recall_fscore_support
 

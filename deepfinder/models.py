@@ -5,9 +5,9 @@
 # License: GPL v3.0. See <https://www.gnu.org/licenses/>
 # =============================================================================================
 
-from keras.layers import Input, concatenate
-from keras.models import Model
-from keras.layers.convolutional import Conv3D, MaxPooling3D, UpSampling3D
+from tensorflow.keras.layers import Input, concatenate
+from tensorflow.keras.layers import Conv3D, MaxPooling3D, UpSampling3D
+from tensorflow.keras.models import Model
 
 def my_model(dim_in, Ncl):
     
