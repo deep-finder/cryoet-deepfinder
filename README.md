@@ -13,6 +13,7 @@ __News__: (29/01/20) A first version of the GUI is now available in folder pyqt/
 - [Installation guide](##Installation guide)
 - [Instructions for use](##Instructions for use)
 - [Documentation](https://deepfinder.readthedocs.io/en/latest/)
+- [Google group](https://groups.google.com/g/deepfinder)
 
 ## System requirements
 __Deep Finder__ has been implemented using __Python 3__ and is based on the __Keras__ package. It has been tested on Linux (Debian 8.6), and should also work on Mac OSX as well as Windows.
