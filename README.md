@@ -1,6 +1,6 @@
 # Deep Finder
 
-The code in this repository is described in [this pre-print](https://www.biorxiv.org/content/10.1101/2020.04.15.042747v1). This paper has been submitted to Nature Methods and is currently under revision.
+The code in this repository is described in [this pre-print](https://www.biorxiv.org/content/10.1101/2020.04.15.042747v1). This paper has been submitted to Nature Methods and has now been [published](https://doi.org/10.1038/s41592-021-01275-4).
 
 __To reviewers__: you can follow our [tutorial](https://deepfinder.readthedocs.io/en/latest/tutorial.html) to reproduce segmentations from our paper.
 
