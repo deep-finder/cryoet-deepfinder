@@ -108,9 +108,13 @@ class TargetGenerationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             vol_initial = np.zeros((dim_z, dim_y, dim_x))
 
         if strategy == 'Shapes':
-            target = tbuild.generate_with_shapes(objl, vol_initial, param_list)
+            mask_list = []
+            for fname in param_list:  # load masks
+                mask = cm.read_array(fname)
+                mask_list.append(mask)
+            target = tbuild.generate_with_shapes(objl, vol_initial, mask_list)
         else:
-            param_list = list(map(int, param_list)) # convert the radius list from str to int
+            param_list = list(map(int, param_list))  # convert the radius list from str to int
             target = tbuild.generate_with_spheres(objl, vol_initial, param_list)
 
         tbuild.display('Saving target ...')
