@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/Users/emoebel/code/python/deep-finder/deepfinder/')
+sys.path.append('../../deepfinder/')
 
 import numpy as np
 import utils.objl as ol
@@ -7,18 +7,6 @@ import utils.eval as ev
 
 import unittest
 import copy
-
-objl_true = ol.read('../../examples/training/in/object_list_tomo0.xml')
-
-tomoid_list = [obj['tomo_idx'] for obj in objl_true]
-tomoid_list = np.unique(tomoid_list)
-dset_true = {}
-for tomoid in tomoid_list:
-    dset_true[tomoid] = {'object_list': ol.get_tomo(objl_true, tomoid)}
-
-dset_pred = dset_true
-
-
 
 
 # Create dummy inputs:
@@ -33,7 +21,7 @@ def create_dummy_objl(n_obj=100, mono_class=True):
         else:
             label = np.random.randint(1, 4)
         cluster_size = np.random.uniform(0, 1)
-        objl = ol.add_obj(objl, label=label, coord=(z,y,x), cluster_size=cluster_size)
+        objl = ol.add_obj(objl, label=label, coord=(z, y, x), cluster_size=cluster_size)
     return objl
 
 def create_dummy_data_set(n_tomos=5, n_obj=100, mono_class=True):
