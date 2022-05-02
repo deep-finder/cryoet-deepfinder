@@ -3,6 +3,8 @@ from sklearn.metrics import pairwise_distances
 from pycm import ConfusionMatrix
 from . import objl as ol
 import copy
+import matplotlib.pyplot as plt
+
 
 class Evaluator:
 
@@ -48,7 +50,7 @@ class Evaluator:
     def get_evaluation_wrt_detection_score(self, score_thr_list):
         for score_thr in score_thr_list:
             self.get_evaluation(score_thr)
-            self.detect_eval_list.append(self.detect_eval)
+            self.detect_eval_list.append(copy.deepcopy(self.detect_eval))
 
         return self.detect_eval_list
 
@@ -122,14 +124,6 @@ class Evaluator:
                         obj_fp = copy.deepcopy(obj)  # necessary else the labels in objl_true get modified
                         obj_fp['label'] = 0  # fp, therefore label is 0
                         objl_pred_corresp[idx] = obj_fp
-                    # elif len(indices) > 1:  # multiple correspondences
-                    #     obj_fp = copy.deepcopy(obj)  # necessary else the labels in objl_true get modified
-                    #     obj_fp['label'] = 0  # not counted as tp (ie counted as fp), therefore label is 0
-                    #     objl_pred_corresp[idx] = obj_fp
-                    # elif len(indices) < 1:  # no correspondence
-                    #     obj_fp = copy.deepcopy(obj)  # necessary else the labels in objl_true get modified
-                    #     obj_fp['label'] = 0  # fp, therefore label is 0
-                    #     objl_pred_corresp[idx] = obj_fp
                     else:
                         print('Exception!! This case should never happen.')
 
@@ -151,11 +145,6 @@ class Evaluator:
                 objl_true_no_corresp = copy.deepcopy(objl_pred_no_corresp)
                 for idx, obj in enumerate(objl_true_no_corresp):
                     obj['label'] = 0
-                #test_objl_fp1 = ol.get_class(objl_true_no_corresp, label=0)
-                #test_objl_fp2 = ol.get_class(objl_true_corresp, label=0)
-
-                test_objl_fn1 = ol.get_class(objl_pred_no_corresp, 0)
-                test_objl_fn2 = ol.get_class(objl_pred_corresp, 0)
 
                 # Finally:
                 objl_true_corresp = objl_true_corresp + objl_true_no_corresp
@@ -188,11 +177,6 @@ class Evaluator:
         cmat_global = ConfusionMatrix(actual_vector=y_true_global, predict_vector=y_pred_global)
         self.detect_eval['global']['cmat'] = cmat_global
 
-
-
-
-
-
     def get_metrics(self):
         n_true_global = 0
         n_pred_global = 0
@@ -224,82 +208,41 @@ class Evaluator:
         self.detect_eval['global']['n_pred'] = n_pred_global
 
 
-    # def get_cm(self, dist_thr):
-    #     self.get_distance_matrix()
-    #
-    #     z_true_global = []
-    #     z_pred_global = []
-    #     n_multi_hit = 0
-    #     for key, dmat in self.dmat_dict.items():
-    #         y_true = [obj['class'] for obj in self.dset_true[key]['object_list']]
-    #         y_pred = [obj['class'] for obj in self.dset_pred[key]['object_list']]
-    #
-    #         if dmat is not None:  # i.e., if something has been detected
-    #             # y_true and y_pred are not of same lenght. Below I transform y_pred into z_pred and y_true into z_true,
-    #             # where z_true and z_pred have 1 to 1 correspondence between their elements:
-    #             z_pred = [None for _ in range(len(y_true))]
-    #
-    #             # Correspondence matrix where '1' means that an entry from pred is situated at a distance <=dist_thr
-    #             # to an entry of true:
-    #             dmat = dmat <= dist_thr
-    #
-    #             match_idx_list = []  # this list stores all the entries in y_pred that have a match in y_true
-    #             for idx in range(len(y_true)):
-    #                 indices = np.nonzero(dmat[idx, :])[0]
-    #                 if len(indices) == 1:  # only 1 correspondence = true positive // this is necessary in case 1 true matches several pred
-    #                     z_pred[idx] = y_pred[indices[0]]
-    #                     match_idx_list.append(indices[0])
-    #                 elif len(indices) > 1:  # multiple correspondences (not counted as tp)
-    #                     z_pred[idx] = 0
-    #                     n_multi_hit += 1
-    #                     print(f'multi hit: {len(indices)}')
-    #                 elif len(indices) < 1:  # no correspondence = false negative
-    #                     z_pred[idx] = 0
-    #                 else:
-    #                     print(f'Exception!! {len(indices)}')
-    #
-    #             # At this point, z_pred has a 1-to-1 corresp to y_true. But we also have to take into account the
-    #             # predictions that have no correspondence in GT, because those are false positives. In z_true, these
-    #             # correspond to the negative class (lbl=0)
-    #             y_pred_no_corresp = y_pred
-    #
-    #             match_idx_list = np.unique(match_idx_list)  # this is necessary in case 1 pred matches several true. Therefore 1 pred is counted only once as true positive
-    #             match_idx_list = np.flip(np.sort(match_idx_list))  # sort in descending order, else it is a mess deleting elements y idx
-    #             for idx in match_idx_list:
-    #                 del y_pred_no_corresp[idx]
-    #             y_true_no_corresp = [0 for _ in range(len(y_pred_no_corresp))]  # give label 0
-    #
-    #             z_true = y_true + y_true_no_corresp
-    #             z_pred = z_pred + y_pred_no_corresp
-    #
-    #         else:  # if nothing has been detected
-    #             z_true = y_true
-    #             z_pred = [0 for _ in range(len(z_true))]
-    #
-    #         z_true_global += z_true
-    #         z_pred_global += z_pred
-    #
-    #         # print(y_found)
-    #
-    #     cm = ConfusionMatrix(actual_vector=z_true_global, predict_vector=z_pred_global)
-    #     return cm
-    #
-    # def get_cm_wrt_dist(self, dist_thr_list):
-    #     cm_list = []
-    #     for dist_thr in dist_thr_list:
-    #         cm = self.get_cm(dist_thr)
-    #         cm_list.append(cm)
-    #
-    #     return cm_list
-    #
-    # def get_scores_wrt_dist(self, dist_thr_list):
-    #     cm_list = self.get_cm_wrt_dist(dist_thr_list)
-    #     pre_list = []
-    #     rec_list = []
-    #     f1s_list = []
-    #     for cm in cm_list:
-    #         pre_list.append(cm.PPV)
-    #         rec_list.append(cm.TPR)
-    #         f1s_list.append(cm.F1)
-    #
-    #     return pre_list, rec_list, f1s_list
+def plot_eval(detect_eval, class_label, score_thr_list):
+    pre_list = []
+    rec_list = []
+    f1s_list = []
+    for deval in detect_eval:
+        pre = deval['global']['pre'][class_label]
+        rec = deval['global']['rec'][class_label]
+        f1s = deval['global']['f1s'][class_label]
+
+        pre_list.append(pre)
+        rec_list.append(rec)
+        f1s_list.append(f1s)
+
+    # Get max(F1-score) with corresponding precision and recall:
+    f1s_max = np.max(f1s_list)
+    idx_max = np.argmax(f1s_list)
+    pre_best = pre_list[idx_max]
+    rec_best = rec_list[idx_max]
+
+    f1s_max = np.round(f1s_max, 2)
+    pre_best = np.round(pre_best, 2)
+    rec_best = np.round(rec_best, 2)
+
+    # Drop the plot:
+    fontsize = 10
+    fig, ax = plt.subplots(1, 1)
+    ax.plot(score_thr_list, pre_list)
+    ax.plot(score_thr_list, rec_list)
+    ax.plot(score_thr_list, f1s_list)
+    ax.set_title(f'max(f1-score)={f1s_max}, [pre,rec]=[{pre_best},{rec_best}]', fontsize=fontsize)
+    ax.set_xlim([np.min(score_thr_list), np.max(score_thr_list)])
+    ax.set_ylim([0, 1])
+    ax.set_xlabel('Detection score threshold')
+    ax.set_ylabel('Metrics')
+    ax.grid(True)
+    ax.legend(['Precision', 'Recall', 'F1-score'])
+
+    return fig
