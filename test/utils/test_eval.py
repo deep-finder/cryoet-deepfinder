@@ -24,6 +24,7 @@ def create_dummy_objl(n_obj=100, mono_class=True):
         objl = ol.add_obj(objl, label=label, coord=(z, y, x), cluster_size=cluster_size)
     return objl
 
+
 def create_dummy_data_set(n_tomos=5, n_obj=100, mono_class=True):
     dset = {}
     for idx in range(n_tomos):
@@ -31,10 +32,6 @@ def create_dummy_data_set(n_tomos=5, n_obj=100, mono_class=True):
         dset[key] = {'object_list': create_dummy_objl(n_obj, mono_class)}
     return dset
 
-dset_true = create_dummy_data_set(n_tomos=5, n_obj=100, mono_class=False)
-dset_pred = dset_true
-
-detect_eval = ev.Evaluator(dset_true, dset_pred, dist_thr=5).get_evaluation(score_thr=None)
 
 class TestEvaluator(unittest.TestCase):
 
