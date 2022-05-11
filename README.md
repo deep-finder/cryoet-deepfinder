@@ -1,6 +1,6 @@
 # Deep Finder
 
-The code in this repository is described in [this pre-print](https://www.biorxiv.org/content/10.1101/2020.04.15.042747v1). This paper has been submitted to Nature Methods and is currently under revision.
+The code in this repository is described in [this pre-print](https://www.biorxiv.org/content/10.1101/2020.04.15.042747v1). This paper has been submitted to Nature Methods and has now been [published](https://doi.org/10.1038/s41592-021-01275-4).
 
 __To reviewers__: you can follow our [tutorial](https://deepfinder.readthedocs.io/en/latest/tutorial.html) to reproduce segmentations from our paper.
 
@@ -16,7 +16,7 @@ __News__: (29/01/20) A first version of the GUI is now available in folder pyqt/
 - [Google group](https://groups.google.com/g/deepfinder)
 
 ## System requirements
-__Deep Finder__ has been implemented using __Python 3__ and is based on the __Keras__ package. It has been tested on Linux (Debian 8.6), and should also work on Mac OSX as well as Windows.
+__Deep Finder__ has been implemented using __Python 3__ and is based on the __Keras__ package. It has been tested on Linux (Debian 10), and should also work on Mac OSX as well as Windows.
 
 The algorithm needs an __Nvidia GPU__ and __CUDA__ to run at reasonable speed (in particular for training). The present code has been tested on Tesla K80 and M40 GPUs. For running on other GPUs, some parameter values (e.g. patch and batch sizes) may need to be changed to adapt to available memory.
 
