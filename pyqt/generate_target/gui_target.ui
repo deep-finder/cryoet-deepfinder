@@ -39,12 +39,12 @@
         <widget class="QComboBox" name="cb_strategy">
          <item>
           <property name="text">
-           <string>Shapes</string>
+           <string>Spheres</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Spheres</string>
+           <string>Shapes</string>
           </property>
          </item>
         </widget>
@@ -184,7 +184,7 @@ p, li { white-space: pre-wrap; }
        <item row="0" column="0">
         <widget class="QLabel" name="lbl_strategy_input">
          <property name="text">
-          <string>Shape mask paths</string>
+          <string>Sphere radius list</string>
          </property>
         </widget>
        </item>
