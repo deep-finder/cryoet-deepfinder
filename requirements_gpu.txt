@@ -11,3 +11,4 @@ PyQt5==5.13.2
 pyqtgraph==0.10.0
 openpyxl==3.0.3
 scipy==1.5.4
+pycm
