@@ -15,10 +15,10 @@ import threading
 sys.path.append('../../')
 import numpy as np
 
-from deepfinder.training import TargetBuilder
-from deepfinder.utils import core
-from deepfinder.utils import common as cm
-from deepfinder.utils import objl as ol
+from cryoet-deepfinder.training import TargetBuilder
+from cryoet-deepfinder.utils import core
+from cryoet-deepfinder.utils import common as cm
+from cryoet-deepfinder.utils import objl as ol
 
 
 qtcreator_file  = 'gui_target.ui'

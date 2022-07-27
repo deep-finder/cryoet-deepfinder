@@ -18,10 +18,10 @@ import os
 import threading
 
 sys.path.append('../../')
-from deepfinder.inference import Segment
-from deepfinder.utils import core
-from deepfinder.utils import common as cm
-from deepfinder.utils import smap as sm
+from cryoet-deepfinder.inference import Segment
+from cryoet-deepfinder.utils import core
+from cryoet-deepfinder.utils import common as cm
+from cryoet-deepfinder.utils import smap as sm
 
 qtcreator_file  = 'gui_segment.ui'
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtcreator_file)

@@ -18,9 +18,9 @@ sys.path.append('../display/')
 from gui_display import DisplayWindow
 
 sys.path.append('../../')
-from deepfinder.utils import objl as ol
-from deepfinder.training import TargetBuilder
-from deepfinder.utils import common as cm
+from cryoet-deepfinder.utils import objl as ol
+from cryoet-deepfinder.training import TargetBuilder
+from cryoet-deepfinder.utils import common as cm
 
 import numpy as np
 

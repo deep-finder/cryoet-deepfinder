@@ -16,7 +16,7 @@ from custom_theme import set_custom_theme, display_message_box
 from widget_display import DisplayOrthoslicesWidget
 
 sys.path.append('../../')
-from deepfinder.utils import common as cm
+from cryoet-deepfinder.utils import common as cm
 
 import gui_display_interface
 

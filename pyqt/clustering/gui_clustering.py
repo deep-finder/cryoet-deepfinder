@@ -15,10 +15,10 @@ import threading
 
 sys.path.append('../../')
 
-from deepfinder.inference import Cluster
-from deepfinder.utils import core
-from deepfinder.utils import common as cm
-from deepfinder.utils import objl as ol
+from cryoet-deepfinder.inference import Cluster
+from cryoet-deepfinder.utils import core
+from cryoet-deepfinder.utils import common as cm
+from cryoet-deepfinder.utils import objl as ol
 
 
 qtcreator_file  = 'gui_clustering.ui'
