@@ -1,8 +1,8 @@
 import sys
 sys.path.append('../../') # add parent folder to path
 
-from deepfinder.training import Train
-import deepfinder.utils.objl as ol
+from cryoet-deepfinder.training import Train
+import cryoet-deepfinder.utils.objl as ol
 
 # This script will not work because this repository does not include the training set. However it shows how training
 # is realized.

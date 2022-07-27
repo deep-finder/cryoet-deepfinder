@@ -2,9 +2,9 @@ import sys
 sys.path.append('../../') # add parent folder to path
 
 import numpy as np
-from deepfinder.training import TargetBuilder
-import deepfinder.utils.common as cm
-import deepfinder.utils.objl as ol
+from cryoet-deepfinder.training import TargetBuilder
+import cryoet-deepfinder.utils.common as cm
+import cryoet-deepfinder.utils.objl as ol
 
 path_output = 'out/'
 

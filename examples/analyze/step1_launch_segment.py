@@ -1,9 +1,9 @@
 import sys
 sys.path.append('../../') # add parent folder to path
 
-from deepfinder.inference import Segment
-import deepfinder.utils.common as cm
-import deepfinder.utils.smap as sm
+from cryoet-deepfinder.inference import Segment
+import cryoet-deepfinder.utils.common as cm
+import cryoet-deepfinder.utils.smap as sm
 
 # Input parameters:
 path_tomo    = 'in/tomo9.mrc' # tomogram to be segmented
