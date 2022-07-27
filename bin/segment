@@ -39,9 +39,9 @@ if no_args: # if no args are passed, then open GUI
 elif incomplete_args:
     print('DeepFinder message: an argument is missing. All arguments need to be addressed: -t, -w, -c, -p, -o')
 else:
-    from deepfinder.utils import smap as sm
-    from deepfinder.inference import Segment
-    import deepfinder.utils.common as cm
+    from cryoet-deepfinder.utils import smap as sm
+    from cryoet-deepfinder.inference import Segment
+    import cryoet-deepfinder.utils.common as cm
 
     # Load data:
     tomo = cm.read_array(args.path_tomo)
