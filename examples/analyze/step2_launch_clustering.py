@@ -1,9 +1,9 @@
 import sys
 sys.path.append('../../') # add parent folder to path
 
-from cryoet-deepfinder.inference import Cluster
-import cryoet-deepfinder.utils.common as cm
-import cryoet-deepfinder.utils.objl as ol
+from deepfinder.inference import Cluster
+import deepfinder.utils.common as cm
+import deepfinder.utils.objl as ol
 
 # Input parameters:
 path_labelmap = 'out/tomo9_bin1_labelmap.mrc'

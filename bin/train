@@ -30,9 +30,9 @@ if args.path_params == None: # if no args are passed, then open GUI
     os.system(cmd)
 
 else:
-    from cryoet-deepfinder.utils.params import ParamsTrain
-    from cryoet-deepfinder.training import Train
-    import cryoet-deepfinder.utils.objl as ol
+    from deepfinder.utils.params import ParamsTrain
+    from deepfinder.training import Train
+    import deepfinder.utils.objl as ol
 
     # Import parameters:
     params = ParamsTrain()

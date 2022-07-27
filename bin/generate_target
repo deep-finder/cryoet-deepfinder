@@ -19,10 +19,10 @@ deepfindHome = dirname(abspath(__file__))
 deepfindHome = os.path.split(deepfindHome)[0]+'/'
 sys.path.append(deepfindHome)
 
-from cryoet-deepfinder.utils.params import ParamsGenTarget
-from cryoet-deepfinder.training import TargetBuilder
-import cryoet-deepfinder.utils.common as cm
-import cryoet-deepfinder.utils.objl as ol
+from deepfinder.utils.params import ParamsGenTarget
+from deepfinder.training import TargetBuilder
+import deepfinder.utils.common as cm
+import deepfinder.utils.objl as ol
 
 
 # Define arguments:

@@ -39,9 +39,9 @@ elif incomplete_args:
     print('DeepFinder message: an argument is missing. All arguments need to be addressed: -l, -r, -o')
 
 else:
-    from cryoet-deepfinder.inference import Cluster
-    import cryoet-deepfinder.utils.common as cm
-    import cryoet-deepfinder.utils.objl as ol
+    from deepfinder.inference import Cluster
+    import deepfinder.utils.common as cm
+    import deepfinder.utils.objl as ol
 
     # Load data:
     lmap = cm.read_array(args.path_lmap)

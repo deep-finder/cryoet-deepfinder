@@ -15,9 +15,9 @@ import os
 import threading
 
 sys.path.append('../../')
-from cryoet-deepfinder.training import Train
-from cryoet-deepfinder.utils import core
-from cryoet-deepfinder.utils import objl as ol
+from deepfinder.training import Train
+from deepfinder.utils import core
+from deepfinder.utils import objl as ol
 
 from plot_window import TrainMetricsPlotWindow
 

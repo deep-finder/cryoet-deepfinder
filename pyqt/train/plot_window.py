@@ -12,7 +12,7 @@ sys.path.append('../')
 
 import numpy as np
 import pyqtgraph as pg
-from cryoet-deepfinder.utils import core
+from deepfinder.utils import core
 
 # Note: for multiple axe plots, check: pyqtgraph/examples/MultiplePlotAxes.py
 class TrainMetricsPlotWindow:
