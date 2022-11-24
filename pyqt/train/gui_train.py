@@ -18,6 +18,7 @@ sys.path.append('../../')
 from deepfinder.training import Train
 from deepfinder.utils import core
 from deepfinder.utils import objl as ol
+from deepfinder.utils.dataloader import Dataloader
 
 from plot_window import TrainMetricsPlotWindow
 
@@ -51,8 +52,44 @@ class TrainingWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.winPlot = TrainMetricsPlotWindow()
         self.place_window_plot()
 
-
     def launch_process(self):
+        path_dset = self.le_path_dset.text()
+        path_weights = self.le_path_weights.text()
+        path_out         = self.le_path_out.text()
+        Ncl              = int(self.le_nclass.text())
+        psize            = int(self.sb_psize.value())
+        bsize            = int( self.le_bsize.text() )
+        nepochs          = int( self.le_nepochs.text() )
+        steps_per_e      = int( self.le_steps_per_e.text() )
+        steps_per_v      = int( self.le_steps_per_v.text() )
+        flag_direct_read = self.cb_direct_read.isChecked()
+        flag_bootstrap   = self.cb_bootstrap.isChecked()
+        rnd_shift        = int( self.le_rnd_shift.text() )
+
+        # Initialize training:
+        trainer = Train(Ncl=Ncl, dim_in=psize)
+        trainer.path_out        = path_out
+        trainer.batch_size      = bsize
+        trainer.epochs          = nepochs
+        trainer.steps_per_epoch = steps_per_e
+        trainer.Nvalid          = steps_per_v
+        trainer.flag_direct_read     = flag_direct_read
+        trainer.flag_batch_bootstrap = flag_bootstrap
+        trainer.Lrnd            = rnd_shift
+
+        trainer.set_observer(core.observer_gui(self.print_signal))
+
+        if path_weights is not '':
+            print('Loading weights from path ' + path_weights)
+            trainer.net.load_weights(path_weights)
+
+        # Get dataset:
+        path_data, path_target, objl_train, objl_valid = Dataloader()(path_dset)
+
+        # Launch training:
+        trainer.launch(path_data, path_target, objl_train, objl_valid)
+
+    def launch_process_old(self):
         # Get parameters from line edit widgets:
         Ntomo = int(self.te_path_tomo.document().blockCount())
         Ntarget = int(self.te_path_target.document().blockCount())
