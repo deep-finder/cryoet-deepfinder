@@ -139,8 +139,21 @@ objects. The minimum size of validation set should be **at least** few dozen obj
 
    Training GUI
 
-* **Tomogram and target paths**: list here the paths to the tomograms an their corresponding targets. Should correspond line per line
-* **Object list paths**: tomogram index in these object lists should correspond to the order of above listed tomo/target pairs.
+DeepFinder expects the dataset folder to be organized as follows::
+
+    folder
+    |-train
+    | |-tomo1.mrc
+    | |-tomo1_target.mrc
+    | |-tomo1_objl.xml
+    | |- ...
+    |-valid
+    | |-tomo8.mrc
+    | |-tomo8_target.mrc
+    | |-tomo8_objl.xml
+
+* **Dataset path**: give here the path to your dataset folder
+* **Initialize weights**: if left empty, the model will be trained from scratch (random initizalisation). Else, you can use this field to resume a previous training session, by indicating the path to the weights obtained from a previous training. Or, if you want to do fine-tuning, you can load weights of a pre-trained DeepFinder model.
 * **Output path**: where network weights and training metrics will be saved.
 
 
