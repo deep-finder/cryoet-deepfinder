@@ -3,24 +3,18 @@ sys.path.append('../../') # add parent folder to path
 
 from deepfinder.training import Train
 import deepfinder.utils.objl as ol
+from deepfinder.utils.dataloader import Dataloader
 
 # This script will not work because this repository does not include the training set. However it shows how training
 # is realized.
 
+# Load dataset:
+path_dset = '/path/to/dataset/folder/'
+path_data, path_target, objl_train, objl_valid = Dataloader()(path_dset)
+
 # Input parameters:
-path_data = ['/path/tomo1.mrc',
-             '/path/tomo2.mrc',
-             '/path/tomo3.mrc']
-
-path_target = ['/path/target1.mrc',
-               '/path/target2.mrc',
-               '/path/target3.mrc']
-
-path_objl_train = 'in/object_list_train.xml'
-path_objl_valid = 'in/object_list_valid.xml'
-
 Nclass = 13
-dim_in = 56 # patch size
+dim_in = 56  # patch size
 
 # Initialize training task:
 trainer = Train(Ncl=Nclass, dim_in=dim_in)
@@ -37,10 +31,6 @@ trainer.class_weights = None # keras syntax: class_weights={0:1., 1:10.} every i
 
 # Use following line if you want to resume a previous training session:
 #trainer.net.load_weights('out/round1/net_weights_FINAL.h5')
-
-# Load object lists:
-objl_train = ol.read_xml(path_objl_train)
-objl_valid = ol.read_xml(path_objl_valid)
 
 # Finally, launch the training procedure:
 trainer.launch(path_data, path_target, objl_train, objl_valid)
