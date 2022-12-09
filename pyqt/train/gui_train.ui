@@ -300,7 +300,7 @@
        <item row="0" column="1">
         <widget class="QLineEdit" name="le_path_dset">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;DeepFinder expects this folder to be organized as follows:&lt;/p&gt;&lt;p&gt;folder&lt;/p&gt;&lt;p&gt;  |-train&lt;/p&gt;&lt;p&gt;  |    |-tomo1.mrc&lt;/p&gt;&lt;p&gt;  |    |-tomo1_target.mrc&lt;/p&gt;&lt;p&gt;  |    |-tomo1_objl.xml&lt;/p&gt;&lt;p&gt;  |    |- ... &lt;/p&gt;&lt;p&gt;  |-valid&lt;/p&gt;&lt;p&gt;  |    |-tomo8.rmc&lt;/p&gt;&lt;p&gt;  |    |-tomo8_target.mrc&lt;/p&gt;&lt;p&gt;  |    |-tomo8_objl.xml&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;DeepFinder expects this folder to be organized as follows:&lt;/p&gt;&lt;p&gt;folder&lt;/p&gt;&lt;p&gt;|-train&lt;/p&gt;&lt;p&gt;| |-tomo1.mrc&lt;/p&gt;&lt;p&gt;| |-tomo1_target.mrc&lt;/p&gt;&lt;p&gt;| |-tomo1_objl.xml&lt;/p&gt;&lt;p&gt;| |- ... &lt;/p&gt;&lt;p&gt;|-valid&lt;/p&gt;&lt;p&gt;| |-tomo8.mrc&lt;/p&gt;&lt;p&gt;| |-tomo8_target.mrc&lt;/p&gt;&lt;p&gt;| |-tomo8_objl.xml&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>/path/to/dataset/folder</string>
