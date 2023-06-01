@@ -90,9 +90,20 @@ def write_h5array(array, filename, dset_name='dataset'):
     if array.dtype == np.int8:
         dset = h5file.create_dataset(dset_name, array.shape, dtype='int8')
         dset[:] = np.int8(array)
-    else:
+    elif array.dtype == np.uint8:
+        dset = h5file.create_dataset(dset_name, array.shape, dtype='uint8')
+        dset[:] = np.uint8(array)
+    elif array.dtype == np.uint16:
+        dset = h5file.create_dataset(dset_name, array.shape, dtype='uint16')
+        dset[:] = np.uint16(array)
+    elif array.dtype == np.float16:
         dset = h5file.create_dataset(dset_name, array.shape, dtype='float16')
         dset[:] = np.float16(array)
+    elif array.dtype == np.float32:
+        dset = h5file.create_dataset(dset_name, array.shape, dtype='float32')
+        dset[:] = np.float32(array)
+    else:
+        print('/!\ DeepFinder: array needs to be one of following formats: uint8, int8, float16 or float32')
     h5file.close()
 
 # Reads array stored as mrc.
