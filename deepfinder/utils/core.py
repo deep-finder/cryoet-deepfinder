@@ -128,8 +128,8 @@ def load_dataset(path_data, path_target, dset_name='dataset'):
             print('DeepFinder message: tomogram and target are not of same size!')
             sys.exit()
 
-        data_list.append(data.astype(np.float16))
-        target_list.append(target.astype(np.uint8))
+        data_list.append(data)
+        target_list.append(target)
     return data_list, target_list
 
 # This function applies bootstrap (i.e. re-sampling) in case of unbalanced classes.
