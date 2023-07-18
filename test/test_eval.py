@@ -38,7 +38,7 @@ import copy
 class TestEvaluator(unittest.TestCase):
 
     def test_identity(self):  # here we test dset_true to itself. Should give perfect scores
-        dset_true = create_dummy_dset_for_evaluator(n_tomos=5, n_obj=100, mono_class=False)
+        dset_true = create_dummy_dset_for_evaluator(n_tomos=5, n_obj=100, n_obj_classes=3)
         dset_pred = dset_true
 
         detect_eval = ev.Evaluator(dset_true, dset_pred, dist_thr=0).get_evaluation(score_thr=None)
@@ -55,7 +55,7 @@ class TestEvaluator(unittest.TestCase):
         self.assertEqual(len(detect_eval['tomo0']['objl_fn']), 0)  # n_fn should be 0
 
     def test_recall(self):
-        dset_true = create_dummy_dset_for_evaluator(n_tomos=1, n_obj=100, mono_class=True)
+        dset_true = create_dummy_dset_for_evaluator(n_tomos=1, n_obj=100, n_obj_classes=1)
         dset_pred = copy.deepcopy(dset_true)
 
         # Delete 10 elements from pred:
@@ -79,7 +79,7 @@ class TestEvaluator(unittest.TestCase):
         self.assertEqual(detect_eval['global']['pre'][1], 1.0)
 
     def test_precision(self):
-        dset_true = create_dummy_dset_for_evaluator(n_tomos=1, n_obj=100, mono_class=True)
+        dset_true = create_dummy_dset_for_evaluator(n_tomos=1, n_obj=100, n_obj_classes=1)
         dset_pred = copy.deepcopy(dset_true)
 
         # Delete 10 elements from true:

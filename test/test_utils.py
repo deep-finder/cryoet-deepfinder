@@ -17,11 +17,11 @@ def create_dummy_objl(n_obj=100, n_obj_classes=1):
     return objl
 
 
-def create_dummy_dset_for_evaluator(n_tomos=5, n_obj=100, mono_class=True):
+def create_dummy_dset_for_evaluator(n_tomos=5, n_obj=100, n_obj_classes=1):
     dset = {}
     for idx in range(n_tomos):
         key = 'tomo'+str(idx)
-        dset[key] = {'object_list': create_dummy_objl(n_obj, mono_class)}
+        dset[key] = {'object_list': create_dummy_objl(n_obj, n_obj_classes)}
     return dset
 
 
