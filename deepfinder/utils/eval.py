@@ -159,6 +159,7 @@ class Evaluator:
                 y_pred = [obj['label'] for obj in objl_pred_corresp]
 
             else:  # if nothing has been detected
+                objl_true_corresp = objl_true.copy()
                 y_true = [obj['label'] for obj in objl_true_corresp]
                 y_pred = [0 for _ in range(len(y_true))]
 
