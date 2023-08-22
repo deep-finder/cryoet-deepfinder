@@ -163,6 +163,10 @@ class Evaluator:
                 y_true = [obj['label'] for obj in objl_true_corresp]
                 y_pred = [0 for _ in range(len(y_true))]
 
+                objl_tp = []
+                objl_fp = []
+                objl_fn = objl_true.copy()
+
             # Get ConfusionMatrix:
             cmat = ConfusionMatrix(actual_vector=y_true, predict_vector=y_pred)
 
