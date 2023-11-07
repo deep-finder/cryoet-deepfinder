@@ -7,7 +7,7 @@ from deepfinder.inference import Segment
 from deepfinder.models import my_model
 
 
-class TestEvaluator(unittest.TestCase):
+class TestSegment(unittest.TestCase):
 
     def setUp(self):
         # Create temporary directory

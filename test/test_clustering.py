@@ -1,6 +1,4 @@
-import os
 import unittest
-import shutil, tempfile
 import numpy as np
 
 from deepfinder.training import TargetBuilder
@@ -17,7 +15,16 @@ class TestClustering(unittest.TestCase):
         tomodim = (50, 100, 100)
 
         # Get dummy objl:
-        objl_true = create_dummy_objl(n_obj=20, n_obj_classes=2, tomodim=tomodim)  # TODO: replace with exact positions cause right now there is a risk of overlapping objects
+        #objl_true = create_dummy_objl(n_obj=20, n_obj_classes=2, tomodim=tomodim)
+
+        objl_true = [
+            {'tomo_idx': 0, 'label': 1, 'x': 10, 'y': 50, 'z': 25, 'phi': 0, 'psi': 0, 'the': 0,},
+            {'tomo_idx': 0, 'label': 1, 'x': 20, 'y': 50, 'z': 25, 'phi': 0, 'psi': 0, 'the': 0,},
+            {'tomo_idx': 0, 'label': 1, 'x': 30, 'y': 50, 'z': 25, 'phi': 0, 'psi': 0, 'the': 0,},
+            {'tomo_idx': 0, 'label': 2, 'x': 40, 'y': 50, 'z': 25, 'phi': 0, 'psi': 0, 'the': 0,},
+            {'tomo_idx': 0, 'label': 2, 'x': 50, 'y': 50, 'z': 25, 'phi': 0, 'psi': 0, 'the': 0,},
+            {'tomo_idx': 0, 'label': 2, 'x': 60, 'y': 50, 'z': 25, 'phi': 0, 'psi': 0, 'the': 0,},
+        ]
 
         # Create dummy label map:
         tbuild = TargetBuilder()
