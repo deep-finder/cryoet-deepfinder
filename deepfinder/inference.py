@@ -55,9 +55,9 @@ class Segment(core.DeepFinder):
         dataArray = np.pad(dataArray, self.pcrop, mode='constant', constant_values=0)  # zeropad
         dim = dataArray.shape
 
-        l = np.int(self.P / 2)
-        lcrop = np.int(l - self.pcrop)
-        step = np.int(2 * l + 1 - self.poverlap)
+        l = np.int_(self.P / 2)
+        lcrop = np.int_(l - self.pcrop)
+        step = np.int_(2 * l + 1 - self.poverlap)
 
         # Get patch centers:
         pcenterX = list(range(l, dim[0] - l, step))  # list() necessary for py3
