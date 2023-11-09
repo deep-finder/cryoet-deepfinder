@@ -68,7 +68,7 @@ class TargetBuilder(core.DeepFinder):
             the = objl[p]['the']
 
             ref = ref_list[lbl - 1]
-            centeroffset = np.int(np.floor(ref.shape[0] / 2)) # here we expect ref to be cubic
+            centeroffset = np.int_(np.floor(ref.shape[0] / 2)) # here we expect ref to be cubic
 
             # Rotate ref:
             if phi!=None and psi!=None and the!=None:
@@ -355,7 +355,7 @@ class Train(core.DeepFinder):
     #   batch_data: numpy array [batch_idx, z, y, x, channel] in our case only 1 channel
     #   batch_target: numpy array [batch_idx, z, y, x, class_idx] is one-hot encoded
     def generate_batch_direct_read(self, path_data, path_target, batch_size, objlist=None):
-        p_in = np.int(np.floor(self.dim_in / 2))
+        p_in = np.int_(np.floor(self.dim_in / 2))
 
         batch_data = np.zeros((batch_size, self.dim_in, self.dim_in, self.dim_in, 1))
         batch_target = np.zeros((batch_size, self.dim_in, self.dim_in, self.dim_in, self.Ncl))
@@ -414,7 +414,7 @@ class Train(core.DeepFinder):
     #   batch_data: numpy array [batch_idx, z, y, x, channel] in our case only 1 channel
     #   batch_target: numpy array [batch_idx, z, y, x, class_idx] is one-hot encoded
     def generate_batch_from_array(self, data, target, batch_size, objlist=None):
-        p_in = np.int(np.floor(self.dim_in / 2))
+        p_in = np.int_(np.floor(self.dim_in / 2))
 
         batch_data = np.zeros((batch_size, self.dim_in, self.dim_in, self.dim_in, 1))
         batch_target = np.zeros((batch_size, self.dim_in, self.dim_in, self.dim_in, self.Ncl))
