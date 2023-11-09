@@ -5,12 +5,12 @@ import deepfinder.utils.common as cm
 
 
 # Create dummy inputs:
-def create_dummy_objl(n_obj=100, n_obj_classes=1):
+def create_dummy_objl(n_obj=100, n_obj_classes=1, tomodim=(200, 500, 500)):
     objl = []
     for _ in range(n_obj):
-        x = np.random.randint(0, 500)
-        y = np.random.randint(0, 500)
-        z = np.random.randint(0, 200)
+        x = np.random.randint(0, tomodim[2])
+        y = np.random.randint(0, tomodim[1])
+        z = np.random.randint(0, tomodim[0])
         label = np.random.randint(low=1, high=n_obj_classes+1)
         cluster_size = np.random.randint(low=1, high=100)
         objl = ol.add_obj(objl, label=label, coord=(z, y, x), cluster_size=cluster_size)
