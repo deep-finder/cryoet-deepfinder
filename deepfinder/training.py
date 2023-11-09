@@ -8,7 +8,8 @@ import h5py
 import numpy as np
 import time
 
-from tensorflow.keras.optimizers import Adam
+#from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers.legacy import Adam
 from tensorflow.keras.utils import to_categorical
 import tensorflow.keras.backend as K
 
