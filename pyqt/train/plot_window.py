@@ -17,7 +17,7 @@ from deepfinder.utils import core
 # Note: for multiple axe plots, check: pyqtgraph/examples/MultiplePlotAxes.py
 class TrainMetricsPlotWindow:
     def __init__(self):
-        self.win = pg.GraphicsWindow()  # Automatically generates grids with multiple items
+        self.win = pg.GraphicsLayoutWidget()  # Automatically generates grids with multiple items
         self.p_loss = self.win.addPlot(row=0, col=0)
         self.p_acc  = self.win.addPlot(row=1, col=0)
         self.p_f1   = self.win.addPlot(row=0, col=1)
