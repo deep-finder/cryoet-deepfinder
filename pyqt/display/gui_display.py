@@ -6,24 +6,20 @@
 # =============================================================================================
 
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets, uic
-
+from PyQt5 import QtCore, QtWidgets, uic
 import argparse
+from deepfinder.utils import common as cm
 
 sys.path.append('../')
 from custom_theme import set_custom_theme, display_message_box
-
 from widget_display import DisplayOrthoslicesWidget
-
-sys.path.append('../../')
-from deepfinder.utils import common as cm
-
 import gui_display_interface
 
-#qtcreator_file  = 'gui_display.ui'
-#Ui_MainWindow, QtBaseClass = uic.loadUiType(qtcreator_file)
 
-#class DisplayWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+# qtcreator_file  = 'gui_display.ui'
+# Ui_MainWindow, QtBaseClass = uic.loadUiType(qtcreator_file)
+
+# class DisplayWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
@@ -33,9 +29,9 @@ class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
         self.dwidget = DisplayOrthoslicesWidget()
         self.layout.addWidget(self.dwidget)
 
-        #self.histogram_widget.setImageItem(self.dwidget.img_xy)
-        #self.histogram_widget.setImageItem(self.dwidget.img_zx)
-        #self.histogram_widget.setImageItem(self.dwidget.img_zy)
+        # self.histogram_widget.setImageItem(self.dwidget.img_xy)
+        # self.histogram_widget.setImageItem(self.dwidget.img_zx)
+        # self.histogram_widget.setImageItem(self.dwidget.img_zy)
 
         self.button_load_tomo.clicked.connect(self.on_button_tomo_clicked)
         self.button_load_lmap.clicked.connect(self.on_button_lmap_clicked)
@@ -46,10 +42,10 @@ class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
         self.button_denoise.clicked.connect(self.on_button_denoised)
 
         # Signals for communicating with other windows:
-        #self.coord_signal = None # for communicating with annotation windows
+        # self.coord_signal = None # for communicating with annotation windows
         self.signal_tomo_loaded = None
 
-    #def connect_coord_signal(self, coord_signal):
+    # def connect_coord_signal(self, coord_signal):
     #    self.coord_signal = coord_signal
     def connect_signal_tomo_loaded(self, signal_tomo_loaded):
         self.signal_tomo_loaded = signal_tomo_loaded
@@ -60,8 +56,8 @@ class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
 
     @QtCore.pyqtSlot()
     def on_button_tomo_clicked(self):
-        #path_tomo = self.le_path_tomo.text()
-        path_tomo =  QtGui.QFileDialog.getOpenFileName(self, 'Open file')
+        # path_tomo = self.le_path_tomo.text()
+        path_tomo = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file')
         vol = cm.read_array(path_tomo[0])
         self.set_vol(vol)
 
@@ -78,8 +74,8 @@ class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
         self.slider_contrast_max.setValue(self.dataToSliderValue(self.dwidget.levels[1]))
 
         # Automatically propose a value for sigma_noise:
-        #sigma_noise = int( 0.7*self.dwidget.vol_sig )
-        #self.le_sigma_noise.setText(str(sigma_noise))
+        # sigma_noise = int( 0.7*self.dwidget.vol_sig )
+        # self.le_sigma_noise.setText(str(sigma_noise))
 
         # Inform other windows that tomo is loaded (if they exist):
         if self.signal_tomo_loaded != None:
@@ -87,8 +83,8 @@ class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
 
     @QtCore.pyqtSlot()
     def on_button_lmap_clicked(self):
-        #path_lmap = self.le_path_lmap.text()
-        path_lmap = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
+        # path_lmap = self.le_path_lmap.text()
+        path_lmap = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file')
         lmap = cm.read_array(path_lmap[0])
         self.dwidget.set_lmap(lmap)
 
@@ -121,28 +117,30 @@ class DisplayWindow(QtWidgets.QMainWindow, gui_display_interface.Ui_MainWindow):
             display_message_box('Please load a tomogram first')
 
     def dataToSliderValue(self, val):
-        return 100*(val-self.dwidget.vol_min)/(self.dwidget.vol_max-self.dwidget.vol_min)
+        return 100 * (val - self.dwidget.vol_min) / (self.dwidget.vol_max - self.dwidget.vol_min)
+
     def sliderToDataValue(self, val):
-        return val*(self.dwidget.vol_max-self.dwidget.vol_min)/100 + self.dwidget.vol_min
+        return val * (self.dwidget.vol_max - self.dwidget.vol_min) / 100 + self.dwidget.vol_min
 
     @QtCore.pyqtSlot()
     def on_zoom_slider_value_changed(self):
-        scale = float(self.slider_zoom.value())/10
-        self.dwidget.zoom_slices((scale,scale))
+        scale = float(self.slider_zoom.value()) / 10
+        self.dwidget.zoom_slices((scale, scale))
 
     @QtCore.pyqtSlot()
     def on_button_denoised(self):
         if self.dwidget.isTomoLoaded:
-            N = int( self.spinb_denoise_param.value() )
+            N = int(self.spinb_denoise_param.value())
             self.dwidget.denoise_slices(N)
         else:
             display_message_box('Please load a tomogram first')
 
     def place_window(self):
         ag = QtWidgets.QDesktopWidget().availableGeometry()
-        width = 3*int(ag.width()/4)
+        width = 3 * int(ag.width() / 4)
         self.resize(width, ag.height())
         self.move(ag.width() - width, 0)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Annotate a tomogram.')
