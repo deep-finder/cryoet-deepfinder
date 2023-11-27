@@ -142,9 +142,9 @@ class DisplayOrthoslicesWidget(QWidget):
 
     def initialize_display(self): # /!\ self.dim needs to be declared first.
         # Stuff that needs to be intialized after loading a volume (tomogram or label map)
-        self.x = np.int(np.round(self.dim[2] / 2))
-        self.y = np.int(np.round(self.dim[1] / 2))
-        self.z = np.int(np.round(self.dim[0] / 2))
+        self.x = np.int_(np.round(self.dim[2] / 2))
+        self.y = np.int_(np.round(self.dim[1] / 2))
+        self.z = np.int_(np.round(self.dim[0] / 2))
 
         self.lineV_xy.setPos(self.x)
         self.lineH_xy.setPos(self.y)
