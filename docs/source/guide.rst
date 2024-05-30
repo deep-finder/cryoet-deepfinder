@@ -5,7 +5,9 @@ Guide
 
 DeepFinder consists of 5 steps (blue boxes below), which constitute a workflow that allows to locate macromolecular
 complexes in crowded cells, when executed in depicted order. Each step can be executed either using a script (see examples/)
-or using the graphical user interface (see pyqt/). These steps may be used in other workflows, e.g. if the user
+or using the graphical user interface (see pyqt/). 
+Note that the more up-to-date [napari-deepfinder](https://github.com/deep-finder/napari-deepfinder) plugin can also be used to annotate and segment your images.
+These steps may be used in other workflows, e.g. if the user
 needs only the segmentation step.
 
 .. figure::  ../../images/deepfinder_workflow.png
