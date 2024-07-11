@@ -315,30 +315,9 @@ def get_patch_position(tomodim, p_in, obj, Lrnd):
     y = int(obj["y"])
     z = int(obj["z"])
 
-    # Add random shift to coordinates:
-    x = x + np.random.choice(range(-Lrnd, Lrnd + 1))
-    y = y + np.random.choice(range(-Lrnd, Lrnd + 1))
-    z = z + np.random.choice(range(-Lrnd, Lrnd + 1))
-
-    # Shift position if too close to border:
-    if x < p_in:
-        x = p_in
-    if y < p_in:
-        y = p_in
-    if z < p_in:
-        z = p_in
-    if x > tomodim[2] - p_in:
-        x = tomodim[2] - p_in
-    if y > tomodim[1] - p_in:
-        y = tomodim[1] - p_in
-    if z > tomodim[0] - p_in:
-        z = tomodim[0] - p_in
-
-    # else: # sample random position in tomogram
-    #    x = np.int32( np.random.choice(range(p_in,tomodim[0]-p_in)) )
-    #    y = np.int32( np.random.choice(range(p_in,tomodim[0]-p_in)) )
-    #    z = np.int32( np.random.choice(range(p_in,tomodim[0]-p_in)) )
-
+    x,y,z = add_random_shift(tomodim,p_in,Lrnd,x,y,z)
+    
+    return x,y,z      
 
 def get_copick_patch_position(tomodim, p_in, Lrnd, voxelSize, copicks):
     # sample at coordinates specified in obj=objlist[idx]
@@ -346,34 +325,31 @@ def get_copick_patch_position(tomodim, p_in, Lrnd, voxelSize, copicks):
     y = int(copicks.location.y / voxelSize)
     z = int(copicks.location.z / voxelSize)
 
+    x,y,z = add_random_shift(tomodim,p_in,Lrnd,x,y,z)
+    
+    return x,y,z    
+
+def add_random_shift(tomodim, p_in, Lrnd, x,y,z):
+
     # Add random shift to coordinates:
-    x = x + np.random.choice(range(-Lrnd, Lrnd + 1))
-    y = y + np.random.choice(range(-Lrnd, Lrnd + 1))
-    z = z + np.random.choice(range(-Lrnd, Lrnd + 1))
-
+    x = x + np.random.choice(range(-Lrnd,Lrnd+1))
+    y = y + np.random.choice(range(-Lrnd,Lrnd+1))
+    z = z + np.random.choice(range(-Lrnd,Lrnd+1))
+    
     # Shift position if too close to border:
-    if x < p_in:
-        x = p_in
-    if y < p_in:
-        y = p_in
-    if z < p_in:
-        z = p_in
-    if x > tomodim[2] - p_in:
-        x = tomodim[2] - p_in
-    if y > tomodim[1] - p_in:
-        y = tomodim[1] - p_in
-    if z > tomodim[0] - p_in:
-        z = tomodim[0] - p_in
+    if (x<p_in) : x = p_in
+    if (y<p_in) : y = p_in
+    if (z<p_in) : z = p_in
+    if (x>tomodim[2]-p_in): x = tomodim[2]-p_in
+    if (y>tomodim[1]-p_in): y = tomodim[1]-p_in
+    if (z>tomodim[0]-p_in): z = tomodim[0]-p_in
 
-    # else: # sample random position in tomogram
+    #else: # sample random position in tomogram
     #    x = np.int32( np.random.choice(range(p_in,tomodim[0]-p_in)) )
     #    y = np.int32( np.random.choice(range(p_in,tomodim[0]-p_in)) )
     #    z = np.int32( np.random.choice(range(p_in,tomodim[0]-p_in)) )
-
-    return x, y, z
-
-    return x, y, z
-
+    
+    return x,y,z 
 
 # Saves training history as .h5 file.
 # INPUTS:
