@@ -4,8 +4,8 @@ import numpy as np
 import tensorflow as tf
 from sklearn.metrics import precision_recall_fscore_support
 
-from .utils import copick_tools as copicktools
-from .utils import core
+from deepfinder.utils import copick_tools as copicktools
+from deepfinder.utils import core
 
 
 class DatasetSwapCallback(tf.keras.callbacks.Callback):

@@ -13,15 +13,9 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.utils import to_categorical
 import tensorflow.keras.backend as K
 
-import matplotlib.pyplot as plt
-from sklearn.metrics import precision_recall_fscore_support
-from sklearn.utils.class_weight import compute_class_weight
-
-from .utils import common as cm
-from .utils import core
-from . import callbacks
-from . import models
-from . import losses
+from deepfinder.models import model_loader
+from deepfinder import callbacks, losses
+from deepfinder.utils import core
 
 # Enable mixed precision
 from tensorflow.keras import mixed_precision
@@ -35,23 +29,10 @@ class Train(core.DeepFinder):
         self.path_out = './'
         self.h5_dset_name = 'dataset' # if training set is stored as .h5 file, specify here in which h5 dataset the arrays are stored
 
-        # Check GPU memory limit
-        gpus = tf.config.experimental.list_physical_devices('GPU')
-        if gpus:
-            try:
-                # Enable memory growth for the GPU
-                for gpu in gpus:
-                    tf.config.experimental.set_memory_growth(gpu, True)
-
-            except RuntimeError as e:
-                print(e)
-        else:
-            print("No GPU found.")  
-
         # Network parameters:
         self.Ncl = Ncl  # Ncl
         self.dim_in = dim_in  # /!\ has to a multiple of 4 (because of 2 pooling layers), so that dim_in=dim_out
-        self.net = models.my_model(self.dim_in, self.Ncl)
+        self.net = None
 
         self.label_list = []
         for l in range(self.Ncl): self.label_list.append(l) # for precision_recall_fscore_support
@@ -67,7 +48,9 @@ class Train(core.DeepFinder):
 
         self.flag_direct_read = 1
         self.flag_batch_bootstrap = 0
-        self.Lrnd = 13  # random shifts applied when sampling data- and target-patches (in voxels)
+        
+        # random shifts applied when sampling data- and target-patches (in voxels)
+        self.Lrnd = 13 
 
         self.class_weight = None
         self.sample_weights = None  # np array same lenght as objl_train
@@ -135,6 +118,9 @@ class Train(core.DeepFinder):
         self.check_attributes()
         self.check_arguments(path_data, path_target, objlist_train, objlist_valid)
 
+        if self.net is None:
+            self.net = model_loader.load_model(self.dim_in, self.Ncl, 'unet', None)    
+
         # TensorBoard writer
         log_dir = self.path_out + "tensorboard_logs/"
         writer = tf.summary.create_file_writer(log_dir)        
@@ -142,6 +128,22 @@ class Train(core.DeepFinder):
 
         # gpus = tf.config.list_logical_devices('GPU')
         # strategy = tf.distribute.MirroredStrategy(gpus)
+
+        # Check GPU memory limit
+        gpus = tf.config.experimental.list_physical_devices("GPU")
+        if gpus:
+            try:
+                # Set the Desired GPU if Multi-Model Training is Specified
+                if self.gpuID is not None:
+                    tf.config.experimental.set_visible_devices(gpus[self.gpuID], "GPU")
+                # Enable memory growth for the GPU
+                for gpu in gpus:
+                    tf.config.experimental.set_memory_growth(gpu, True)
+
+            except RuntimeError as e:
+                print(e)
+        else:
+            print("No GPU found.")
 
         # Build network (not in constructor, else not possible to init model with weights from previous train round):
         self.net.compile(optimizer=self.optimizer, loss=self.loss, metrics=['accuracy'])

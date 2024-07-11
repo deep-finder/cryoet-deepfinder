@@ -5,10 +5,9 @@
 # License: GPL v3.0. See <https://www.gnu.org/licenses/>
 # =============================================================================================
 
+from deepfinder.utils import common as cm
 import numpy as np
 import h5py
-
-from . import common as cm
 
 def bin(scoremaps):
     """Subsamples the scoremaps by a factor 2. Subsampling is performed by averaging voxel values in 2x2x2 tiles.

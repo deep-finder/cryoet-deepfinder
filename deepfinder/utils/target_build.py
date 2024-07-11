@@ -1,5 +1,5 @@
-from . import common as cm
-from . import core
+from deepfinder.utils import common as cm
+from deepfinder.utils import core
 import numpy as np
 
 class TargetBuilder(core.DeepFinder):

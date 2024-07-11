@@ -1,12 +1,7 @@
-import os
-from typing import List, Tuple
-
-import click
-import copick
-
-import deepfinder.utils.common as cm
 from deepfinder.training_copick import Train
-
+import deepfinder.utils.common as cm
+from typing import List, Tuple
+import copick, click, os
 
 @click.group()
 @click.pass_context

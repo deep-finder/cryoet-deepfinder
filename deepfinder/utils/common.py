@@ -17,8 +17,8 @@ warnings.simplefilter("ignore")  # to mute some warnings produced when opening t
 import matplotlib
 from scipy.ndimage import map_coordinates
 from scipy.spatial.transform import Rotation as R
-from skimage.measure import block_reduce
 from sklearn.model_selection import train_test_split
+from skimage.measure import block_reduce
 
 matplotlib.use("agg")  # necessary else: AttributeError: 'NoneType' object has no attribute 'is_interactive'
 import matplotlib.pyplot as plt

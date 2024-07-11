@@ -1,7 +1,8 @@
-import os
-import warnings
+from deepfinder.utils import copick_tools as copicktools
+from copick.impl.filesystem import CopickRootFSSpec
 import deepfinder.utils.objl as ol
-
+import warnings, os, sys
+from tqdm import tqdm
 
 class Dataloader:
     def __init__(self):
@@ -53,6 +54,24 @@ class Dataloader:
                     self.objl_valid += objl
 
                 self.tomo_idx += 1
+
+    def load_copick_datasets(self, copickPath, train_instance, tomoIDs = None):
+    
+        data_list   = {}; target_list = {}
+
+        copickRoot = CopickRootFSSpec.from_file(copickPath)
+        if tomoIDs is None:  tomoIDs = [run.name for run in copickRoot.runs]
+
+        print(f'Loading Targets and Tomograms for the Following Runs: {list(tomoIDs)}') 
+        for idx in tqdm(range(len(tomoIDs))):
+            target_list[tomoIDs[idx]] = copicktools.get_copick_segmentation( copickRoot.get_run(tomoIDs[idx]), train_instance.labelName, train_instance.labelUserID)[:] 
+            data_list[tomoIDs[idx]] = copicktools.read_copick_tomogram_group(copickRoot, train_instance.voxelSize, train_instance.tomoAlg, tomoIDs[idx])[0][:]
+
+            if data_list[tomoIDs[idx]].shape != target_list[tomoIDs[idx]].shape:
+                print(f'DeepFinder Message: tomogram and target for run {tomoIDs[idx]} are not of same size!')
+                sys.exit()
+
+        return data_list, target_list
 
 
 #path_dset = '/net/serpico-fs2/emoebel/cryo/shrec2021/localization/test_deepfinder/test_dataloader/data/'

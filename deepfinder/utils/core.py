@@ -7,23 +7,17 @@
 
 # This file contains classes/functions that are judged not necessary for the user.
 
-import matplotlib
-import matplotlib.pyplot as plt
-
-matplotlib.use("agg")  # necessary else: AttributeError: 'NoneType' object has no attribute 'is_interactive'
-
-import os
-import sys
+from deepfinder.utils import copick_tools as copicktools
+from deepfinder.utils import common as cm
 from itertools import chain
-
-import copick
-import h5py
-import numpy as np
 from tqdm import tqdm
+import copick, h5py
+import numpy as np
+import os, sys
 
-from . import common as cm
-from . import copick_tools as copicktools
-
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use("agg")  # necessary else: AttributeError: 'NoneType' object has no attribute 'is_interactive'
 
 class DeepFinder:
     def __init__(self):
@@ -241,7 +235,6 @@ def query_available_picks(copickRoot, tomoIDs=None, targets=None):
 
     for tomoInd in range(len(tomoIDs)):
         copickRun = copickRoot.get_run(tomoIDs[tomoInd])
-        print(copickRun.picks)
 
         if targets is None:
             query = copickRun.picks
