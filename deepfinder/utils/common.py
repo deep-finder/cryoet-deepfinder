@@ -44,9 +44,9 @@ def plot_volume_orthoslices(vol, filename):
 
     # Get central slices along each dimension:
     dim = vol.shape
-    idx0 = np.int( np.round(dim[0]/2) )
-    idx1 = np.int( np.round(dim[1]/2) )
-    idx2 = np.int( np.round(dim[2]/2) )
+    idx0 = int( np.round(dim[0]/2) )
+    idx1 = int( np.round(dim[1]/2) )
+    idx2 = int( np.round(dim[2]/2) )
 
     slice0 = vol[idx0,:,:]
     slice1 = vol[:,idx1,:]

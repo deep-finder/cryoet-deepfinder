@@ -21,9 +21,9 @@ def bin(scoremaps):
     """
     dim = scoremaps.shape
     Ncl = dim[3]
-    dimB0 = np.int(np.ceil(dim[0] / 2))
-    dimB1 = np.int(np.ceil(dim[1] / 2))
-    dimB2 = np.int(np.ceil(dim[2] / 2))
+    dimB0 = int(np.ceil(dim[0] / 2))
+    dimB1 = int(np.ceil(dim[1] / 2))
+    dimB2 = int(np.ceil(dim[2] / 2))
     dimB = (dimB0, dimB1, dimB2, Ncl)
     scoremapsB = np.zeros(dimB)
     for cl in range(0,Ncl):
